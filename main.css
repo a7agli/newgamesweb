@@ -1,13 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
 
-body{
-    margin:0;
-    background: linear-gradient(135deg, #000000 0%, #050505 40%, #0a0a0a 100%);
-    font-family:'Montserrat', sans-serif;
-    color:var(--text);
-    display:flex;
-    height:100vh;
-}
+body { background-color: #1b1b1b; font-family: 'Montserrat', sans-serif; } nav { position: fixed; top: 0; left: 0; backdrop-filter: blur(10px) saturate(200%) brightness(70%); color: #fff; display: flex; height: 7vw; width: 100%; align-items: center; justify-content: left; padding: 0 1%; z-index: 5; margin: auto; }
 nav img {
     height: 80%;
     width: auto;
