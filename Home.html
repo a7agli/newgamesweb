@@ -1,223 +1,402 @@
-<!DOCTYPE html> 
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Frazer</title>
-
 <link rel="stylesheet" href="/main.css">
 <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.2.0/css/all.css">
-
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #000;
-  color: #fff;
-}
+  *, *::before, *::after { box-sizing: border-box; }
 
-/* NAV */
-nav {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
-  background: #0d0d0d;
-  border-bottom: 1px solid #222;
-}
+  :root {
+    --bg:           #0a0a0a;
+    --bg-nav:       #111;
+    --bg-card:      #181818;
+    --bg-input:     #151515;
+    --bg-btn:       #1e1e1e;
+    --bg-setting:   #141414;
+    --border:       #1e1e1e;
+    --border-input: #2a2a2a;
+    --text:         #ffffff;
+    --text-muted:   #bbb;
+    --text-dim:     #777;
+    --text-faint:   #555;
+    --accent:       #5b8fff;
+    --toggle-bg:    #2a2a2a;
+    --toggle-knob:  #666;
+  }
 
-nav img {
-  height: 36px;
-  border-radius: 6px;
-}
+  [data-theme="light"] {
+    --bg:           #f4f4f4;
+    --bg-nav:       #ffffff;
+    --bg-card:      #ffffff;
+    --bg-input:     #f0f0f0;
+    --bg-btn:       #e8e8e8;
+    --bg-setting:   #f9f9f9;
+    --border:       #e0e0e0;
+    --border-input: #d0d0d0;
+    --text:         #111111;
+    --text-muted:   #444;
+    --text-dim:     #666;
+    --text-faint:   #999;
+    --toggle-bg:    #ddd;
+    --toggle-knob:  #aaa;
+  }
 
-nav h1 {
-  font-size: 20px;
-  margin: 0;
-}
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.25s, color 0.25s;
+  }
 
-/* SECTION */
-.section {
-  padding: 20px;
-}
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 24px;
+    background: var(--bg-nav);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: background 0.25s, border-color 0.25s;
+  }
 
-.section h2 {
-  margin-bottom: 15px;
-  font-size: 18px;
-  color: #aaa;
-}
+  nav img { height: 34px; border-radius: 8px; }
 
-/* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 14px;
-}
+  nav h1 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.5px;
+    flex: 1;
+  }
 
-/* CARD */
-.card {
-  position: relative;
-  transition: 0.2s;
-}
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-input);
+    background: var(--bg-btn);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    transition: color 0.15s;
+    user-select: none;
+  }
 
-.card img {
-  width: 100%;
-  border-radius: 10px;
-}
+  .theme-toggle:hover { color: var(--text); }
 
-.card:hover {
-  transform: scale(1.05);
-}
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 0 24px;
+    background: var(--bg-nav);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.25s, border-color 0.25s;
+  }
 
-.play-button {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.4);
-  border-radius: 10px;
-  opacity: 0;
-  transition: 0.2s;
-}
+  .tab-btn {
+    padding: 12px 18px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-dim);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    letter-spacing: 0.3px;
+  }
 
-.card:hover .play-button {
-  opacity: 1;
-}
+  .tab-btn:hover { color: var(--text-muted); }
+  .tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
 
-.play-button i {
-  font-size: 20px;
-}
+  .tab-panel { display: none; padding: 28px 24px; }
+  .tab-panel.active { display: block; }
 
-/* SEARCH */
-.search {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
+  .section { margin-bottom: 36px; }
 
-.search input {
-  flex: 1;
-  padding: 10px;
-  background: #111;
-  border: 1px solid #333;
-  color: white;
-  border-radius: 6px;
-}
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
 
-.search button {
-  padding: 10px 14px;
-  background: #222;
-  border: 1px solid #333;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-}
+  .section-header h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+  }
+
+  .section-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin-left: 8px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+    overflow: visible;
+  }
+
+  .card {
+    position: relative;
+    display: block;
+    background: none;
+    border: none;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform;
+  }
+
+  .card img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .card:hover {
+    transform: scale(1.07) translateY(-4px);
+    z-index: 2;
+  }
+
+  .card:hover .card-inner {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 0 1px #5b8fff33;
+  }
+
+  .card:hover img { transform: scale(1.04); }
+
+  .play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    transition: opacity 0.18s;
+  }
+
+  .card:hover .play-overlay { opacity: 1; }
+
+  .play-overlay i {
+    font-size: 22px;
+    color: #fff;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+  }
+
+  .card { overflow: visible; }
+  .card-inner {
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .card:hover .card-inner { border-color: #5b8fff55; }
+
+  .card-label {
+    padding: 5px 2px 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    transition: color 0.2s;
+  }
+  .card:hover .card-label { color: var(--text); }
+
+  @keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position:  400px 0; }
+  }
+
+  .skeleton {
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+  }
+
+  .skeleton-thumb {
+    width: 100%;
+    aspect-ratio: 1;
+    background: linear-gradient(90deg, var(--border) 25%, var(--bg-btn) 50%, var(--border) 75%);
+    background-size: 400px 100%;
+    animation: shimmer 1.4s infinite linear;
+  }
+
+  .skeleton-label {
+    height: 11px;
+    margin: 7px auto 5px;
+    width: 65%;
+    border-radius: 6px;
+    background: linear-gradient(90deg, var(--border) 25%, var(--bg-btn) 50%, var(--border) 75%);
+    background-size: 400px 100%;
+    animation: shimmer 1.4s infinite linear;
+    animation-delay: 0.1s;
+  }
+
+  .search-bar { display: flex; gap: 8px; margin-bottom: 18px; }
+
+  .search-bar input {
+    flex: 1;
+    padding: 10px 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-input);
+    color: var(--text);
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-bar input:focus { border-color: var(--accent); }
+  .search-bar input::placeholder { color: var(--text-faint); }
+
+  .search-bar button {
+    padding: 10px 16px;
+    background: var(--bg-btn);
+    border: 1px solid var(--border-input);
+    color: var(--text-muted);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.15s;
+  }
+
+  .search-bar button:hover { color: var(--text); }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .empty-state i { font-size: 40px; color: var(--border-input); }
+  .empty-state p { margin: 0; font-size: 15px; color: var(--text-faint); }
+
+  .settings-grid { display: flex; flex-direction: column; gap: 10px; max-width: 600px; }
+
+  .settings-group {
+    background: var(--bg-setting);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: background 0.25s, border-color 0.25s;
+  }
+
+  .settings-group-label {
+    padding: 10px 16px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-faint);
+  }
+
+  .setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+    gap: 16px;
+    transition: border-color 0.25s;
+  }
+
+  .settings-group .setting-row:first-of-type { border-top: none; }
+
+  .setting-info { flex: 1; }
+  .setting-info .label { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .setting-info .desc { font-size: 12px; color: var(--text-faint); }
+
+  .toggle-wrap { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+  .toggle-wrap input { opacity: 0; width: 0; height: 0; position: absolute; }
+
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    background: var(--toggle-bg);
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--toggle-knob);
+    transition: transform 0.2s, background 0.2s;
+  }
+
+  .toggle-wrap input:checked + .toggle-track { background: var(--accent); }
+  .toggle-wrap input:checked + .toggle-track::after { transform: translateX(18px); background: #fff; }
+
+  .setting-select {
+    padding: 7px 10px;
+    background: var(--bg-btn);
+    border: 1px solid var(--border-input);
+    color: var(--text);
+    border-radius: 7px;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .setting-select:focus { border-color: var(--accent); }
+
+  .reset-btn {
+    padding: 7px 14px;
+    background: var(--bg-btn);
+    border: 1px solid var(--border-input);
+    color: var(--text-muted);
+    border-radius: 7px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .reset-btn:hover { color: var(--text); }
 </style>
 </head>
-
 <body>
 
 <nav>
-  <img src="images/image_1884.jpeg">
+  <img src="images/image_1884.jpeg" alt="Frazer logo">
   <h1>Frazer</h1>
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <i id="themeIcon" class="fa-solid fa-moon"></i>
+    <span id="themeLabel">Dark</span>
+  </button>
 </nav>
 
-<!-- POPULAR -->
-<div class="section">
-  <h2>🔥 Popular</h2>
-  <div class="grid">
-    <a href="games/bob-the-robber-2/" class="card"><img src="images/bob-the-robber-2.png"><div class="play-button"><i class="fa-solid fa-play"></i></div></a>
-    <a href="games/vex7/" class="card"><img src="images/vex7.jpeg"><div class="play-button"><i class="fa-solid fa-play"></i></div></a>
-    <a href="games/drive-mad/" class="card"><img src="images/drive-mad.jpg"><div class="play-button"><i class="fa-solid fa-play"></i></div></a>
-    <a href="games/retro-bowl/" class="card"><img src="images/retro-bowl.jpg"><div class="play-button"><i class="fa-solid fa-play"></i></div></a>
-  </div>
-</div>
-
-<!-- PARKOUR / PLATFORM -->
-<div class="section">
-  <h2>🏃 Parkour / Platform</h2>
-  <div class="grid">
-    <a href="games/vex6/" class="card"><img src="images/vex6.jpeg"></a>
-    <a href="games/vex7/" class="card"><img src="images/vex7.jpeg"></a>
-    <a href="games/slope/" class="card"><img src="images/slope.jpg"></a>
-  </div>
-</div>
-
-<!-- DRIVING -->
-<div class="section">
-  <h2>🚗 Driving</h2>
-  <div class="grid">
-    <a href="games/drive-mad/" class="card"><img src="images/drive-mad.jpg"></a>
-    <a href="games/moto-x3m/" class="card"><img src="images/moto-x3m.jpg"></a>
-    <a href="games/motox3m2/" class="card"><img src="images/motox3m2.jpg"></a>
-    <a href="games/rocket-goal/" class="card"><img src="images/Rocketgoal.jpeg"></a>
-  </div>
-</div>
-
-<!-- SPORTS -->
-<div class="section">
-  <h2>🏀 Sports</h2>
-  <div class="grid">
-    <a href="games/retro-bowl/" class="card"><img src="images/retro-bowl.jpg"></a>
-    <a href="games/Basketball stars/" class="card"><img src="images/basketball-stars.png"></a>
-    <a href="games/gball/" class="card"><img src="images/gball.png"></a>
-    <a href="games/hoopland/" class="card"><img src="images/hoopland.png"></a>
-  </div>
-</div>
-
-<!-- OTHER / EMULATORS -->
-<div class="section">
-  <h2>🎮 Other</h2>
-  <div class="grid">
-    <a href="games/WebMC-Master" class="card"><img src="images/mc.png"></a>
-    <a href="games/GBA-gh-pages/" class="card"><img src="images/gba.jpg"></a>
-    <a href="games/Snow-Rider3D-main/" class="card"><img src="images/logo.png"></a>
-    <a href="games/wordle/" class="card"><img src="images/wordle.png"></a>
-  </div>
-</div>
-
-<!-- HORROR -->
-<div class="section">
-  <h2>👻 Horror</h2>
-  <div class="grid">
-    <a href="games/fnaje/" class="card"><img src="images/fnaje.png"></a>
-    <a href="games/fnaf/" class="card"><img src="images/fnaf.jpg"></a>
-  </div>
-</div>
-
-<!-- SEARCH ALL -->
-<div class="section">
-  <h2>🔍 All Games</h2>
-
-  <div class="search">
-    <input type="text" placeholder="Search...">
-    <button><i class="fas fa-search"></i></button>
-  </div>
-
-  <div class="grid">
-    <!-- keep all -->
-    <a href="games/bob-the-robber-2/" class="card"><img src="images/bob-the-robber-2.png"></a>
-    <a href="games/vex7/" class="card"><img src="images/vex7.jpeg"></a>
-    <a href="games/vex6/" class="card"><img src="images/vex6.jpeg"></a>
-    <a href="games/WebMC-Master" class="card"><img src="images/mc.png"></a>
-    <a href="games/moto-x3m/" class="card"><img src="images/moto-x3m.jpg"></a>
-    <a href="games/retro-bowl/" class="card"><img src="images/retro-bowl.jpg"></a>
-    <a href="games/drive-mad/" class="card"><img src="images/drive-mad.jpg"></a>
-    <a href="games/slope/" class="card"><img src="images/slope.jpg"></a>
-    <a href="games/motox3m2/" class="card"><img src="images/motox3m2.jpg"></a>
-    <a href="games/Basketball stars/" class="card"><img src="images/basketball-stars.png"></a>
-    <a href="games/Snow-Rider3D-main/" class="card"><img src="images/logo.png"></a>
-    <a href="games/GBA-gh-pages/" class="card"><img src="images/gba.jpg"></a>
-    <a href="games/fnaje/" class="card"><img src="images/fnaje.png"></a>
-    <a href="games/fnaf/" class="card"><img src="images/fnaf.jpg"></a>
-    <a href="games/gball/" class="card"><img src="images/gball.png"></a>
-    <a href="games/wordle/" class="card"><img src="images/wordle.png"></a>
-    <a href="games/hoopland/" class="card"><img src="images/hoopland.png"></a>
-    <a href="games/rocket-goal/" class="card"><img src="images/Rocketgoal.jpeg"></a>
-  </div>
-</div>
-
-<script src="script.js"></script>
-</body>
-</html>
+<div c
