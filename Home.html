@@ -203,6 +203,7 @@
     filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
   }
 
+  /* ── CARD WRAPPER (allow overflow for label) ── */
   .card { overflow: visible; }
   .card-inner {
     border-radius: 10px;
@@ -226,6 +227,7 @@
   }
   .card:hover .card-label { color: var(--text); }
 
+  /* ── SKELETON ── */
   @keyframes shimmer {
     0%   { background-position: -400px 0; }
     100% { background-position:  400px 0; }
@@ -300,6 +302,7 @@
   .empty-state i { font-size: 40px; color: var(--border-input); }
   .empty-state p { margin: 0; font-size: 15px; color: var(--text-faint); }
 
+  /* ── SETTINGS ── */
   .settings-grid { display: flex; flex-direction: column; gap: 10px; max-width: 600px; }
 
   .settings-group {
@@ -399,4 +402,304 @@
   </button>
 </nav>
 
-<div c
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('games', this)">
+    <i class="fa-solid fa-gamepad" style="margin-right:6px;font-size:12px;"></i>Games
+  </button>
+  <button class="tab-btn" onclick="switchTab('apps', this)">
+    <i class="fa-solid fa-grid-2" style="margin-right:6px;font-size:12px;"></i>Apps
+  </button>
+  <button class="tab-btn" onclick="switchTab('settings', this)">
+    <i class="fa-solid fa-gear" style="margin-right:6px;font-size:12px;"></i>Settings
+  </button>
+</div>
+
+<!-- GAMES -->
+<div id="tab-games" class="tab-panel active">
+
+  <div class="section">
+    <div class="section-header"><h2>🔥 Popular</h2></div>
+    <div class="grid">
+      <a href="games/bob-the-robber-2/" class="card"><div class="card-inner"><img src="images/bob-the-robber-2.png" alt="Bob the Robber 2"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Bob the Robber 2</div></a>
+      <a href="games/vex7/" class="card"><div class="card-inner"><img src="images/vex7.jpeg" alt="Vex 7"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Vex 7</div></a>
+      <a href="games/drive-mad/" class="card"><div class="card-inner"><img src="images/drive-mad.jpg" alt="Drive Mad"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Drive Mad</div></a>
+      <a href="games/retro-bowl/" class="card"><div class="card-inner"><img src="images/retro-bowl.jpg" alt="Retro Bowl"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Retro Bowl</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><h2>🏃 Parkour / Platform</h2></div>
+    <div class="grid">
+      <a href="games/vex6/" class="card"><div class="card-inner"><img src="images/vex6.jpeg" alt="Vex 6"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Vex 6</div></a>
+      <a href="games/vex7/" class="card"><div class="card-inner"><img src="images/vex7.jpeg" alt="Vex 7"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Vex 7</div></a>
+      <a href="games/slope/" class="card"><div class="card-inner"><img src="images/slope.jpg" alt="Slope"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Slope</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><h2>🚗 Driving</h2></div>
+    <div class="grid">
+      <a href="games/drive-mad/" class="card"><div class="card-inner"><img src="images/drive-mad.jpg" alt="Drive Mad"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Drive Mad</div></a>
+      <a href="games/moto-x3m/" class="card"><div class="card-inner"><img src="images/moto-x3m.jpg" alt="Moto X3M"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Moto X3M</div></a>
+      <a href="games/motox3m2/" class="card"><div class="card-inner"><img src="images/motox3m2.jpg" alt="Moto X3M 2"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Moto X3M 2</div></a>
+      <a href="games/rocket-goal/" class="card"><div class="card-inner"><img src="images/Rocketgoal.jpeg" alt="Rocket Goal"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Rocket Goal</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><h2>🏀 Sports</h2></div>
+    <div class="grid">
+      <a href="games/retro-bowl/" class="card"><div class="card-inner"><img src="images/retro-bowl.jpg" alt="Retro Bowl"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Retro Bowl</div></a>
+      <a href="games/Basketball stars/" class="card"><div class="card-inner"><img src="images/basketball-stars.png" alt="Basketball Stars"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Basketball Stars</div></a>
+      <a href="games/gball/" class="card"><div class="card-inner"><img src="images/gball.png" alt="GBall"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">GBall</div></a>
+      <a href="games/hoopland/" class="card"><div class="card-inner"><img src="images/hoopland.png" alt="Hoopland"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Hoopland</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><h2>🎮 Other</h2></div>
+    <div class="grid">
+      <a href="games/WebMC-Master" class="card"><div class="card-inner"><img src="images/mc.png" alt="Minecraft"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Minecraft</div></a>
+      <a href="games/GBA-gh-pages/" class="card"><div class="card-inner"><img src="images/gba.jpg" alt="GBA"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">GBA Emulator</div></a>
+      <a href="games/Snow-Rider3D-main/" class="card"><div class="card-inner"><img src="images/logo.png" alt="Snow Rider 3D"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Snow Rider 3D</div></a>
+      <a href="games/wordle/" class="card"><div class="card-inner"><img src="images/wordle.png" alt="Wordle"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Wordle</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><h2>👻 Horror</h2></div>
+    <div class="grid">
+      <a href="games/fnaje/" class="card"><div class="card-inner"><img src="images/fnaje.png" alt="FNaJE"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">FNaJE</div></a>
+      <a href="games/fnaf/" class="card"><div class="card-inner"><img src="images/fnaf.jpg" alt="FNaF"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">FNaF</div></a>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><h2>🔍 All Games</h2></div>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search games..." oninput="filterGames()">
+      <button onclick="filterGames()"><i class="fas fa-search"></i></button>
+    </div>
+    <div class="grid" id="allGamesGrid">
+      <a href="games/bob-the-robber-2/" class="card" data-name="bob the robber"><div class="card-inner"><img src="images/bob-the-robber-2.png" alt="Bob the Robber 2"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Bob the Robber 2</div></a>
+      <a href="games/vex7/" class="card" data-name="vex 7"><div class="card-inner"><img src="images/vex7.jpeg" alt="Vex 7"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Vex 7</div></a>
+      <a href="games/vex6/" class="card" data-name="vex 6"><div class="card-inner"><img src="images/vex6.jpeg" alt="Vex 6"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Vex 6</div></a>
+      <a href="games/WebMC-Master" class="card" data-name="minecraft"><div class="card-inner"><img src="images/mc.png" alt="Minecraft"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Minecraft</div></a>
+      <a href="games/moto-x3m/" class="card" data-name="moto x3m"><div class="card-inner"><img src="images/moto-x3m.jpg" alt="Moto X3M"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Moto X3M</div></a>
+      <a href="games/retro-bowl/" class="card" data-name="retro bowl"><div class="card-inner"><img src="images/retro-bowl.jpg" alt="Retro Bowl"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Retro Bowl</div></a>
+      <a href="games/drive-mad/" class="card" data-name="drive mad"><div class="card-inner"><img src="images/drive-mad.jpg" alt="Drive Mad"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Drive Mad</div></a>
+      <a href="games/slope/" class="card" data-name="slope"><div class="card-inner"><img src="images/slope.jpg" alt="Slope"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Slope</div></a>
+      <a href="games/motox3m2/" class="card" data-name="moto x3m 2"><div class="card-inner"><img src="images/motox3m2.jpg" alt="Moto X3M 2"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Moto X3M 2</div></a>
+      <a href="games/Basketball stars/" class="card" data-name="basketball stars"><div class="card-inner"><img src="images/basketball-stars.png" alt="Basketball Stars"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Basketball Stars</div></a>
+      <a href="games/Snow-Rider3D-main/" class="card" data-name="snow rider"><div class="card-inner"><img src="images/logo.png" alt="Snow Rider 3D"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Snow Rider 3D</div></a>
+      <a href="games/GBA-gh-pages/" class="card" data-name="gba emulator"><div class="card-inner"><img src="images/gba.jpg" alt="GBA"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">GBA Emulator</div></a>
+      <a href="games/fnaje/" class="card" data-name="fnaje horror"><div class="card-inner"><img src="images/fnaje.png" alt="FNaJE"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">FNaJE</div></a>
+      <a href="games/fnaf/" class="card" data-name="fnaf horror"><div class="card-inner"><img src="images/fnaf.jpg" alt="FNaF"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">FNaF</div></a>
+      <a href="games/gball/" class="card" data-name="gball"><div class="card-inner"><img src="images/gball.png" alt="GBall"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">GBall</div></a>
+      <a href="games/wordle/" class="card" data-name="wordle"><div class="card-inner"><img src="images/wordle.png" alt="Wordle"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Wordle</div></a>
+      <a href="games/hoopland/" class="card" data-name="hoopland"><div class="card-inner"><img src="images/hoopland.png" alt="Hoopland"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Hoopland</div></a>
+      <a href="games/rocket-goal/" class="card" data-name="rocket goal"><div class="card-inner"><img src="images/Rocketgoal.jpeg" alt="Rocket Goal"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Rocket Goal</div></a>
+    </div>
+  </div>
+
+</div>
+
+<!-- APPS -->
+<div id="tab-apps" class="tab-panel">
+  <div class="empty-state">
+    <i class="fa-solid fa-grid-2"></i>
+    <p>No apps yet — check back soon!</p>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="tab-settings" class="tab-panel">
+  <div class="settings-grid">
+
+    <div class="settings-group">
+      <div class="settings-group-label">Appearance</div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="label">Dark mode</div>
+          <div class="desc">Switch between dark and light theme</div>
+        </div>
+        <label class="toggle-wrap">
+          <input type="checkbox" id="darkModeToggle" checked onchange="applyTheme(this.checked)">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="label">Card size</div>
+          <div class="desc">How large game thumbnails appear in the grid</div>
+        </div>
+        <select class="setting-select" id="cardSizeSelect" onchange="setCardSize(this.value)">
+          <option value="100px">Small</option>
+          <option value="130px" selected>Medium</option>
+          <option value="170px">Large</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-label">Games</div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="label">Show play button on hover</div>
+          <div class="desc">Display the play icon when hovering a game card</div>
+        </div>
+        <label class="toggle-wrap">
+          <input type="checkbox" id="playOverlayToggle" checked onchange="togglePlayOverlay(this.checked)">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="label">Open games in new tab</div>
+          <div class="desc">Games launch in a separate browser tab</div>
+        </div>
+        <label class="toggle-wrap">
+          <input type="checkbox" id="newTabToggle" onchange="toggleNewTab(this.checked)">
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-group-label">About</div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="label">Version</div>
+          <div class="desc">Current build of Frazer</div>
+        </div>
+        <span style="font-size:13px;color:var(--text-faint);">1.0.0</span>
+      </div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="label">Reset preferences</div>
+          <div class="desc">Restore all settings to their defaults</div>
+        </div>
+        <button class="reset-btn" onclick="clearPrefs()">Reset</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function filterGames() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('#allGamesGrid .card').forEach(card => {
+      card.style.display = (card.dataset.name || '').includes(q) ? '' : 'none';
+    });
+  }
+
+  function applyTheme(dark) {
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    document.getElementById('themeIcon').className = dark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+    document.getElementById('themeLabel').textContent = dark ? 'Dark' : 'Light';
+    document.getElementById('darkModeToggle').checked = dark;
+    localStorage.setItem('frazer-dark', dark ? '1' : '0');
+  }
+
+  function toggleTheme() {
+    applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
+  }
+
+  function setCardSize(size) {
+    document.querySelectorAll('.grid').forEach(g => {
+      g.style.gridTemplateColumns = `repeat(auto-fill, minmax(${size}, 1fr))`;
+    });
+    localStorage.setItem('frazer-card-size', size);
+  }
+
+  function togglePlayOverlay(on) {
+    document.querySelectorAll('.play-overlay').forEach(el => el.style.display = on ? '' : 'none');
+    localStorage.setItem('frazer-play-overlay', on ? '1' : '0');
+  }
+
+  function toggleNewTab(on) {
+    document.querySelectorAll('.card').forEach(card => card.target = on ? '_blank' : '');
+    localStorage.setItem('frazer-new-tab', on ? '1' : '0');
+  }
+
+  function clearPrefs() {
+    ['frazer-dark','frazer-card-size','frazer-play-overlay','frazer-new-tab'].forEach(k => localStorage.removeItem(k));
+    applyTheme(true);
+    setCardSize('130px');
+    document.getElementById('cardSizeSelect').value = '130px';
+    document.getElementById('playOverlayToggle').checked = true;
+    togglePlayOverlay(true);
+    document.getElementById('newTabToggle').checked = false;
+    toggleNewTab(false);
+  }
+
+  (function loadPrefs() {
+    const dark = localStorage.getItem('frazer-dark');
+    if (dark !== null) applyTheme(dark === '1');
+
+    const size = localStorage.getItem('frazer-card-size');
+    if (size) { setCardSize(size); document.getElementById('cardSizeSelect').value = size; }
+
+    if (localStorage.getItem('frazer-play-overlay') === '0') {
+      document.getElementById('playOverlayToggle').checked = false;
+      togglePlayOverlay(false);
+    }
+
+    if (localStorage.getItem('frazer-new-tab') === '1') {
+      document.getElementById('newTabToggle').checked = true;
+      toggleNewTab(true);
+    }
+  })();
+  /* ── SKELETON LOADER ── */
+  (function initSkeletons() {
+    const grids = document.querySelectorAll('.grid');
+    grids.forEach(grid => {
+      const cards = Array.from(grid.querySelectorAll('.card'));
+      const count = cards.length;
+      // hide real cards initially
+      cards.forEach(c => { c.style.opacity = '0'; c.style.position = 'absolute'; c.style.pointerEvents = 'none'; });
+      // insert skeletons
+      const frags = cards.map(() => {
+        const sk = document.createElement('div');
+        sk.className = 'skeleton';
+        sk.innerHTML = '<div class="skeleton-thumb"></div><div class="skeleton-label"></div>';
+        grid.appendChild(sk);
+        return sk;
+      });
+      // when all images in this grid load, fade in real cards and remove skeletons
+      const imgs = grid.querySelectorAll('img');
+      let loaded = 0;
+      const total = imgs.length || 1;
+      const done = () => {
+        loaded++;
+        if (loaded >= total) {
+          frags.forEach(sk => sk.remove());
+          cards.forEach((c, i) => {
+            c.style.position = '';
+            c.style.pointerEvents = '';
+            setTimeout(() => {
+              c.style.transition = 'opacity 0.3s';
+              c.style.opacity = '1';
+            }, i * 40);
+          });
+        }
+      };
+      imgs.forEach(img => {
+        if (img.complete) done();
+        else { img.addEventListener('load', done); img.addEventListener('error', done); }
+      });
+    });
+  })();
+
+</script>
+</body>
+</html>
