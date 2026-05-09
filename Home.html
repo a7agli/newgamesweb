@@ -116,7 +116,7 @@ body{
 .panel{display:none;}
 .panel.active{display:block;}
 
-/* WINDOWS */
+/* WINDOWS SYSTEM (FIXED FULL LAYOUT) */
 #window-area{
   position:fixed;
   top:0;
@@ -135,6 +135,10 @@ body{
   overflow:hidden;
   box-shadow:0 10px 40px rgba(0,0,0,0.5);
   pointer-events:auto;
+
+  display:flex;
+  flex-direction:column;
+
   resize:both;
   min-width:300px;
   min-height:200px;
@@ -142,6 +146,7 @@ body{
 
 .window-header{
   height:40px;
+  flex-shrink:0;
   background:rgba(255,255,255,0.1);
   display:flex;
   justify-content:space-between;
@@ -165,7 +170,6 @@ body{
 
 .close{background:#ff5f57;}
 .max{background:#ffbd2e;}
-.min{background:#28c840;}
 
 .window.maximized{
   top:0 !important;
@@ -174,6 +178,14 @@ body{
   height:calc(100% - 50px) !important;
   border-radius:0 !important;
 }
+
+/* FIXED IFRAME (THIS FIXES YOUR ISSUE) */
+.window iframe{
+  flex:1;
+  width:100%;
+  border:none;
+  display:block;
+}
 </style>
 </head>
 
@@ -181,7 +193,7 @@ body{
 
 <div id="window-area"></div>
 
-<!-- START MENU (UNCHANGED) -->
+<!-- START MENU (UNCHANGED STRUCTURE) -->
 <div id="start-menu">
 
 <input class="search" placeholder="Search For Apps, Settings, Etc">
@@ -207,7 +219,7 @@ body{
   </div>
 </div>
 
-<!-- GAMES (FULL RESTORE) -->
+<!-- GAMES -->
 <div id="games-panel" class="panel">
   <div class="tile" onclick="openPanel('home')">⬅ Back</div>
 
@@ -250,8 +262,7 @@ body{
 </div>
 
 <script>
-let z = 2000;
-let minimized = [];
+let z=2000;
 
 /* MENU */
 function toggleMenu(){
@@ -271,7 +282,7 @@ function openPanel(name){
   document.getElementById(name+"-panel").classList.add("active");
 }
 
-/* OPEN APP WINDOW */
+/* WINDOWS */
 function openApp(url,title){
   const win=document.createElement("div");
   win.className="window";
@@ -284,7 +295,6 @@ function openApp(url,title){
       <span>${title}</span>
 
       <div class="win-controls">
-        <div class="win-btn min" onclick="minimize(this)"></div>
         <div class="win-btn max" onclick="toggleMax(this)"></div>
         <div class="win-btn close" onclick="this.closest('.window').remove()"></div>
       </div>
@@ -297,28 +307,10 @@ function openApp(url,title){
   drag(win);
 }
 
-/* MINIMIZE */
-function minimize(btn){
-  const win = btn.closest(".window");
-  win.style.display = "none";
-  minimized.push(win);
-}
-
 /* MAXIMIZE */
 function toggleMax(btn){
-  const win = btn.closest(".window");
-  win.classList.toggle("maximized");
+  btn.closest(".window").classList.toggle("maximized");
 }
-
-/* RESTORE (optional click anywhere taskbar reuse) */
-document.addEventListener("keydown",(e)=>{
-  if(e.key==="Tab"){
-    if(minimized.length){
-      const win=minimized.pop();
-      win.style.display="block";
-    }
-  }
-});
 
 /* DRAG */
 function drag(el){
