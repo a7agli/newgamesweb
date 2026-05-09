@@ -1,714 +1,265 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Frazer</title>
-<link rel="stylesheet" href="/main.css">
-<link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.2.0/css/all.css">
+<title>Frazer OS</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
-  *, *::before, *::after { box-sizing: border-box; }
+body{
+  margin:0;
+  font-family:Arial;
+  height:100vh;
+  overflow:hidden;
+  background:url("https://www.wallpaperhub.app/_next/image?url=https%3A%2F%2Fcdn.wallpaperhub.app%2Fcloudcache%2F8%2Fe%2Fc%2F4%2F4%2Ff%2F8ec44f86876a912a93f4116f50e6a3839af5c03b.jpg&w=4096&h=2160&q=100") center/cover no-repeat;
+}
 
-  :root {
-    --bg:           #0a0a0a;
-    --bg-nav:       #111;
-    --bg-card:      #181818;
-    --bg-input:     #151515;
-    --bg-btn:       #1e1e1e;
-    --bg-setting:   #141414;
-    --border:       #1e1e1e;
-    --border-input: #2a2a2a;
-    --text:         #ffffff;
-    --text-muted:   #bbb;
-    --text-dim:     #777;
-    --text-faint:   #555;
-    --accent:       #5b8fff;
-    --toggle-bg:    #2a2a2a;
-    --toggle-knob:  #666;
-  }
+/* TASKBAR */
+.taskbar{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  height:50px;
+  background:rgba(20,20,20,0.7);
+  backdrop-filter:blur(12px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
 
-  [data-theme="light"] {
-    --bg:           #f4f4f4;
-    --bg-nav:       #ffffff;
-    --bg-card:      #ffffff;
-    --bg-input:     #f0f0f0;
-    --bg-btn:       #e8e8e8;
-    --bg-setting:   #f9f9f9;
-    --border:       #e0e0e0;
-    --border-input: #d0d0d0;
-    --text:         #111111;
-    --text-muted:   #444;
-    --text-dim:     #666;
-    --text-faint:   #999;
-    --toggle-bg:    #ddd;
-    --toggle-knob:  #aaa;
-  }
+.start-btn{
+  width:44px;height:44px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
+  cursor:pointer;
+}
 
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    transition: background 0.25s, color 0.25s;
-  }
+/* START MENU */
+#start-menu{
+  position:fixed;
+  bottom:70px;
+  left:50%;
+  transform:translateX(-50%) scale(0.95);
+  width:600px;
+  height:680px;
+  background:rgba(25,25,25,0.85);
+  backdrop-filter:blur(20px);
+  border-radius:16px;
+  padding:16px;
+  display:none;
+  color:white;
+  opacity:0;
+  transition:0.25s;
+}
+#start-menu.show{
+  opacity:1;
+  transform:translateX(-50%) scale(1);
+}
 
-  nav {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 24px;
-    background: var(--bg-nav);
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    transition: background 0.25s, border-color 0.25s;
-  }
+/* SEARCH */
+.search{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  outline:none;
+  background:rgba(255,255,255,0.1);
+  color:white;
+  margin-bottom:12px;
+}
 
-  nav img { height: 34px; border-radius: 8px; }
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
 
-  nav h1 {
-    font-size: 18px;
-    font-weight: 700;
-    margin: 0;
-    letter-spacing: 0.5px;
-    flex: 1;
-  }
+/* TILE */
+.tile{
+  background:rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:10px;
+  text-align:center;
+  cursor:pointer;
+  transition:0.2s;
+}
+.tile:hover{transform:scale(1.05); background:rgba(255,255,255,0.15);}
+.tile img{width:42px;height:42px;}
+.tile i{font-size:28px;}
 
-  .theme-toggle {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    padding: 6px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border-input);
-    background: var(--bg-btn);
-    color: var(--text-muted);
-    font-size: 13px;
-    font-weight: 600;
-    transition: color 0.15s;
-    user-select: none;
-  }
+/* PANELS */
+.panel{display:none;}
+.panel.active{display:block;}
 
-  .theme-toggle:hover { color: var(--text); }
+/* LIST GRID INSIDE FOLDERS */
+.big-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-top:10px;
+}
 
-  .tabs {
-    display: flex;
-    gap: 4px;
-    padding: 0 24px;
-    background: var(--bg-nav);
-    border-bottom: 1px solid var(--border);
-    transition: background 0.25s, border-color 0.25s;
-  }
+.small-tile{
+  background:rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:8px;
+  text-align:center;
+  font-size:12px;
+  cursor:pointer;
+}
 
-  .tab-btn {
-    padding: 12px 18px;
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--text-dim);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: color 0.2s, border-color 0.2s;
-    letter-spacing: 0.3px;
-  }
+/* FOOTER */
+.footer{
+  position:absolute;
+  bottom:14px;
+  left:16px;
+  right:16px;
+  display:flex;
+  justify-content:space-between;
+  border-top:1px solid rgba(255,255,255,0.1);
+  padding-top:10px;
+}
 
-  .tab-btn:hover { color: var(--text-muted); }
-  .tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
+.user{display:flex;gap:8px;align-items:center;}
+.avatar{
+  width:32px;height:32px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.1);
+  display:flex;align-items:center;justify-content:center;
+}
 
-  .tab-panel { display: none; padding: 28px 24px; }
-  .tab-panel.active { display: block; }
-
-  .section { margin-bottom: 36px; }
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-
-  .section-header h2 {
-    margin: 0;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    white-space: nowrap;
-  }
-
-  .section-header::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-    margin-left: 8px;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 12px;
-    overflow: visible;
-  }
-
-  .card {
-    position: relative;
-    display: block;
-    background: none;
-    border: none;
-    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-    will-change: transform;
-  }
-
-  .card img {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .card:hover {
-    transform: scale(1.07) translateY(-4px);
-    z-index: 2;
-  }
-
-  .card:hover .card-inner {
-    box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 0 1px #5b8fff33;
-  }
-
-  .card:hover img { transform: scale(1.04); }
-
-  .play-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.5);
-    opacity: 0;
-    transition: opacity 0.18s;
-  }
-
-  .card:hover .play-overlay { opacity: 1; }
-
-  .play-overlay i {
-    font-size: 22px;
-    color: #fff;
-    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
-  }
-
-  /* ── CARD WRAPPER (allow overflow for label) ── */
-  .card { overflow: visible; }
-  .card-inner {
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-    border: 1px solid var(--border);
-    transition: border-color 0.2s;
-  }
-  .card:hover .card-inner { border-color: #5b8fff55; }
-
-  .card-label {
-    padding: 5px 2px 0;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-dim);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
-    transition: color 0.2s;
-  }
-  .card:hover .card-label { color: var(--text); }
-
-  /* ── SKELETON ── */
-  @keyframes shimmer {
-    0%   { background-position: -400px 0; }
-    100% { background-position:  400px 0; }
-  }
-
-  .skeleton {
-    border-radius: 10px;
-    overflow: hidden;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-  }
-
-  .skeleton-thumb {
-    width: 100%;
-    aspect-ratio: 1;
-    background: linear-gradient(90deg, var(--border) 25%, var(--bg-btn) 50%, var(--border) 75%);
-    background-size: 400px 100%;
-    animation: shimmer 1.4s infinite linear;
-  }
-
-  .skeleton-label {
-    height: 11px;
-    margin: 7px auto 5px;
-    width: 65%;
-    border-radius: 6px;
-    background: linear-gradient(90deg, var(--border) 25%, var(--bg-btn) 50%, var(--border) 75%);
-    background-size: 400px 100%;
-    animation: shimmer 1.4s infinite linear;
-    animation-delay: 0.1s;
-  }
-
-  .search-bar { display: flex; gap: 8px; margin-bottom: 18px; }
-
-  .search-bar input {
-    flex: 1;
-    padding: 10px 14px;
-    background: var(--bg-input);
-    border: 1px solid var(--border-input);
-    color: var(--text);
-    border-radius: 8px;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .search-bar input:focus { border-color: var(--accent); }
-  .search-bar input::placeholder { color: var(--text-faint); }
-
-  .search-bar button {
-    padding: 10px 16px;
-    background: var(--bg-btn);
-    border: 1px solid var(--border-input);
-    color: var(--text-muted);
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: color 0.15s;
-  }
-
-  .search-bar button:hover { color: var(--text); }
-
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 80px 20px;
-    gap: 12px;
-    text-align: center;
-  }
-
-  .empty-state i { font-size: 40px; color: var(--border-input); }
-  .empty-state p { margin: 0; font-size: 15px; color: var(--text-faint); }
-
-  /* ── SETTINGS ── */
-  .settings-grid { display: flex; flex-direction: column; gap: 10px; max-width: 600px; }
-
-  .settings-group {
-    background: var(--bg-setting);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: background 0.25s, border-color 0.25s;
-  }
-
-  .settings-group-label {
-    padding: 10px 16px 6px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-faint);
-  }
-
-  .setting-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    border-top: 1px solid var(--border);
-    gap: 16px;
-    transition: border-color 0.25s;
-  }
-
-  .settings-group .setting-row:first-of-type { border-top: none; }
-
-  .setting-info { flex: 1; }
-  .setting-info .label { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-  .setting-info .desc { font-size: 12px; color: var(--text-faint); }
-
-  .toggle-wrap { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
-  .toggle-wrap input { opacity: 0; width: 0; height: 0; position: absolute; }
-
-  .toggle-track {
-    position: absolute;
-    inset: 0;
-    background: var(--toggle-bg);
-    border-radius: 24px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  .toggle-track::after {
-    content: '';
-    position: absolute;
-    top: 3px; left: 3px;
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    background: var(--toggle-knob);
-    transition: transform 0.2s, background 0.2s;
-  }
-
-  .toggle-wrap input:checked + .toggle-track { background: var(--accent); }
-  .toggle-wrap input:checked + .toggle-track::after { transform: translateX(18px); background: #fff; }
-
-  .setting-select {
-    padding: 7px 10px;
-    background: var(--bg-btn);
-    border: 1px solid var(--border-input);
-    color: var(--text);
-    border-radius: 7px;
-    font-size: 13px;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .setting-select:focus { border-color: var(--accent); }
-
-  .reset-btn {
-    padding: 7px 14px;
-    background: var(--bg-btn);
-    border: 1px solid var(--border-input);
-    color: var(--text-muted);
-    border-radius: 7px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: color 0.15s;
-  }
-
-  .reset-btn:hover { color: var(--text); }
+.power{
+  width:36px;height:36px;
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.1);
+  cursor:pointer;
+}
 </style>
 </head>
+
 <body>
 
-<nav>
-  <img src="images/image_1884.jpeg" alt="Frazer logo">
-  <h1>Frazer</h1>
-  <button class="theme-toggle" onclick="toggleTheme()">
-    <i id="themeIcon" class="fa-solid fa-moon"></i>
-    <span id="themeLabel">Dark</span>
-  </button>
-</nav>
+<!-- START MENU -->
+<div id="start-menu">
 
-<div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('games', this)">
-    <i class="fa-solid fa-gamepad" style="margin-right:6px;font-size:12px;"></i>Games
-  </button>
-  <button class="tab-btn" onclick="switchTab('apps', this)">
-    <i class="fa-solid fa-grid-2" style="margin-right:6px;font-size:12px;"></i>Apps
-  </button>
-  <button class="tab-btn" onclick="switchTab('settings', this)">
-    <i class="fa-solid fa-gear" style="margin-right:6px;font-size:12px;"></i>Settings
-  </button>
-</div>
+<input class="search" placeholder="Search For Apps, Settings, Etc">
 
-<!-- GAMES -->
-<div id="tab-games" class="tab-panel active">
+<!-- HOME -->
+<div id="home-panel" class="panel active">
 
-  <div class="section">
-    <div class="section-header"><h2>🔥 Popular</h2></div>
-    <div class="grid">
-      <a href="games/bob-the-robber-2/" class="card"><div class="card-inner"><img src="images/bob-the-robber-2.png" alt="Bob the Robber 2"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Bob the Robber 2</div></a>
-      <a href="games/vex7/" class="card"><div class="card-inner"><img src="images/vex7.jpeg" alt="Vex 7"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Vex 7</div></a>
-      <a href="games/drive-mad/" class="card"><div class="card-inner"><img src="images/drive-mad.jpg" alt="Drive Mad"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Drive Mad</div></a>
-      <a href="games/retro-bowl/" class="card"><div class="card-inner"><img src="images/retro-bowl.jpg" alt="Retro Bowl"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Retro Bowl</div></a>
+  <div class="grid">
+
+    <div class="tile" onclick="openPanel('games')">
+      <img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png">
+      <div>Games</div>
     </div>
-  </div>
 
-  <div class="section">
-    <div class="section-header"><h2>🏃 Parkour / Platform</h2></div>
-    <div class="grid">
-      <a href="games/vex6/" class="card"><div class="card-inner"><img src="images/vex6.jpeg" alt="Vex 6"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Vex 6</div></a>
-      <a href="games/vex7/" class="card"><div class="card-inner"><img src="images/vex7.jpeg" alt="Vex 7"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Vex 7</div></a>
-      <a href="games/slope/" class="card"><div class="card-inner"><img src="images/slope.jpg" alt="Slope"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Slope</div></a>
+    <div class="tile" onclick="openPanel('apps')">
+      <img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png">
+      <div>Apps</div>
     </div>
-  </div>
 
-  <div class="section">
-    <div class="section-header"><h2>🚗 Driving</h2></div>
-    <div class="grid">
-      <a href="games/drive-mad/" class="card"><div class="card-inner"><img src="images/drive-mad.jpg" alt="Drive Mad"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Drive Mad</div></a>
-      <a href="games/moto-x3m/" class="card"><div class="card-inner"><img src="images/moto-x3m.jpg" alt="Moto X3M"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Moto X3M</div></a>
-      <a href="games/motox3m2/" class="card"><div class="card-inner"><img src="images/motox3m2.jpg" alt="Moto X3M 2"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Moto X3M 2</div></a>
-      <a href="games/rocket-goal/" class="card"><div class="card-inner"><img src="images/Rocketgoal.jpeg" alt="Rocket Goal"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Rocket Goal</div></a>
+    <div class="tile" onclick="openPanel('settings')">
+      <i class="fa fa-gear"></i>
+      <div>Settings</div>
     </div>
-  </div>
 
-  <div class="section">
-    <div class="section-header"><h2>🏀 Sports</h2></div>
-    <div class="grid">
-      <a href="games/retro-bowl/" class="card"><div class="card-inner"><img src="images/retro-bowl.jpg" alt="Retro Bowl"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Retro Bowl</div></a>
-      <a href="games/Basketball stars/" class="card"><div class="card-inner"><img src="images/basketball-stars.png" alt="Basketball Stars"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Basketball Stars</div></a>
-      <a href="games/gball/" class="card"><div class="card-inner"><img src="images/gball.png" alt="GBall"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Google Baseball</div></a>
-      <a href="games/hoopland/" class="card"><div class="card-inner"><img src="images/hoopland.png" alt="Hoopland"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Hoopland</div></a>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-header"><h2>🎮 Other</h2></div>
-    <div class="grid">
-      <a href="games/WebMC-Master" class="card"><div class="card-inner"><img src="images/mc.png" alt="Minecraft"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Minecraft</div></a>
-      <a href="games/GBA-gh-pages/" class="card"><div class="card-inner"><img src="images/gba.jpg" alt="GBA"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">GBA Emulator</div></a>
-      <a href="games/Snow-Rider3D-main/" class="card"><div class="card-inner"><img src="images/logo.png" alt="Snow Rider 3D"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Snow Rider 3D</div></a>
-      <a href="games/wordle/" class="card"><div class="card-inner"><img src="images/wordle.png" alt="Wordle"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Wordle</div></a>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-header"><h2>👻 Horror</h2></div>
-    <div class="grid">
-      <a href="games/fnaje/" class="card"><div class="card-inner"><img src="images/fnaje.png" alt="FNaJE"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">FNaJE</div></a>
-      <a href="games/fnaf/" class="card"><div class="card-inner"><img src="images/fnaf.jpg" alt="FNaF"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">FNaF</div></a>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-header"><h2>🔍 All Games</h2></div>
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search games..." oninput="filterGames()">
-      <button onclick="filterGames()"><i class="fas fa-search"></i></button>
-    </div>
-    <div class="grid" id="allGamesGrid">
-      <a href="games/bob-the-robber-2/" class="card" data-name="bob the robber"><div class="card-inner"><img src="images/bob-the-robber-2.png" alt="Bob the Robber 2"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Bob the Robber 2</div></a>
-      <a href="games/vex7/" class="card" data-name="vex 7"><div class="card-inner"><img src="images/vex7.jpeg" alt="Vex 7"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Vex 7</div></a>
-      <a href="games/vex6/" class="card" data-name="vex 6"><div class="card-inner"><img src="images/vex6.jpeg" alt="Vex 6"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Vex 6</div></a>
-      <a href="games/WebMC-Master" class="card" data-name="minecraft"><div class="card-inner"><img src="images/mc.png" alt="Minecraft"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Minecraft</div></a>
-      <a href="games/moto-x3m/" class="card" data-name="moto x3m"><div class="card-inner"><img src="images/moto-x3m.jpg" alt="Moto X3M"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Moto X3M</div></a>
-      <a href="games/retro-bowl/" class="card" data-name="retro bowl"><div class="card-inner"><img src="images/retro-bowl.jpg" alt="Retro Bowl"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Retro Bowl</div></a>
-      <a href="games/drive-mad/" class="card" data-name="drive mad"><div class="card-inner"><img src="images/drive-mad.jpg" alt="Drive Mad"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Drive Mad</div></a>
-      <a href="games/slope/" class="card" data-name="slope"><div class="card-inner"><img src="images/slope.jpg" alt="Slope"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Slope</div></a>
-      <a href="games/motox3m2/" class="card" data-name="moto x3m 2"><div class="card-inner"><img src="images/motox3m2.jpg" alt="Moto X3M 2"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Moto X3M 2</div></a>
-      <a href="games/Basketball stars/" class="card" data-name="basketball stars"><div class="card-inner"><img src="images/basketball-stars.png" alt="Basketball Stars"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Basketball Stars</div></a>
-      <a href="games/Snow-Rider3D-main/" class="card" data-name="snow rider"><div class="card-inner"><img src="images/logo.png" alt="Snow Rider 3D"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Snow Rider 3D</div></a>
-      <a href="games/GBA-gh-pages/" class="card" data-name="gba emulator"><div class="card-inner"><img src="images/gba.jpg" alt="GBA"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">GBA Emulator</div></a>
-      <a href="games/fnaje/" class="card" data-name="fnaje horror"><div class="card-inner"><img src="images/fnaje.png" alt="FNaJE"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">FNaJE</div></a>
-      <a href="games/fnaf/" class="card" data-name="fnaf horror"><div class="card-inner"><img src="images/fnaf.jpg" alt="FNaF"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">FNaF</div></a>
-      <a href="games/gball/" class="card" data-name="gball"><div class="card-inner"><img src="images/gball.png" alt="GBall"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">GBall</div></a>
-      <a href="games/wordle/" class="card" data-name="wordle"><div class="card-inner"><img src="images/wordle.png" alt="Wordle"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Wordle</div></a>
-      <a href="games/hoopland/" class="card" data-name="hoopland"><div class="card-inner"><img src="images/hoopland.png" alt="Hoopland"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Hoopland</div></a>
-      <a href="games/rocket-goal/" class="card" data-name="rocket goal"><div class="card-inner"><img src="images/Rocketgoal.jpeg" alt="Rocket Goal"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Rocket Goal</div></a>
-    </div>
-  </div>
-
-</div>
-
-<!-- APPS -->
-<div id="tab-apps" class="tab-panel">
-  <div class="empty-state">
-    <i class="fa-solid fa-grid-2"></i>
-    <p>No new apps yet — check back soon!</p>
   </div>
 </div>
 
- <div class="section">
-    <div class="section-header"><h2> AI </h2></h2></div>
-    <div class="grid">
-      <a href="apps/chatbot/" class="card"><div class="card-inner"><img src="images/chatgpt.webp" alt="Chatbot"><div class="play-overlay"><i class="fa-solid fa-play"></i></div></div><div class="card-label">Chatbot</div></a>
-    </div>
-  </div>
+<!-- GAMES FOLDER (FULL LIST) -->
+<div id="games-panel" class="panel">
+  <div class="tile" onclick="openPanel('home')">⬅ Back</div>
 
+  <div class="big-grid">
+
+    <div class="small-tile">Bob the Robber 2</div>
+    <div class="small-tile">Vex 6</div>
+    <div class="small-tile">Vex 7</div>
+    <div class="small-tile">Drive Mad</div>
+    <div class="small-tile">Retro Bowl</div>
+    <div class="small-tile">Slope</div>
+    <div class="small-tile">Moto X3M</div>
+    <div class="small-tile">Moto X3M 2</div>
+    <div class="small-tile">Rocket Goal</div>
+    <div class="small-tile">Basketball Stars</div>
+    <div class="small-tile">GBall</div>
+    <div class="small-tile">Minecraft</div>
+    <div class="small-tile">Snow Rider 3D</div>
+    <div class="small-tile">Wordle</div>
+    <div class="small-tile">FNaF</div>
+    <div class="small-tile">FNaJE</div>
+    <div class="small-tile">Hoopland</div>
+
+  </div>
 </div>
- 
+
+<!-- APPS FOLDER -->
+<div id="apps-panel" class="panel">
+  <div class="tile" onclick="openPanel('home')">⬅ Back</div>
+
+  <div class="big-grid">
+
+    <div class="small-tile">Chatbot</div>
+    <div class="small-tile">Browser</div>
+    <div class="small-tile">Files</div>
+    <div class="small-tile">Music Player</div>
+
+  </div>
+</div>
+
 <!-- SETTINGS -->
-<div id="tab-settings" class="tab-panel">
-  <div class="settings-grid">
+<div id="settings-panel" class="panel">
+  <div class="tile" onclick="openPanel('home')">⬅ Back</div>
+  <p>⚙ Frazer Settings System</p>
+</div>
 
-    <div class="settings-group">
-      <div class="settings-group-label">Appearance</div>
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="label">Dark mode</div>
-          <div class="desc">Switch between dark and light theme</div>
-        </div>
-        <label class="toggle-wrap">
-          <input type="checkbox" id="darkModeToggle" checked onchange="applyTheme(this.checked)">
-          <span class="toggle-track"></span>
-        </label>
-      </div>
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="label">Card size</div>
-          <div class="desc">How large game thumbnails appear in the grid</div>
-        </div>
-        <select class="setting-select" id="cardSizeSelect" onchange="setCardSize(this.value)">
-          <option value="100px">Small</option>
-          <option value="130px" selected>Medium</option>
-          <option value="170px">Large</option>
-        </select>
-      </div>
-    </div>
+<!-- FOOTER -->
+<div class="footer">
 
-    <div class="settings-group">
-      <div class="settings-group-label">Games</div>
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="label">Show play button on hover</div>
-          <div class="desc">Display the play icon when hovering a game card</div>
-        </div>
-        <label class="toggle-wrap">
-          <input type="checkbox" id="playOverlayToggle" checked onchange="togglePlayOverlay(this.checked)">
-          <span class="toggle-track"></span>
-        </label>
-      </div>
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="label">Open games in new tab</div>
-          <div class="desc">Games launch in a separate browser tab</div>
-        </div>
-        <label class="toggle-wrap">
-          <input type="checkbox" id="newTabToggle" onchange="toggleNewTab(this.checked)">
-          <span class="toggle-track"></span>
-        </label>
-      </div>
-    </div>
+  <div class="user">
+    <div class="avatar"><i class="fa fa-user"></i></div>
+    <div>Frazer User</div>
+  </div>
 
-    <div class="settings-group">
-      <div class="settings-group-label">About</div>
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="label">Version</div>
-          <div class="desc">Current build of Frazer</div>
-        </div>
-        <span style="font-size:13px;color:var(--text-faint);">1.0.0</span>
-      </div>
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="label">Reset preferences</div>
-          <div class="desc">Restore all settings to their defaults</div>
-        </div>
-        <button class="reset-btn" onclick="clearPrefs()">Reset</button>
-      </div>
-    </div>
+  <div class="power">
+    <i class="fa fa-power-off"></i>
+  </div>
 
+</div>
+
+</div>
+
+<!-- TASKBAR -->
+<div class="taskbar">
+  <div class="start-btn" onclick="toggleMenu()">
+    <i class="fa-brands fa-windows"></i>
   </div>
 </div>
 
-<script src="script.js"></script>
 <script>
-  function switchTab(name, btn) {
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
-    btn.classList.add('active');
+function toggleMenu(){
+  const m=document.getElementById("start-menu");
+  if(m.classList.contains("show")){
+    m.classList.remove("show");
+    setTimeout(()=>m.style.display="none",200);
+  }else{
+    m.style.display="block";
+    setTimeout(()=>m.classList.add("show"),10);
   }
+}
 
-  function filterGames() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
-    document.querySelectorAll('#allGamesGrid .card').forEach(card => {
-      card.style.display = (card.dataset.name || '').includes(q) ? '' : 'none';
-    });
-  }
-
-  function applyTheme(dark) {
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-    document.getElementById('themeIcon').className = dark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
-    document.getElementById('themeLabel').textContent = dark ? 'Dark' : 'Light';
-    document.getElementById('darkModeToggle').checked = dark;
-    localStorage.setItem('frazer-dark', dark ? '1' : '0');
-  }
-
-  function toggleTheme() {
-    applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
-  }
-
-  function setCardSize(size) {
-    document.querySelectorAll('.grid').forEach(g => {
-      g.style.gridTemplateColumns = `repeat(auto-fill, minmax(${size}, 1fr))`;
-    });
-    localStorage.setItem('frazer-card-size', size);
-  }
-
-  function togglePlayOverlay(on) {
-    document.querySelectorAll('.play-overlay').forEach(el => el.style.display = on ? '' : 'none');
-    localStorage.setItem('frazer-play-overlay', on ? '1' : '0');
-  }
-
-  function toggleNewTab(on) {
-    document.querySelectorAll('.card').forEach(card => card.target = on ? '_blank' : '');
-    localStorage.setItem('frazer-new-tab', on ? '1' : '0');
-  }
-
-  function clearPrefs() {
-    ['frazer-dark','frazer-card-size','frazer-play-overlay','frazer-new-tab'].forEach(k => localStorage.removeItem(k));
-    applyTheme(true);
-    setCardSize('130px');
-    document.getElementById('cardSizeSelect').value = '130px';
-    document.getElementById('playOverlayToggle').checked = true;
-    togglePlayOverlay(true);
-    document.getElementById('newTabToggle').checked = false;
-    toggleNewTab(false);
-  }
-
-  (function loadPrefs() {
-    const dark = localStorage.getItem('frazer-dark');
-    if (dark !== null) applyTheme(dark === '1');
-
-    const size = localStorage.getItem('frazer-card-size');
-    if (size) { setCardSize(size); document.getElementById('cardSizeSelect').value = size; }
-
-    if (localStorage.getItem('frazer-play-overlay') === '0') {
-      document.getElementById('playOverlayToggle').checked = false;
-      togglePlayOverlay(false);
-    }
-
-    if (localStorage.getItem('frazer-new-tab') === '1') {
-      document.getElementById('newTabToggle').checked = true;
-      toggleNewTab(true);
-    }
-  })();
-  /* ── SKELETON LOADER ── */
-  (function initSkeletons() {
-    const grids = document.querySelectorAll('.grid');
-    grids.forEach(grid => {
-      const cards = Array.from(grid.querySelectorAll('.card'));
-      const count = cards.length;
-      // hide real cards initially
-      cards.forEach(c => { c.style.opacity = '0'; c.style.position = 'absolute'; c.style.pointerEvents = 'none'; });
-      // insert skeletons
-      const frags = cards.map(() => {
-        const sk = document.createElement('div');
-        sk.className = 'skeleton';
-        sk.innerHTML = '<div class="skeleton-thumb"></div><div class="skeleton-label"></div>';
-        grid.appendChild(sk);
-        return sk;
-      });
-      // when all images in this grid load, fade in real cards and remove skeletons
-      const imgs = grid.querySelectorAll('img');
-      let loaded = 0;
-      const total = imgs.length || 1;
-      const done = () => {
-        loaded++;
-        if (loaded >= total) {
-          frags.forEach(sk => sk.remove());
-          cards.forEach((c, i) => {
-            c.style.position = '';
-            c.style.pointerEvents = '';
-            setTimeout(() => {
-              c.style.transition = 'opacity 0.3s';
-              c.style.opacity = '1';
-            }, i * 40);
-          });
-        }
-      };
-      imgs.forEach(img => {
-        if (img.complete) done();
-        else { img.addEventListener('load', done); img.addEventListener('error', done); }
-      });
-    });
-  })();
-
+function openPanel(name){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  document.getElementById(name+"-panel").classList.add("active");
+}
 </script>
+
 </body>
 </html>
