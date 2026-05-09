@@ -96,7 +96,7 @@ body{
 .panel{display:none;}
 .panel.active{display:block;}
 
-/* LIST GRID INSIDE FOLDERS */
+/* BIG GRID */
 .big-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -104,6 +104,7 @@ body{
   margin-top:10px;
 }
 
+/* CLICKABLE APPS FIX */
 .small-tile{
   background:rgba(255,255,255,0.08);
   border-radius:12px;
@@ -111,6 +112,11 @@ body{
   text-align:center;
   font-size:12px;
   cursor:pointer;
+  transition:0.2s;
+}
+.small-tile:hover{
+  transform:scale(1.05);
+  background:rgba(255,255,255,0.18);
 }
 
 /* FOOTER */
@@ -173,43 +179,38 @@ body{
   </div>
 </div>
 
-<!-- GAMES FOLDER (FULL LIST) -->
+<!-- GAMES -->
 <div id="games-panel" class="panel">
   <div class="tile" onclick="openPanel('home')">⬅ Back</div>
 
   <div class="big-grid">
 
-    <div class="small-tile">Bob the Robber 2</div>
-    <div class="small-tile">Vex 6</div>
-    <div class="small-tile">Vex 7</div>
-    <div class="small-tile">Drive Mad</div>
-    <div class="small-tile">Retro Bowl</div>
-    <div class="small-tile">Slope</div>
-    <div class="small-tile">Moto X3M</div>
-    <div class="small-tile">Moto X3M 2</div>
-    <div class="small-tile">Rocket Goal</div>
-    <div class="small-tile">Basketball Stars</div>
-    <div class="small-tile">GBall</div>
-    <div class="small-tile">Minecraft</div>
-    <div class="small-tile">Snow Rider 3D</div>
-    <div class="small-tile">Wordle</div>
-    <div class="small-tile">FNaF</div>
-    <div class="small-tile">FNaJE</div>
-    <div class="small-tile">Hoopland</div>
+    <div class="small-tile" onclick="openGame('games/vex7/')">Vex 7</div>
+    <div class="small-tile" onclick="openGame('games/vex6/')">Vex 6</div>
+    <div class="small-tile" onclick="openGame('games/slope/')">Slope</div>
+    <div class="small-tile" onclick="openGame('games/drive-mad/')">Drive Mad</div>
+    <div class="small-tile" onclick="openGame('games/retro-bowl/')">Retro Bowl</div>
+    <div class="small-tile" onclick="openGame('games/gball/')">GBall</div>
+    <div class="small-tile" onclick="openGame('games/moto-x3m/')">Moto X3M</div>
+    <div class="small-tile" onclick="openGame('games/motox3m2/')">Moto X3M 2</div>
+    <div class="small-tile" onclick="openGame('games/Basketball stars/')">Basketball Stars</div>
+    <div class="small-tile" onclick="openGame('games/Snow-Rider3D-main/')">Snow Rider 3D</div>
+    <div class="small-tile" onclick="openGame('games/fnaf/')">FNaF</div>
+    <div class="small-tile" onclick="openGame('games/fnaje/')">FNaJE</div>
 
   </div>
 </div>
 
-<!-- APPS FOLDER -->
+<!-- APPS -->
 <div id="apps-panel" class="panel">
   <div class="tile" onclick="openPanel('home')">⬅ Back</div>
 
   <div class="big-grid">
 
-    <div class="small-tile">Chatbot</div>
-    <div class="small-tile">Browser</div>
-    <div class="small-tile">Files</div>
-    <div class="small-tile">Music Player</div>
+    <div class="small-tile" onclick="openGame('apps/chatbot/')">Chatbot</div>
+    <div class="small-tile" onclick="alert('Browser App')">Browser</div>
+    <div class="small-tile" onclick="alert('Files App')">Files</div>
+    <div class="small-tile" onclick="alert('Music App')">Music</div>
 
   </div>
 </div>
@@ -217,7 +218,7 @@ body{
 <!-- SETTINGS -->
 <div id="settings-panel" class="panel">
   <div class="tile" onclick="openPanel('home')">⬅ Back</div>
-  <p>⚙ Frazer Settings System</p>
+  <p>⚙ Settings App</p>
 </div>
 
 <!-- FOOTER -->
@@ -228,7 +229,7 @@ body{
     <div>Frazer User</div>
   </div>
 
-  <div class="power">
+  <div class="power" onclick="window.location='https://classroom.google.com'">
     <i class="fa fa-power-off"></i>
   </div>
 
@@ -258,6 +259,11 @@ function toggleMenu(){
 function openPanel(name){
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
   document.getElementById(name+"-panel").classList.add("active");
+}
+
+/* ✅ FIX: REAL GAME OPENING */
+function openGame(url){
+  window.location.href = url;
 }
 </script>
 
