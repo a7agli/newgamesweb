@@ -27,6 +27,7 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
+  z-index:9999;
 }
 
 .start-btn{
@@ -38,7 +39,7 @@ body{
   cursor:pointer;
 }
 
-/* START MENU */
+/* START MENU (UNCHANGED STYLE) */
 #start-menu{
   position:fixed;
   bottom:70px;
@@ -54,13 +55,13 @@ body{
   color:white;
   opacity:0;
   transition:0.25s;
+  z-index:9998;
 }
 #start-menu.show{
   opacity:1;
   transform:translateX(-50%) scale(1);
 }
 
-/* SEARCH */
 .search{
   width:100%;
   padding:10px;
@@ -72,14 +73,12 @@ body{
   margin-bottom:12px;
 }
 
-/* GRID */
 .grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:10px;
 }
 
-/* TILE */
 .tile{
   background:rgba(255,255,255,0.08);
   border-radius:12px;
@@ -88,15 +87,11 @@ body{
   cursor:pointer;
   transition:0.2s;
 }
-.tile:hover{transform:scale(1.05); background:rgba(255,255,255,0.15);}
-.tile img{width:42px;height:42px;}
-.tile i{font-size:28px;}
+.tile:hover{
+  transform:scale(1.05);
+  background:rgba(255,255,255,0.15);
+}
 
-/* PANELS */
-.panel{display:none;}
-.panel.active{display:block;}
-
-/* BIG GRID */
 .big-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -104,7 +99,6 @@ body{
   margin-top:10px;
 }
 
-/* CLICKABLE APPS FIX */
 .small-tile{
   background:rgba(255,255,255,0.08);
   border-radius:12px;
@@ -119,39 +113,56 @@ body{
   background:rgba(255,255,255,0.18);
 }
 
-/* FOOTER */
-.footer{
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* WINDOWS SYSTEM */
+#window-area{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+.window{
   position:absolute;
-  bottom:14px;
-  left:16px;
-  right:16px;
+  width:850px;
+  height:520px;
+  background:#1e1e1e;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 10px 40px rgba(0,0,0,0.5);
+  pointer-events:auto;
+}
+
+.window-header{
+  height:40px;
+  background:rgba(255,255,255,0.1);
   display:flex;
   justify-content:space-between;
-  border-top:1px solid rgba(255,255,255,0.1);
-  padding-top:10px;
+  align-items:center;
+  padding:0 10px;
+  cursor:move;
+  color:white;
 }
 
-.user{display:flex;gap:8px;align-items:center;}
-.avatar{
-  width:32px;height:32px;
-  border-radius:50%;
-  background:rgba(255,255,255,0.1);
-  display:flex;align-items:center;justify-content:center;
-}
-
-.power{
-  width:36px;height:36px;
-  border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(255,255,255,0.1);
-  cursor:pointer;
+.window iframe{
+  width:100%;
+  height:calc(100% - 40px);
+  border:none;
+  background:black;
 }
 </style>
 </head>
 
 <body>
 
-<!-- START MENU -->
+<!-- WINDOWS -->
+<div id="window-area"></div>
+
+<!-- START MENU (UNCHANGED CONTENT STRUCTURE) -->
 <div id="start-menu">
 
 <input class="search" placeholder="Search For Apps, Settings, Etc">
@@ -162,12 +173,12 @@ body{
   <div class="grid">
 
     <div class="tile" onclick="openPanel('games')">
-      <img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png">
+      <img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png" width="40">
       <div>Games</div>
     </div>
 
     <div class="tile" onclick="openPanel('apps')">
-      <img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png">
+      <img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png" width="40">
       <div>Apps</div>
     </div>
 
@@ -179,26 +190,24 @@ body{
   </div>
 </div>
 
-<!-- GAMES -->
+<!-- GAMES (ORIGINAL LIST RESTORED) -->
 <div id="games-panel" class="panel">
   <div class="tile" onclick="openPanel('home')">⬅ Back</div>
 
   <div class="big-grid">
-
-    <div class="small-tile" onclick="openGame('games/vex7/')">Vex 7</div>
-    <div class="small-tile" onclick="openGame('games/vex6/')">Vex 6</div>
-    <div class="small-tile" onclick="openGame('games/slope/')">Slope</div>
-    <div class="small-tile" onclick="openGame('games/drive-mad/')">Drive Mad</div>
-    <div class="small-tile" onclick="openGame('games/retro-bowl/')">Retro Bowl</div>
-    <div class="small-tile" onclick="openGame('games/gball/')">GBall</div>
-    <div class="small-tile" onclick="openGame('games/moto-x3m/')">Moto X3M</div>
-    <div class="small-tile" onclick="openGame('games/motox3m2/')">Moto X3M 2</div>
-    <div class="small-tile" onclick="openGame('games/Basketball stars/')">Basketball Stars</div>
-    <div class="small-tile" onclick="openGame('games/Snow-Rider3D-main/')">Snow Rider 3D</div>
-    <div class="small-tile" onclick="openGame('games/fnaf/')">FNaF</div>
-    <div class="small-tile" onclick="openGame('games/fnaje/')">FNaJE</div>
-    <div class="small-tile" onclick="opengame('games/rocket-goal/')">Rocket Goal</div>
-
+    <div class="small-tile" onclick="openGame('games/vex7/index.html','Vex 7')">Vex 7</div>
+    <div class="small-tile" onclick="openGame('games/vex6/index.html','Vex 6')">Vex 6</div>
+    <div class="small-tile" onclick="openGame('games/slope/index.html','Slope')">Slope</div>
+    <div class="small-tile" onclick="openGame('games/drive-mad/index.html','Drive Mad')">Drive Mad</div>
+    <div class="small-tile" onclick="openGame('games/retro-bowl/index.html','Retro Bowl')">Retro Bowl</div>
+    <div class="small-tile" onclick="openGame('games/gball/index.html','GBall')">GBall</div>
+    <div class="small-tile" onclick="openGame('games/moto-x3m/index.html','Moto X3M')">Moto X3M</div>
+    <div class="small-tile" onclick="openGame('games/motox3m2/index.html','Moto X3M 2')">Moto X3M 2</div>
+    <div class="small-tile" onclick="openGame('games/Basketball stars/index.html','Basketball Stars')">Basketball Stars</div>
+    <div class="small-tile" onclick="openGame('games/Snow-Rider3D-main/index.html','Snow Rider 3D')">Snow Rider 3D</div>
+    <div class="small-tile" onclick="openGame('games/fnaf/index.html','FNaF')">FNaF</div>
+    <div class="small-tile" onclick="openGame('games/fnaje/index.html','FNaJE')">FNaJE</div>
+    <div class="small-tile" onclick="openGame('games/rocket-goal/index.html','Rocket Goal')">Rocket Goal</div>
   </div>
 </div>
 
@@ -207,33 +216,16 @@ body{
   <div class="tile" onclick="openPanel('home')">⬅ Back</div>
 
   <div class="big-grid">
-
-    <div class="small-tile" onclick="openGame('apps/chatbot/')">Chatbot</div>
-    <div class="small-tile" onclick="alert('Coming soon!')">Browser</div>
-    <div class="small-tile" onclick="alert('Coming soon!')">Files</div>
-    <div class="small-tile" onclick="alert('Coming soon!')">Music</div>
-
+    <div class="small-tile" onclick="openGame('apps/chatbot/index.html','Chatbot')">Chatbot</div>
+    <div class="small-tile" onclick="alert('Coming soon')">Browser</div>
+    <div class="small-tile" onclick="alert('Coming soon')">Files</div>
+    <div class="small-tile" onclick="alert('Coming soon')">Music</div>
   </div>
 </div>
 
 <!-- SETTINGS -->
 <div id="settings-panel" class="panel">
   <div class="tile" onclick="openPanel('home')">⬅ Back</div>
-  <p>⚙ Settings App</p>
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-
-  <div class="user">
-    <div class="avatar"><i class="fa fa-user"></i></div>
-    <div>Frazer User</div>
-  </div>
-
-  <div class="power" onclick="window.location='https://classroom.google.com'">
-    <i class="fa fa-power-off"></i>
-  </div>
-
 </div>
 
 </div>
@@ -246,6 +238,9 @@ body{
 </div>
 
 <script>
+let z = 2000;
+
+/* START MENU */
 function toggleMenu(){
   const m=document.getElementById("start-menu");
   if(m.classList.contains("show")){
@@ -257,14 +252,52 @@ function toggleMenu(){
   }
 }
 
+/* PANEL SWITCH */
 function openPanel(name){
   document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
   document.getElementById(name+"-panel").classList.add("active");
 }
 
-/* ✅ FIX: REAL GAME OPENING */
-function openGame(url){
-  window.location.href = url;
+/* WINDOWS LAUNCHER (FIXED) */
+function openGame(url,title){
+  const win=document.createElement("div");
+  win.className="window";
+  win.style.top="80px";
+  win.style.left="80px";
+  win.style.zIndex=z++;
+
+  win.innerHTML=`
+    <div class="window-header">
+      <span>${title}</span>
+      <button onclick="this.closest('.window').remove()"
+      style="background:none;border:none;color:white;font-size:16px;">✕</button>
+    </div>
+    <iframe src="${url}"></iframe>
+  `;
+
+  document.getElementById("window-area").appendChild(win);
+  drag(win);
+}
+
+/* DRAG SYSTEM */
+function drag(el){
+  const h=el.querySelector(".window-header");
+  let dx,dy,drag=false;
+
+  h.onmousedown=(e)=>{
+    drag=true;
+    dx=e.clientX-el.offsetLeft;
+    dy=e.clientY-el.offsetTop;
+    el.style.zIndex=z++;
+  };
+
+  document.onmousemove=(e)=>{
+    if(!drag)return;
+    el.style.left=(e.clientX-dx)+"px";
+    el.style.top=(e.clientY-dy)+"px";
+  };
+
+  document.onmouseup=()=>drag=false;
 }
 </script>
 
