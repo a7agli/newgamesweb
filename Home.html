@@ -39,7 +39,7 @@ body{
   cursor:pointer;
 }
 
-/* START MENU (UNCHANGED) */
+/* START MENU */
 #start-menu{
   position:fixed;
   bottom:70px;
@@ -87,10 +87,7 @@ body{
   cursor:pointer;
   transition:0.2s;
 }
-.tile:hover{
-  transform:scale(1.05);
-  background:rgba(255,255,255,0.15);
-}
+.tile:hover{transform:scale(1.05);background:rgba(255,255,255,0.15);}
 
 .big-grid{
   display:grid;
@@ -108,15 +105,12 @@ body{
   cursor:pointer;
   transition:0.2s;
 }
-.small-tile:hover{
-  transform:scale(1.05);
-  background:rgba(255,255,255,0.18);
-}
+.small-tile:hover{transform:scale(1.05);background:rgba(255,255,255,0.18);}
 
 .panel{display:none;}
 .panel.active{display:block;}
 
-/* WINDOWS SYSTEM (FIXED FULL LAYOUT) */
+/* WINDOWS SYSTEM */
 #window-area{
   position:fixed;
   top:0;
@@ -156,18 +150,11 @@ body{
   color:white;
 }
 
-.win-controls{
-  display:flex;
-  gap:6px;
-}
+.win-controls{display:flex;gap:6px;}
 
 .win-btn{
-  width:14px;
-  height:14px;
-  border-radius:3px;
-  cursor:pointer;
+  width:14px;height:14px;border-radius:3px;cursor:pointer;
 }
-
 .close{background:#ff5f57;}
 .max{background:#ffbd2e;}
 
@@ -179,7 +166,6 @@ body{
   border-radius:0 !important;
 }
 
-/* FIXED IFRAME (THIS FIXES YOUR ISSUE) */
 .window iframe{
   flex:1;
   width:100%;
@@ -193,7 +179,7 @@ body{
 
 <div id="window-area"></div>
 
-<!-- START MENU (UNCHANGED STRUCTURE) -->
+<!-- START MENU -->
 <div id="start-menu">
 
 <input class="search" placeholder="Search For Apps, Settings, Etc">
@@ -244,7 +230,7 @@ body{
 <div id="apps-panel" class="panel">
   <div class="tile" onclick="openPanel('home')">⬅ Back</div>
 
- <div class="big-grid">
+<div class="big-grid">
   <div class="small-tile" onclick="openApp('apps/chatbot/index.html','Chatbot')">AI Chatbot</div>
   <div class="small-tile" onclick="alert('Browser coming soon')">Browser</div>
   <div class="small-tile" onclick="alert('Files coming soon')">Files</div>
@@ -263,6 +249,7 @@ body{
 
 <script>
 let z=2000;
+let windows=[];
 
 /* MENU */
 function toggleMenu(){
@@ -282,12 +269,12 @@ function openPanel(name){
   document.getElementById(name+"-panel").classList.add("active");
 }
 
-/* WINDOWS */
+/* OPEN APP */
 function openApp(url,title){
   const win=document.createElement("div");
   win.className="window";
-  win.style.top="80px";
-  win.style.left="80px";
+  win.style.top=(80+windows.length*20)+"px";
+  win.style.left=(80+windows.length*20)+"px";
   win.style.zIndex=z++;
 
   win.innerHTML=`
@@ -299,12 +286,56 @@ function openApp(url,title){
         <div class="win-btn close" onclick="this.closest('.window').remove()"></div>
       </div>
     </div>
-
     <iframe src="${url}"></iframe>
   `;
 
   document.getElementById("window-area").appendChild(win);
+  windows.push(win);
   drag(win);
+
+  win.addEventListener("mousedown",()=>win.style.zIndex=z++);
+}
+
+/* MUSIC APP */
+function openMusic(){
+  const win=document.createElement("div");
+  win.className="window";
+  win.style.top="120px";
+  win.style.left="120px";
+  win.style.zIndex=z++;
+
+  win.innerHTML=`
+    <div class="window-header">
+      <span>Frazer Music</span>
+
+      <div class="win-controls">
+        <div class="win-btn max" onclick="toggleMax(this)"></div>
+        <div class="win-btn close" onclick="this.closest('.window').remove()"></div>
+      </div>
+    </div>
+
+    <div style="padding:10px;color:white;display:flex;flex-direction:column;gap:10px;">
+      <h3>🎵 Music Player</h3>
+
+      <audio controls style="width:100%">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+      </audio>
+
+      <audio controls style="width:100%">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">
+      </audio>
+
+      <audio controls style="width:100%">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">
+      </audio>
+    </div>
+  `;
+
+  document.getElementById("window-area").appendChild(win);
+  windows.push(win);
+  drag(win);
+
+  win.addEventListener("mousedown",()=>win.style.zIndex=z++);
 }
 
 /* MAXIMIZE */
