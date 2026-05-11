@@ -8,12 +8,18 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
+*{
+  box-sizing:border-box;
+}
+
 body{
   margin:0;
   font-family:Arial;
+  width:100vw;
   height:100vh;
   overflow:hidden;
   background:url("https://www.wallpaperhub.app/_next/image?url=https%3A%2F%2Fcdn.wallpaperhub.app%2Fcloudcache%2F8%2Fe%2Fc%2F4%2F4%2Ff%2F8ec44f86876a912a93f4116f50e6a3839af5c03b.jpg&w=4096&h=2160&q=100") center/cover no-repeat;
+  background-size:cover;
 }
 
 /* TASKBAR */
@@ -21,7 +27,7 @@ body{
   position:fixed;
   bottom:0;
   width:100%;
-  height:50px;
+  height:55px;
   background:rgba(20,20,20,0.7);
   backdrop-filter:blur(12px);
   display:flex;
@@ -31,12 +37,20 @@ body{
 }
 
 .start-btn{
-  width:44px;height:44px;
+  width:44px;
+  height:44px;
   display:flex;
   justify-content:center;
   align-items:center;
   color:white;
   cursor:pointer;
+  font-size:20px;
+  border-radius:10px;
+  transition:0.2s;
+}
+
+.start-btn:hover{
+  background:rgba(255,255,255,0.1);
 }
 
 /* START MENU */
@@ -45,18 +59,24 @@ body{
   bottom:70px;
   left:50%;
   transform:translateX(-50%) scale(0.95);
-  width:600px;
-  height:680px;
+
+  width:min(92vw, 600px);
+  height:min(82vh, 680px);
+
   background:rgba(25,25,25,0.85);
   backdrop-filter:blur(20px);
   border-radius:16px;
   padding:16px;
+
   display:none;
   color:white;
   opacity:0;
   transition:0.25s;
   z-index:9998;
+
+  overflow-y:auto;
 }
+
 #start-menu.show{
   opacity:1;
   transform:translateX(-50%) scale(1);
@@ -64,34 +84,39 @@ body{
 
 .search{
   width:100%;
-  padding:10px;
-  border-radius:8px;
+  padding:12px;
+  border-radius:10px;
   border:none;
   outline:none;
   background:rgba(255,255,255,0.1);
   color:white;
   margin-bottom:12px;
+  font-size:15px;
 }
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
   gap:10px;
 }
 
 .tile{
   background:rgba(255,255,255,0.08);
   border-radius:12px;
-  padding:10px;
+  padding:12px;
   text-align:center;
   cursor:pointer;
   transition:0.2s;
 }
-.tile:hover{transform:scale(1.05);background:rgba(255,255,255,0.15);}
+
+.tile:hover{
+  transform:scale(1.05);
+  background:rgba(255,255,255,0.15);
+}
 
 .big-grid{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
   gap:10px;
   margin-top:10px;
 }
@@ -99,18 +124,28 @@ body{
 .small-tile{
   background:rgba(255,255,255,0.08);
   border-radius:12px;
-  padding:8px;
+  padding:10px;
   text-align:center;
   font-size:12px;
   cursor:pointer;
   transition:0.2s;
+  word-wrap:break-word;
 }
-.small-tile:hover{transform:scale(1.05);background:rgba(255,255,255,0.18);}
 
-.panel{display:none;}
-.panel.active{display:block;}
+.small-tile:hover{
+  transform:scale(1.05);
+  background:rgba(255,255,255,0.18);
+}
 
-/* WINDOWS SYSTEM */
+.panel{
+  display:none;
+}
+
+.panel.active{
+  display:block;
+}
+
+/* WINDOW AREA */
 #window-area{
   position:fixed;
   top:0;
@@ -120,12 +155,15 @@ body{
   pointer-events:none;
 }
 
+/* WINDOWS */
 .window{
   position:absolute;
-  width:850px;
-  height:520px;
+
+  width:min(90vw, 850px);
+  height:min(80vh, 520px);
+
   background:#1e1e1e;
-  border-radius:10px;
+  border-radius:12px;
   overflow:hidden;
   box-shadow:0 10px 40px rgba(0,0,0,0.5);
   pointer-events:auto;
@@ -134,35 +172,51 @@ body{
   flex-direction:column;
 
   resize:both;
-  min-width:300px;
+
+  min-width:280px;
   min-height:200px;
+  max-width:100vw;
+  max-height:calc(100vh - 55px);
 }
 
 .window-header{
-  height:40px;
+  height:42px;
   flex-shrink:0;
-  background:rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.08);
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:0 10px;
+  padding:0 12px;
   cursor:move;
   color:white;
+  user-select:none;
 }
 
-.win-controls{display:flex;gap:6px;}
+.win-controls{
+  display:flex;
+  gap:6px;
+}
 
 .win-btn{
-  width:14px;height:14px;border-radius:3px;cursor:pointer;
+  width:14px;
+  height:14px;
+  border-radius:4px;
+  cursor:pointer;
 }
-.close{background:#ff5f57;}
-.max{background:#ffbd2e;}
+
+.close{
+  background:#ff5f57;
+}
+
+.max{
+  background:#ffbd2e;
+}
 
 .window.maximized{
   top:0 !important;
   left:0 !important;
   width:100% !important;
-  height:calc(100% - 50px) !important;
+  height:calc(100% - 55px) !important;
   border-radius:0 !important;
 }
 
@@ -171,6 +225,34 @@ body{
   width:100%;
   border:none;
   display:block;
+  background:white;
+}
+
+/* MOBILE */
+@media (max-width:700px){
+
+  #start-menu{
+    width:96vw;
+    height:85vh;
+    bottom:65px;
+    padding:12px;
+  }
+
+  .window{
+    width:96vw;
+    height:78vh;
+    top:10px !important;
+    left:2vw !important;
+  }
+
+  .window-header{
+    font-size:14px;
+  }
+
+  .small-tile{
+    font-size:11px;
+    padding:8px;
+  }
 }
 </style>
 </head>
@@ -185,67 +267,75 @@ body{
 <input class="search" placeholder="Search For Apps, Settings, Etc">
 
 <div id="home-panel" class="panel active">
-  <div class="grid">
 
-    <div class="tile" onclick="openPanel('games')">
-      <img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png" width="40">
-      <div>Games</div>
-    </div>
+<div class="grid">
 
-    <div class="tile" onclick="openPanel('apps')">
-      <img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png" width="40">
-      <div>Apps</div>
-    </div>
+<div class="tile" onclick="openPanel('games')">
+<img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png" width="40">
+<div>Games</div>
+</div>
 
-    <div class="tile" onclick="openPanel('settings')">
-      <i class="fa fa-gear"></i>
-      <div>Settings</div>
-    </div>
+<div class="tile" onclick="openPanel('apps')">
+<img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png" width="40">
+<div>Apps</div>
+</div>
 
-  </div>
+<div class="tile" onclick="openPanel('settings')">
+<i class="fa fa-gear"></i>
+<div>Settings</div>
+</div>
+
+</div>
 </div>
 
 <!-- GAMES -->
 <div id="games-panel" class="panel">
-  <div class="tile" onclick="openPanel('home')">⬅ Back</div>
 
-  <div class="big-grid">
-    <div class="small-tile" onclick="openApp('games/vex7/index.html','Vex 7')">Vex 7</div>
-    <div class="small-tile" onclick="openApp('games/vex6/index.html','Vex 6')">Vex 6</div>
-    <div class="small-tile" onclick="openApp('games/slope/index.html','Slope')">Slope</div>
-    <div class="small-tile" onclick="openApp('games/drive-mad/index.html','Drive Mad')">Drive Mad</div>
-    <div class="small-tile" onclick="openApp('games/retro-bowl/index.html','Retro Bowl')">Retro Bowl</div>
-    <div class="small-tile" onclick="openApp('games/gball/index.html','GBall')">GBall</div>
-    <div class="small-tile" onclick="openApp('games/moto-x3m/index.html','Moto X3M')">Moto X3M</div>
-    <div class="small-tile" onclick="openApp('games/motox3m2/index.html','Moto X3M 2')">Moto X3M 2</div>
-    <div class="small-tile" onclick="openApp('games/basketball-stars/index.html','Basketball Stars')">Basketball Stars</div>
-    <div class="small-tile" onclick="openApp('games/Snow-Rider3D-main/index.html','Snow Rider 3D')">Snow Rider 3D</div>
-    <div class="small-tile" onclick="openApp('games/fnaf/index.html','FNaF')">FNaF</div>
-    <div class="small-tile" onclick="openApp('games/fnaje/index.html','FNaJE')">FNaJE</div>
-    <div class="small-tile" onclick="openApp('games/rocket-goal/index.html','Rocket Goal')">Rocket Goal</div>
-  </div>
+<div class="tile" onclick="openPanel('home')">⬅ Back</div>
+
+<div class="big-grid">
+<div class="small-tile" onclick="openApp('games/vex7/index.html','Vex 7')">Vex 7</div>
+<div class="small-tile" onclick="openApp('games/vex6/index.html','Vex 6')">Vex 6</div>
+<div class="small-tile" onclick="openApp('games/slope/index.html','Slope')">Slope</div>
+<div class="small-tile" onclick="openApp('games/drive-mad/index.html','Drive Mad')">Drive Mad</div>
+<div class="small-tile" onclick="openApp('games/retro-bowl/index.html','Retro Bowl')">Retro Bowl</div>
+<div class="small-tile" onclick="openApp('games/gball/index.html','GBall')">GBall</div>
+<div class="small-tile" onclick="openApp('games/moto-x3m/index.html','Moto X3M')">Moto X3M</div>
+<div class="small-tile" onclick="openApp('games/motox3m2/index.html','Moto X3M 2')">Moto X3M 2</div>
+<div class="small-tile" onclick="openApp('games/basketball-stars/index.html','Basketball Stars')">Basketball Stars</div>
+<div class="small-tile" onclick="openApp('games/Snow-Rider3D-main/index.html','Snow Rider 3D')">Snow Rider 3D</div>
+<div class="small-tile" onclick="openApp('games/fnaf/index.html','FNaF')">FNaF</div>
+<div class="small-tile" onclick="openApp('games/fnaje/index.html','FNaJE')">FNaJE</div>
+<div class="small-tile" onclick="openApp('games/rocket-goal/index.html','Rocket Goal')">Rocket Goal</div>
+<div class="small-tile" onclick="openApp('apps/marty-games/index.html','Marty-Games')">Marty Games</div>
+</div>
+
 </div>
 
 <!-- APPS -->
 <div id="apps-panel" class="panel">
-  <div class="tile" onclick="openPanel('home')">⬅ Back</div>
+
+<div class="tile" onclick="openPanel('home')">⬅ Back</div>
 
 <div class="big-grid">
-  <div class="small-tile" onclick="openApp('apps/chatbot/index.html','Chatbot')">AI Chatbot</div>
-  <div class="small-tile" onclick="alert('Browser coming soon')">Browser</div>
-  <div class="small-tile" onclick="alert('Files coming soon')">Files</div>
-  <div class="small-tile" onclick="openApp('apps/music/index.html','Frazer Music')">Frazer Music</div>
-  <div class="small-tile" onclick="openApp('apps/google/index.html','Google')">Frazer Proxy</div>
+<div class="small-tile" onclick="openApp('apps/chatbot/index.html','Chatbot')">AI Chatbot</div>
+<div class="small-tile" onclick="alert('Browser coming soon')">Browser</div>
+<div class="small-tile" onclick="alert('Files coming soon')">Files</div>
+<div class="small-tile" onclick="openApp('apps/music/index.html','Frazer Music')">Frazer Music</div>
+<div class="small-tile" onclick="openApp('apps/google/index.html','Google')">Frazer Proxy</div>
 </div>
+
 </div>
 
 </div>
 
 <!-- TASKBAR -->
 <div class="taskbar">
-  <div class="start-btn" onclick="toggleMenu()">
-    <i class="fa-brands fa-windows"></i>
-  </div>
+
+<div class="start-btn" onclick="toggleMenu()">
+<i class="fa-brands fa-windows"></i>
+</div>
+
 </div>
 
 <script>
@@ -255,88 +345,74 @@ let windows=[];
 /* MENU */
 function toggleMenu(){
   const m=document.getElementById("start-menu");
+
   if(m.classList.contains("show")){
     m.classList.remove("show");
-    setTimeout(()=>m.style.display="none",200);
+
+    setTimeout(()=>{
+      m.style.display="none";
+    },200);
+
   }else{
+
     m.style.display="block";
-    setTimeout(()=>m.classList.add("show"),10);
+
+    setTimeout(()=>{
+      m.classList.add("show");
+    },10);
   }
 }
 
 /* PANELS */
 function openPanel(name){
-  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+
+  document.querySelectorAll(".panel").forEach(p=>{
+    p.classList.remove("active");
+  });
+
   document.getElementById(name+"-panel").classList.add("active");
 }
 
 /* OPEN APP */
 function openApp(url,title){
+
   const win=document.createElement("div");
   win.className="window";
-  win.style.top=(80+windows.length*20)+"px";
-  win.style.left=(80+windows.length*20)+"px";
+
+  let topPos=80+windows.length*20;
+  let leftPos=80+windows.length*20;
+
+  topPos=Math.min(topPos, window.innerHeight-400);
+  leftPos=Math.min(leftPos, window.innerWidth-500);
+
+  win.style.top=topPos+"px";
+  win.style.left=leftPos+"px";
   win.style.zIndex=z++;
 
   win.innerHTML=`
     <div class="window-header">
+
       <span>${title}</span>
 
       <div class="win-controls">
         <div class="win-btn max" onclick="toggleMax(this)"></div>
         <div class="win-btn close" onclick="this.closest('.window').remove()"></div>
       </div>
+
     </div>
+
     <iframe src="${url}"></iframe>
   `;
 
   document.getElementById("window-area").appendChild(win);
+
   windows.push(win);
+
   drag(win);
 
-  win.addEventListener("mousedown",()=>win.style.zIndex=z++);
-}
-
-/* MUSIC APP */
-function openMusic(){
-  const win=document.createElement("div");
-  win.className="window";
-  win.style.top="120px";
-  win.style.left="120px";
-  win.style.zIndex=z++;
-
-  win.innerHTML=`
-    <div class="window-header">
-      <span>Frazer Music</span>
-
-      <div class="win-controls">
-        <div class="win-btn max" onclick="toggleMax(this)"></div>
-        <div class="win-btn close" onclick="this.closest('.window').remove()"></div>
-      </div>
-    </div>
-
-    <div style="padding:10px;color:white;display:flex;flex-direction:column;gap:10px;">
-      <h3>🎵 Music Player</h3>
-
-      <audio controls style="width:100%">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
-      </audio>
-
-      <audio controls style="width:100%">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">
-      </audio>
-
-      <audio controls style="width:100%">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">
-      </audio>
-    </div>
-  `;
-
-  document.getElementById("window-area").appendChild(win);
-  windows.push(win);
-  drag(win);
-
-  win.addEventListener("mousedown",()=>win.style.zIndex=z++);
+  win.addEventListener("mousedown",()=>{
+    win.style.zIndex=z++;
+  });
 }
 
 /* MAXIMIZE */
@@ -346,23 +422,40 @@ function toggleMax(btn){
 
 /* DRAG */
 function drag(el){
+
   const h=el.querySelector(".window-header");
-  let dx,dy,drag=false;
+
+  let dx,dy,isDrag=false;
 
   h.onmousedown=(e)=>{
-    drag=true;
+
+    if(el.classList.contains("maximized")) return;
+
+    isDrag=true;
+
     dx=e.clientX-el.offsetLeft;
     dy=e.clientY-el.offsetTop;
+
     el.style.zIndex=z++;
   };
 
-  document.onmousemove=(e)=>{
-    if(!drag)return;
-    el.style.left=(e.clientX-dx)+"px";
-    el.style.top=(e.clientY-dy)+"px";
-  };
+  document.addEventListener("mousemove",(e)=>{
 
-  document.onmouseup=()=>drag=false;
+    if(!isDrag) return;
+
+    let x=e.clientX-dx;
+    let y=e.clientY-dy;
+
+    x=Math.max(0, Math.min(window.innerWidth-el.offsetWidth, x));
+    y=Math.max(0, Math.min(window.innerHeight-el.offsetHeight-55, y));
+
+    el.style.left=x+"px";
+    el.style.top=y+"px";
+  });
+
+  document.addEventListener("mouseup",()=>{
+    isDrag=false;
+  });
 }
 </script>
 
