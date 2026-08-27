@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Frazer OS</title>
 
-<!-- Font Awesome for Icons -->
-<link rel="stylesheet" href="https://cloudflare.com">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 *{
@@ -15,11 +14,11 @@
 
 body{
   margin:0;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family:Arial;
   width:100vw;
   height:100vh;
   overflow:hidden;
-  background:url("https://wallpaperhub.app") center/cover no-repeat;
+  background:url("https://www.wallpaperhub.app/_next/image?url=https%3A%2F%2Fcdn.wallpaperhub.app%2Fcloudcache%2F8%2Fe%2Fc%2F4%2F4%2Ff%2F8ec44f86876a912a93f4116f50e6a3839af5c03b.jpg&w=4096&h=2160&q=100") center/cover no-repeat;
   background-size:cover;
 }
 
@@ -29,10 +28,8 @@ body{
   bottom:0;
   width:100%;
   height:55px;
-  background:rgba(32, 32, 32, 0.75);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background:rgba(20,20,20,0.7);
+  backdrop-filter:blur(12px);
   display:flex;
   justify-content:center;
   align-items:center;
@@ -45,10 +42,10 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  color:#0078d4;
+  color:white;
   cursor:pointer;
   font-size:20px;
-  border-radius:8px;
+  border-radius:10px;
   transition:0.2s;
 }
 
@@ -56,157 +53,96 @@ body{
   background:rgba(255,255,255,0.1);
 }
 
-/* WINDOWS 11 STYLE START MENU */
+/* START MENU */
 #start-menu{
   position:fixed;
-  bottom:65px;
+  bottom:70px;
   left:50%;
-  transform:translateX(-50%) translateY(20px);
-  width:min(92vw, 560px);
-  max-height:min(85vh, 600px);
-  background:rgba(28, 28, 28, 0.82);
-  backdrop-filter:blur(30px);
-  -webkit-backdrop-filter:blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius:12px;
-  padding:24px;
+  transform:translateX(-50%) scale(0.95);
+
+  width:min(92vw, 600px);
+  height:min(82vh, 680px);
+
+  background:rgba(25,25,25,0.85);
+  backdrop-filter:blur(20px);
+  border-radius:16px;
+  padding:16px;
+
   display:none;
   color:white;
   opacity:0;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:0.25s;
   z-index:9998;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+
   overflow-y:auto;
 }
 
 #start-menu.show{
   opacity:1;
-  transform:translateX(-50%) translateY(0);
+  transform:translateX(-50%) scale(1);
 }
 
 .search{
   width:100%;
-  padding:10px 14px;
-  border-radius:8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding:12px;
+  border-radius:10px;
+  border:none;
   outline:none;
-  background:rgba(45, 45, 45, 0.7);
+  background:rgba(255,255,255,0.1);
   color:white;
-  margin-bottom:20px;
-  font-size:14px;
-  border-bottom: 2px solid #0078d4;
+  margin-bottom:12px;
+  font-size:15px;
 }
 
-.section-label {
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: rgba(255,255,255,0.9);
-}
-
-/* MAIN GRID LAYOUT */
-.main-grid{
+.grid{
   display:grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap:16px;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:10px;
 }
 
-/* WINDOWS FOLDER SYSTEM */
-.folder-tile{
-  background: transparent;
-  border-radius: 8px;
-  padding: 12px 8px;
-  text-align: center;
-  cursor: pointer;
-  transition: background 0.15s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+.tile{
+  background:rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:12px;
+  text-align:center;
+  cursor:pointer;
+  transition:0.2s;
 }
 
-.folder-tile:hover{
-  background: rgba(255, 255, 255, 0.06);
+.tile:hover{
+  transform:scale(1.05);
+  background:rgba(255,255,255,0.15);
 }
 
-.folder-icon-wrapper {
-  position: relative;
-  width: 48px;
-  height: 48px;
+.big-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+  gap:10px;
+  margin-top:10px;
 }
 
-.folder-icon {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+.small-tile{
+  background:rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:10px;
+  text-align:center;
+  font-size:12px;
+  cursor:pointer;
+  transition:0.2s;
+  word-wrap:break-word;
 }
 
-.folder-label {
-  font-size: 12px;
-  color: #e2e2e2;
-  font-weight: 400;
+.small-tile:hover{
+  transform:scale(1.05);
+  background:rgba(255,255,255,0.18);
 }
 
-/* DROPDOWN EXPANDABLE SUB-GRIDS */
-.folder-contents {
-  grid-column: span 4;
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.04);
-  padding: 14px;
-  display: none;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: -4px;
+.panel{
+  display:none;
 }
 
-.folder-contents.open {
-  display: grid;
-}
-
-/* APP & GAME ITEMS */
-.app-item {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.02);
-  border-radius: 6px;
-  padding: 10px 8px;
-  text-align: center;
-  font-size: 12px;
-  color: #f0f0f0;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.app-item:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateY(-1px);
-}
-
-/* SETTINGS INDEPENDENT BUTTON */
-.settings-tile {
-  background: transparent;
-  border-radius: 8px;
-  padding: 12px 8px;
-  text-align: center;
-  cursor: pointer;
-  transition: background 0.15s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-.settings-tile:hover {
-  background: rgba(255, 255, 255, 0.06);
-}
-.settings-tile i {
-  font-size: 34px;
-  color: #0078d4;
-  height: 48px;
-  display: flex;
-  align-items: center;
+.panel.active{
+  display:block;
 }
 
 /* WINDOW AREA */
@@ -222,25 +158,31 @@ body{
 /* WINDOWS */
 .window{
   position:absolute;
+
   width:min(90vw, 850px);
   height:min(80vh, 520px);
-  background:#1c1c1c;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius:10px;
+
+  background:#1e1e1e;
+  border-radius:12px;
   overflow:hidden;
-  box-shadow:0 12px 40px rgba(0,0,0,0.6);
+  box-shadow:0 10px 40px rgba(0,0,0,0.5);
   pointer-events:auto;
+
   display:flex;
   flex-direction:column;
+
   resize:both;
+
   min-width:280px;
   min-height:200px;
+  max-width:100vw;
+  max-height:calc(100vh - 55px);
 }
 
 .window-header{
-  height:40px;
+  height:42px;
   flex-shrink:0;
-  background:rgba(255,255,255,0.04);
+  background:rgba(255,255,255,0.08);
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -248,23 +190,27 @@ body{
   cursor:move;
   color:white;
   user-select:none;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .win-controls{
   display:flex;
-  gap:8px;
+  gap:6px;
 }
 
 .win-btn{
-  width:12px;
-  height:12px;
-  border-radius:50%;
+  width:14px;
+  height:14px;
+  border-radius:4px;
   cursor:pointer;
 }
 
-.close{ background:#ff5f57; }
-.max{ background:#ffbd2e; }
+.close{
+  background:#ff5f57;
+}
+
+.max{
+  background:#ffbd2e;
+}
 
 .window.maximized{
   top:0 !important;
@@ -282,18 +228,30 @@ body{
   background:white;
 }
 
+/* MOBILE */
 @media (max-width:700px){
+
   #start-menu{
     width:96vw;
-    bottom:60px;
-    padding:16px;
+    height:85vh;
+    bottom:65px;
+    padding:12px;
   }
-  .main-grid {
-    grid-template-columns: repeat(3, 1fr);
+
+  .window{
+    width:96vw;
+    height:78vh;
+    top:10px !important;
+    left:2vw !important;
   }
-  .folder-contents {
-    grid-column: span 3;
-    grid-template-columns: repeat(2, 1fr);
+
+  .window-header{
+    font-size:14px;
+  }
+
+  .small-tile{
+    font-size:11px;
+    padding:8px;
   }
 }
 </style>
@@ -303,73 +261,206 @@ body{
 
 <div id="window-area"></div>
 
-<!-- WINDOWS 11 PANEL START MENU -->
+<!-- START MENU -->
 <div id="start-menu">
-  <input class="search" placeholder="Search apps, games, settings...">
-  
-  <div class="section-label">Pinned Folders</div>
-  
-  <div class="main-grid">
-    
-    <!-- GAMES FOLDER ENTRY -->
-    <div class="folder-tile" onclick="toggleFolder('games-folder')">
-      <div class="folder-icon-wrapper">
-        <!-- Built-in Custom SVG Yellow Windows Folder Icon with Orange Tab Header Segment -->
-        <svg viewBox="0 0 100 100" class="folder-icon">
-          <path d="M10,20 L45,20 L55,32 L90,32 L90,85 L10,85 Z" fill="#FFC107"/>
-          <path d="M10,20 L40,20 L45,26 L10,26 Z" fill="#FF9800"/>
-          <rect x="10" y="32" width="80" height="53" fill="#FFCA28"/>
-          <line x1="10" y1="83" x2="90" y2="83" stroke="#BCAAA4" stroke-width="3"/>
-        </svg>
+
+<input class="search" placeholder="Search For Apps, Settings, Etc">
+
+<div id="home-panel" class="panel active">
+
+<div class="grid">
+
+<div class="tile" onclick="openPanel('games')">
+<img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png" width="40">
+<div>Games</div>
+</div>
+
+<div class="tile" onclick="openPanel('apps')">
+<img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png" width="40">
+<div>Apps</div>
+</div>
+
+<div class="tile" onclick="openPanel('settings')">
+<i class="fa fa-gear"></i>
+<div>Settings</div>
+</div>
+
+</div>
+</div>
+
+<!-- GAMES -->
+<div id="games-panel" class="panel">
+
+<div class="tile" onclick="openPanel('home')">⬅ Back</div>
+
+<div class="big-grid">
+<div class="small-tile" onclick="openApp('games/vex7/index.html','Vex 7')">Vex 7</div>
+<div class="small-tile" onclick="openApp('games/vex6/index.html','Vex 6')">Vex 6</div>
+<div class="small-tile" onclick="openApp('games/slope/index.html','Slope')">Slope</div>
+<div class="small-tile" onclick="openApp('games/drive-mad/index.html','Drive Mad')">Drive Mad</div>
+<div class="small-tile" onclick="openApp('games/retro-bowl/index.html','Retro Bowl')">Retro Bowl</div>
+<div class="small-tile" onclick="openApp('games/gball/index.html','GBall')">GBall</div>
+<div class="small-tile" onclick="openApp('games/moto-x3m/index.html','Moto X3M')">Moto X3M</div>
+<div class="small-tile" onclick="openApp('games/motox3m2/index.html','Moto X3M 2')">Moto X3M 2</div>
+<div class="small-tile" onclick="openApp('games/basketball-stars/index.html','Basketball Stars')">Basketball Stars</div>
+<div class="small-tile" onclick="openApp('games/Snow-Rider3D-main/index.html','Snow Rider 3D')">Snow Rider 3D</div>
+<div class="small-tile" onclick="openApp('games/fnaf/index.html','FNaF')">FNaF</div>
+<div class="small-tile" onclick="openApp('games/fnaje/index.html','FNaJE')">FNaJE</div>
+<div class="small-tile" onclick="openApp('games/rocket-goal/index.html','Rocket Goal')">Rocket Goal</div>
+<div class="small-tile" onclick="openApp('apps/marty-games/index.html','Marty-Games')">Marty Games</div>
+<div class="small-tile" onclick="openApp('games/papaswings/index.html','Papas wingerria')">Papas wingeria</div>
+<div class="small-tile" onclick="openApp('games/snake/index.html','Snake')">Snake</div>
+<div 
+</div>
+
+</div>
+
+<!-- APPS -->
+<div id="apps-panel" class="panel">
+
+<div class="tile" onclick="openPanel('home')">⬅ Back</div>
+
+<div class="big-grid">
+<div class="small-tile" onclick="openApp('apps/chatbot/index.html','Chatbot')">AI Chatbot</div>
+<div class="small-tile" onclick="alert('Browser coming soon')">Browser</div>
+<div class="small-tile" onclick="alert('Files coming soon')">Files</div>
+<div class="small-tile" onclick="openApp('apps/music/index.html','Frazer Music')">Frazer Music</div>
+<div class="small-tile" onclick="openApp('apps/google/index.html','Google')">Frazer Proxy</div>
+</div>
+
+</div>
+
+</div>
+
+<!-- TASKBAR -->
+<div class="taskbar">
+
+<div class="start-btn" onclick="toggleMenu()">
+<i class="fa-brands fa-windows"></i>
+</div>
+
+</div>
+
+<script>
+let z=2000;
+let windows=[];
+
+/* MENU */
+function toggleMenu(){
+  const m=document.getElementById("start-menu");
+
+  if(m.classList.contains("show")){
+    m.classList.remove("show");
+
+    setTimeout(()=>{
+      m.style.display="none";
+    },200);
+
+  }else{
+
+    m.style.display="block";
+
+    setTimeout(()=>{
+      m.classList.add("show");
+    },10);
+  }
+}
+
+/* PANELS */
+function openPanel(name){
+
+  document.querySelectorAll(".panel").forEach(p=>{
+    p.classList.remove("active");
+  });
+
+  document.getElementById(name+"-panel").classList.add("active");
+}
+
+/* OPEN APP */
+function openApp(url,title){
+
+  const win=document.createElement("div");
+  win.className="window";
+
+  let topPos=80+windows.length*20;
+  let leftPos=80+windows.length*20;
+
+  topPos=Math.min(topPos, window.innerHeight-400);
+  leftPos=Math.min(leftPos, window.innerWidth-500);
+
+  win.style.top=topPos+"px";
+  win.style.left=leftPos+"px";
+  win.style.zIndex=z++;
+
+  win.innerHTML=`
+    <div class="window-header">
+
+      <span>${title}</span>
+
+      <div class="win-controls">
+        <div class="win-btn max" onclick="toggleMax(this)"></div>
+        <div class="win-btn close" onclick="this.closest('.window').remove()"></div>
       </div>
-      <div class="folder-label">Games <i class="fa fa-chevron-down" style="font-size:10px; margin-left:2px;"></i></div>
+
     </div>
 
-    <!-- APPS FOLDER ENTRY -->
-    <div class="folder-tile" onclick="toggleFolder('apps-folder')">
-      <div class="folder-icon-wrapper">
-        <!-- Built-in Custom SVG Yellow Windows Folder Icon with Orange Tab Header Segment -->
-        <svg viewBox="0 0 100 100" class="folder-icon">
-          <path d="M10,20 L45,20 L55,32 L90,32 L90,85 L10,85 Z" fill="#FFC107"/>
-          <path d="M10,20 L40,20 L45,26 L10,26 Z" fill="#FF9800"/>
-          <rect x="10" y="32" width="80" height="53" fill="#FFCA28"/>
-          <line x1="10" y1="83" x2="90" y2="83" stroke="#BCAAA4" stroke-width="3"/>
-        </svg>
-      </div>
-      <div class="folder-label">Apps <i class="fa fa-chevron-down" style="font-size:10px; margin-left:2px;"></i></div>
-    </div>
+    <iframe src="${url}"></iframe>
+  `;
 
-    <!-- SETTINGS TILE -->
-    <div class="settings-tile" onclick="openApp('settings-internal', 'Settings Config')">
-      <i class="fa fa-gear"></i>
-      <div class="folder-label">Settings</div>
-    </div>
+  document.getElementById("window-area").appendChild(win);
 
-    <!-- GAMES FOLDER CONTAINER OVERLAY DROP DOWN -->
-    <div id="games-folder" class="folder-contents">
-      <div class="app-item" onclick="openApp('games/vex7/index.html','Vex 7')">Vex 7</div>
-      <div class="app-item" onclick="openApp('games/vex6/index.html','Vex 6')">Vex 6</div>
-      <div class="app-item" onclick="openApp('games/slope/index.html','Slope')">Slope</div>
-      <div class="app-item" onclick="openApp('games/drive-mad/index.html','Drive Mad')">Drive Mad</div>
-      <div class="app-item" onclick="openApp('games/retro-bowl/index.html','Retro Bowl')">Retro Bowl</div>
-      <div class="app-item" onclick="openApp('games/gball/index.html','GBall')">GBall</div>
-      <div class="app-item" onclick="openApp('games/moto-x3m/index.html','Moto X3M')">Moto X3M</div>
-      <div class="app-item" onclick="openApp('games/motox3m2/index.html','Moto X3M 2')">Moto X3M 2</div>
-      <div class="app-item" onclick="openApp('games/basketball-stars/index.html','Basketball Stars')">Basketball Stars</div>
-      <div class="app-item" onclick="openApp('games/Snow-Rider3D-main/index.html','Snow Rider 3D')">Snow Rider 3D</div>
-      <div class="app-item" onclick="openApp('games/fnaf/index.html','FNaF')">FNaF</div>
-      <div class="app-item" onclick="openApp('games/fnaje/index.html','FNaJE')">FNaJE</div>
-      <div class="app-item" onclick="openApp('games/rocket-goal/index.html','Rocket Goal')">Rocket Goal</div>
-      <div class="app-item" onclick="openApp('apps/marty-games/index.html','Marty-Games')">Marty Games</div>
-      <div class="app-item" onclick="openApp('games/papaswings/index.html','Papas wingerria')">Papas Wingeria</div>
-      <div class="app-item" onclick="openApp('games/snake/index.html','Snake')">Snake</div>
-    </div>
+  windows.push(win);
 
-    <!-- APPS FOLDER CONTAINER OVERLAY DROP DOWN -->
-    <div id="apps-folder" class="folder-contents">
-      <div class="app-item" onclick="openApp('apps/chatbot/index.html','Chatbot')">AI Chatbot</div>
-      <div class="app-item" onclick="alert('Browser coming soon')">Browser</div>
-      <div class="app-item" onclick="alert('Files coming soon')">Files</div>
-      <div class="app-item" onclick="openApp('apps/music/index.html','Frazer Music')">Frazer Music</div>
-      <div class="app-item" onclick="openApp('apps/google/index.html','Google')">Frazer Proxy</div>
-    </div>
+  drag(win);
+
+  win.addEventListener("mousedown",()=>{
+    win.style.zIndex=z++;
+  });
+}
+
+/* MAXIMIZE */
+function toggleMax(btn){
+  btn.closest(".window").classList.toggle("maximized");
+}
+
+/* DRAG */
+function drag(el){
+
+  const h=el.querySelector(".window-header");
+
+  let dx,dy,isDrag=false;
+
+  h.onmousedown=(e)=>{
+
+    if(el.classList.contains("maximized")) return;
+
+    isDrag=true;
+
+    dx=e.clientX-el.offsetLeft;
+    dy=e.clientY-el.offsetTop;
+
+    el.style.zIndex=z++;
+  };
+
+  document.addEventListener("mousemove",(e)=>{
+
+    if(!isDrag) return;
+
+    let x=e.clientX-dx;
+    let y=e.clientY-dy;
+
+    x=Math.max(0, Math.min(window.innerWidth-el.offsetWidth, x));
+    y=Math.max(0, Math.min(window.innerHeight-el.offsetHeight-55, y));
+
+    el.style.left=x+"px";
+    el.style.top=y+"px";
+  });
+
+  document.addEventListener("mouseup",()=>{
+    isDrag=false;
+  });
+}
+</script>
+
+</body>
+</html>
