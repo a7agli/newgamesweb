@@ -42,7 +42,7 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  color:white;
+  color:#0078d4; /* Tinted blue matching standard Windows interface elements */
   cursor:pointer;
   font-size:20px;
   border-radius:10px;
@@ -267,7 +267,6 @@ body{
 <input class="search" placeholder="Search For Apps, Settings, Etc">
 
 <div id="home-panel" class="panel active">
-
 <div class="grid">
 
 <div class="tile" onclick="openPanel('games')">
@@ -288,11 +287,9 @@ body{
 </div>
 </div>
 
-<!-- GAMES -->
+<!-- GAMES PANEL -->
 <div id="games-panel" class="panel">
-
 <div class="tile" onclick="openPanel('home')">⬅ Back</div>
-
 <div class="big-grid">
 <div class="small-tile" onclick="openApp('games/vex7/index.html','Vex 7')">Vex 7</div>
 <div class="small-tile" onclick="openApp('games/vex6/index.html','Vex 6')">Vex 6</div>
@@ -310,16 +307,12 @@ body{
 <div class="small-tile" onclick="openApp('apps/marty-games/index.html','Marty-Games')">Marty Games</div>
 <div class="small-tile" onclick="openApp('games/papaswings/index.html','Papas wingerria')">Papas wingeria</div>
 <div class="small-tile" onclick="openApp('games/snake/index.html','Snake')">Snake</div>
-<div> 
+</div>
 </div>
 
-</div>
-
-<!-- APPS -->
+<!-- APPS PANEL -->
 <div id="apps-panel" class="panel">
-
 <div class="tile" onclick="openPanel('home')">⬅ Back</div>
-
 <div class="big-grid">
 <div class="small-tile" onclick="openApp('apps/chatbot/index.html','Chatbot')">AI Chatbot</div>
 <div class="small-tile" onclick="alert('Browser coming soon')">Browser</div>
@@ -327,57 +320,59 @@ body{
 <div class="small-tile" onclick="openApp('apps/music/index.html','Frazer Music')">Frazer Music</div>
 <div class="small-tile" onclick="openApp('apps/google/index.html','Google')">Frazer Proxy</div>
 </div>
+</div>
 
+<!-- SETTINGS PANEL -->
+<div id="settings-panel" class="panel">
+<div class="tile" onclick="openPanel('home')">⬅ Back</div>
+<p style="padding: 10px;">Settings configuration area.</p>
 </div>
 
 </div>
 
-<!-- TASKBAR -->
+<!-- FIXED TASKBAR & START BUTTON -->
 <div class="taskbar">
-
-<div class="start-btn" onclick="toggleMenu()">
-<i class="fa-brands fa-windows"></i>
-</div>
-
+  <div class="start-btn" onclick="toggleMenu()">
+    <i class="fa-brands fa-windows"></i>
+  </div>
 </div>
 
 <script>
 let z=2000;
 let windows=[];
 
-/* MENU */
+/* MENU TOGGLE FUNCTIONALITY */
 function toggleMenu(){
   const m=document.getElementById("start-menu");
 
   if(m.classList.contains("show")){
     m.classList.remove("show");
-
     setTimeout(()=>{
       m.style.display="none";
     },200);
-
   }else{
-
     m.style.display="block";
-
     setTimeout(()=>{
       m.classList.add("show");
     },10);
   }
 }
 
-/* PANELS */
+/* PANEL NAVIGATION */
 function openPanel(name){
-
   document.querySelectorAll(".panel").forEach(p=>{
     p.classList.remove("active");
   });
-
   document.getElementById(name+"-panel").classList.add("active");
 }
 
-/* OPEN APP */
+/* OPEN APP LOGIC */
 function openApp(url,title){
+  // Close start menu smoothly when opening an app
+  const m=document.getElementById("start-menu");
+  if(m.classList.contains("show")){
+    toggleMenu();
+  }
 
   const win=document.createElement("div");
   win.className="window";
@@ -385,82 +380,53 @@ function openApp(url,title){
   let topPos=80+windows.length*20;
   let leftPos=80+windows.length*20;
 
-  topPos=Math.min(topPos, window.innerHeight-400);
-  leftPos=Math.min(leftPos, window.innerWidth-500);
+  // Repaired cut off boundary logic safely
+  topPos=Math.min(topPos, window.innerHeight - 300);
+  leftPos=Math.min(leftPos, window.innerWidth - 400);
 
-  win.style.top=topPos+"px";
-  win.style.left=leftPos+"px";
-  win.style.zIndex=z++;
+  win.style.top = topPos + "px";
+  win.style.left = leftPos + "px";
+  win.style.zIndex = z++;
 
-  win.innerHTML=`
-    <div class="window-header">
-
+  win.innerHTML = `
+    <div class="window-header" onmousedown="dragStart(event, this.parentElement)">
       <span>${title}</span>
-
       <div class="win-controls">
-        <div class="win-btn max" onclick="toggleMax(this)"></div>
-        <div class="win-btn close" onclick="this.closest('.window').remove()"></div>
+        <div class="win-btn max" onclick="toggleMaximize(this.parentElement.parentElement.parentElement)"></div>
+        <div class="win-btn close" onclick="closeWindow(this.parentElement.parentElement.parentElement)"></div>
       </div>
-
     </div>
-
     <iframe src="${url}"></iframe>
   `;
 
   document.getElementById("window-area").appendChild(win);
-
   windows.push(win);
-
-  drag(win);
-
-  win.addEventListener("mousedown",()=>{
-    win.style.zIndex=z++;
-  });
 }
 
-/* MAXIMIZE */
-function toggleMax(btn){
-  btn.closest(".window").classList.toggle("maximized");
+function closeWindow(winEl){
+  winEl.remove();
+  windows = windows.filter(w => w !== winEl);
 }
 
-/* DRAG */
-function drag(el){
+function toggleMaximize(winEl){
+  winEl.classList.toggle("maximized");
+}
 
-  const h=el.querySelector(".window-header");
-
-  let dx,dy,isDrag=false;
-
-  h.onmousedown=(e)=>{
-
-    if(el.classList.contains("maximized")) return;
-
-    isDrag=true;
-
-    dx=e.clientX-el.offsetLeft;
-    dy=e.clientY-el.offsetTop;
-
-    el.style.zIndex=z++;
+/* BASIC DRAGGING LOGIC FOR WINDOWS */
+function dragStart(e, winEl){
+  if(winEl.classList.contains("maximized")) return;
+  winEl.style.zIndex = z++;
+  
+  let pos1 = 0, pos2 = 0, pos3 = e.clientX, pos4 = e.clientY;
+  
+  document.onmouseup = () => {
+    document.onmouseup = null;
+    document.onmousemove = null;
   };
-
-  document.addEventListener("mousemove",(e)=>{
-
-    if(!isDrag) return;
-
-    let x=e.clientX-dx;
-    let y=e.clientY-dy;
-
-    x=Math.max(0, Math.min(window.innerWidth-el.offsetWidth, x));
-    y=Math.max(0, Math.min(window.innerHeight-el.offsetHeight-55, y));
-
-    el.style.left=x+"px";
-    el.style.top=y+"px";
-  });
-
-  document.addEventListener("mouseup",()=>{
-    isDrag=false;
-  });
-}
-</script>
-
-</body>
-</html>
+  
+  document.onmousemove = (e) => {
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    winEl.style.top = (winEl.offsetTop - pos2) + "px";
