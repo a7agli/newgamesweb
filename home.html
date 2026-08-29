@@ -254,10 +254,96 @@ body{
     padding:8px;
   }
 }
+
+/* SETTINGS OPTIONS */
+body.no-animations *{
+  transition:none !important;
+  animation:none !important;
+}
+
+/* DESKTOP ITEMS */
+#desktop{
+  position:fixed;
+  inset:0 0 55px 0;
+  z-index:10;
+  pointer-events:none;
+  padding:14px;
+}
+
+.desktop-item{
+  width:82px;
+  min-height:82px;
+  margin-bottom:8px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:6px;
+  padding:7px 5px;
+  border-radius:10px;
+  color:white;
+  text-align:center;
+  font-size:12px;
+  user-select:none;
+  cursor:pointer;
+  pointer-events:auto;
+  text-shadow:0 1px 3px rgba(0,0,0,.8);
+  transition:.15s;
+}
+
+.desktop-item:hover{
+  background:rgba(255,255,255,.12);
+}
+
+.desktop-item:active{
+  transform:scale(.96);
+}
+
+.desktop-icon{
+  width:44px;
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  line-height:1;
+}
+
+.desktop-icon img{
+  width:44px;
+  height:44px;
+  object-fit:contain;
+  border-radius:7px;
+}
+
+@media(max-width:700px){
+  #desktop{
+    padding:8px;
+  }
+
+  .desktop-item{
+    width:72px;
+    min-height:76px;
+    font-size:11px;
+  }
+
+  .desktop-icon,
+  .desktop-icon img{
+    width:38px;
+    height:38px;
+  }
+}
+
 </style>
 </head>
 
 <body>
+
+<!-- DESKTOP -->
+<div id="desktop">
+  <!-- Desktop items are generated from the existing games/apps list. -->
+</div>
+
 
 <div id="window-area"></div>
 
@@ -335,14 +421,33 @@ body{
   <div class="tile" onclick="openPanel('home')">⬅ Back</div>
 
   <div style="margin-top:14px;">
-    <h3 style="margin:0 0 10px;">Personalization</h3>
+    <h3 style="margin:0 0 10px;">Settings</h3>
+    <!-- DESKTOP ITEMS -->
+    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
+      <div style="font-size:14px; margin-bottom:10px;">🖥️ Desktop Items</div>
 
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:10px;">
+        <input id="desktop-items-toggle" type="checkbox" checked onchange="toggleDesktopItems(this.checked)">
+        Show desktop icons
+      </label>
+
+      <div id="desktop-icon-options" style="display:grid; gap:8px; padding-top:2px;">
+        <!-- Existing games/apps are generated here -->
+      </div>
+
+      <div style="font-size:12px; opacity:.75; margin-top:9px;">
+        Your desktop choices stay saved on this device.
+      </div>
+    </div>
+
+
+    <!-- PERSONALIZATION -->
     <div class="small-tile" style="text-align:left; cursor:default;">
-      <div style="font-size:14px; margin-bottom:8px;">Background</div>
+      <div style="font-size:14px; margin-bottom:8px;">🎨 Background</div>
 
       <select id="background-select"
         onchange="changeBackground(this.value)"
-        style="width:100%; padding:10px; border:none; outline:none; border-radius:9px; background:rgba(169,169,169,0.5); color:white;">
+        style="width:100%; padding:10px; border:none; outline:none; border-radius:9px; background:rgba(255,255,255,0.1); color:white;">
         <option value="default">Default Frazer OS</option>
         <option value="blue">Blue</option>
         <option value="purple">Purple</option>
@@ -362,10 +467,65 @@ body{
 
     <input id="background-file" type="file" accept="image/*" style="display:none"
       onchange="applyCustomBackground(this.files[0])">
+
+    <!-- FONT SIZE -->
+    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
+      <div style="font-size:14px; margin-bottom:8px;">🔤 Font Size</div>
+
+      <select id="font-size-select"
+        onchange="changeFontSize(this.value)"
+        style="width:100%; padding:10px; border:none; outline:none; border-radius:9px; background:rgba(255,255,255,0.1); color:white;">
+        <option value="small">Small</option>
+        <option value="medium">Medium</option>
+        <option value="large">Large</option>
+        <option value="xlarge">Extra Large</option>
+      </select>
+
+      <div style="font-size:12px; opacity:.75; margin-top:8px;">
+        Changes the main Frazer OS interface text size.
+      </div>
+    </div>
+
+    <!-- TASKBAR -->
+    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
+      <div style="font-size:14px; margin-bottom:8px;">📌 Taskbar Transparency</div>
+
+      <input id="taskbar-opacity" type="range" min="30" max="100" value="70"
+        oninput="changeTaskbarOpacity(this.value)"
+        style="width:100%;">
+
+      <div id="taskbar-opacity-label" style="font-size:12px; opacity:.75; margin-top:5px;">
+        70%
+      </div>
+    </div>
+
+    <!-- ANIMATIONS -->
+    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
+      <div style="font-size:14px; margin-bottom:8px;">✨ Animations</div>
+
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px;">
+        <input id="animations-toggle" type="checkbox" checked onchange="toggleAnimations(this.checked)">
+        Enable animations
+      </label>
+    </div>
+
+    <!-- RESET -->
+    <div class="small-tile" style="margin-top:10px;" onclick="resetSettings()">
+      ♻ Reset Settings
+    </div>
+
+    <!-- ABOUT / FAIR USE -->
+    <div style="margin-top:18px; padding:12px; border-top:1px solid rgba(255,255,255,0.12);">
+      <div style="font-size:12px; opacity:.6; text-align:center; line-height:1.5;">
+        Frazer OS<br>
+        Games and third-party content are provided for<br>
+        <b>fair use / educational purposes.</b><br>
+        Frazer OS does not claim ownership of third-party games.
+      </div>
+    </div>
   </div>
 
 </div>
-
 </div>
 
 <!-- TASKBAR -->
@@ -496,7 +656,7 @@ function drag(el){
     isDrag=false;
   });
 }
-/* BACKGROUND SETTINGS */
+/* BACKGROUND + SETTINGS */
 const defaultBackground =
   'url("https://www.wallpaperhub.app/_next/image?url=https%3A%2F%2Fcdn.wallpaperhub.app%2Fcloudcache%2F8%2Fe%2Fc%2F4%2F4%2Ff%2F8ec44f86876a912a93f4116f50e6a3839af5c03b.jpg&w=4096&h=2160&q=100") center/cover no-repeat';
 
@@ -537,21 +697,262 @@ function applyCustomBackground(file){
   reader.readAsDataURL(file);
 }
 
-(function loadSavedBackground(){
-  const saved = localStorage.getItem("frazerBackground");
+function changeFontSize(value){
+  const sizes = {
+    small: "0.9",
+    medium: "1",
+    large: "1.1",
+    xlarge: "1.2"
+  };
+
+  const scale = sizes[value] || "1";
+  document.documentElement.style.setProperty("--frazer-font-scale", scale);
+  document.body.style.fontSize = `calc(16px * ${scale})`;
+  localStorage.setItem("frazerFontSize", value);
+}
+
+function changeTaskbarOpacity(value){
+  const opacity = Math.max(30, Math.min(100, Number(value))) / 100;
+  const taskbar = document.querySelector(".taskbar");
+
+  if(taskbar){
+    taskbar.style.background = `rgba(20,20,20,${opacity})`;
+  }
+
+  const label = document.getElementById("taskbar-opacity-label");
+  if(label) label.textContent = `${Math.round(opacity * 100)}%`;
+
+  localStorage.setItem("frazerTaskbarOpacity", String(value));
+}
+
+function toggleAnimations(enabled){
+  document.body.classList.toggle("no-animations", !enabled);
+  localStorage.setItem("frazerAnimations", enabled ? "on" : "off");
+}
+
+function resetSettings(){
+  localStorage.removeItem("frazerBackground");
+  localStorage.removeItem("frazerCustomBackground");
+  localStorage.removeItem("frazerFontSize");
+  localStorage.removeItem("frazerTaskbarOpacity");
+  localStorage.removeItem("frazerAnimations");
+  localStorage.removeItem("frazerDesktopItems");
+  Object.keys(desktopItems).forEach(name => localStorage.removeItem("frazerDesktop_" + name));
+  applyBackground(defaultBackground);
+
+  const bgSelect = document.getElementById("background-select");
+  if(bgSelect) bgSelect.value = "default";
+
+  const fontSelect = document.getElementById("font-size-select");
+  if(fontSelect) fontSelect.value = "medium";
+  changeFontSize("medium");
+
+  const opacity = document.getElementById("taskbar-opacity");
+  if(opacity) opacity.value = "70";
+  changeTaskbarOpacity("70");
+
+  const animations = document.getElementById("animations-toggle");
+  if(animations) animations.checked = true;
+  toggleAnimations(true);
+
+  const desktopMaster = document.getElementById("desktop-items-toggle");
+  if(desktopMaster) desktopMaster.checked = true;
+
+  Object.keys(desktopItems).forEach(name => {
+    const checkbox = document.getElementById("desktop-" + name + "-toggle");
+    const enabled = ["vex7","minecraft","music","settings"].includes(name);
+    if(checkbox) checkbox.checked = enabled;
+    setDesktopIcon(name, enabled);
+  });
+
+  toggleDesktopItems(true);
+  renderDesktopSettings();
+}
+
+(function loadSavedSettings(){
+  const savedBackground = localStorage.getItem("frazerBackground");
   const custom = localStorage.getItem("frazerCustomBackground");
 
-  if(saved === "custom" && custom){
+  if(savedBackground === "custom" && custom){
     applyBackground(`url("${custom}") center/cover no-repeat`);
-    return;
+    const bgSelect = document.getElementById("background-select");
+    if(bgSelect) bgSelect.value = "default";
+  }else if(savedBackground){
+    const bgSelect = document.getElementById("background-select");
+    if(bgSelect) bgSelect.value = savedBackground;
+    changeBackground(savedBackground);
   }
 
-  if(saved){
-    const select = document.getElementById("background-select");
-    if(select) select.value = saved;
-    changeBackground(saved);
-  }
+  const savedFont = localStorage.getItem("frazerFontSize") || "medium";
+  const fontSelect = document.getElementById("font-size-select");
+  if(fontSelect) fontSelect.value = savedFont;
+  changeFontSize(savedFont);
+
+  const savedOpacity = localStorage.getItem("frazerTaskbarOpacity") || "70";
+  const opacity = document.getElementById("taskbar-opacity");
+  if(opacity) opacity.value = savedOpacity;
+  changeTaskbarOpacity(savedOpacity);
+
+  const savedAnimations = localStorage.getItem("frazerAnimations");
+  const enabled = savedAnimations !== "off";
+  const animations = document.getElementById("animations-toggle");
+  if(animations) animations.checked = enabled;
+  toggleAnimations(enabled);
 })();
+
+
+function openDesktopSettings(){
+  const m=document.getElementById("start-menu");
+  m.style.display="block";
+  setTimeout(()=>m.classList.add("show"),10);
+  openPanel("settings");
+}
+
+/* DESKTOP ITEM SETTINGS */
+const desktopCatalog = [
+  { id:"vex7", name:"Vex 7", icon:"🎮", url:"games/vex7/index.html", type:"Game" },
+  { id:"snake", name:"Snake", icon:"🐍", url:"games/snake/index.html", type:"Game" },
+  { id:"slope", name:"Slope", icon:"🏂", url:"games/slope/index.html", type:"Game" },
+  { id:"drive-mad", name:"Drive Mad", icon:"🚗", url:"games/drive-mad/index.html", type:"Game" },
+  { id:"retro-bowl", name:"Retro Bowl", icon:"🏈", url:"games/retro-bowl/index.html", type:"Game" },
+  { id:"gball", name:"GBall", icon:"⚽", url:"games/gball/index.html", type:"Game" },
+  { id:"moto-x3m", name:"Moto X3M", icon:"🏍️", url:"games/moto-x3m/index.html", type:"Game" },
+  { id:"motox3m2", name:"Moto X3M 2", icon:"🏍️", url:"games/motox3m2/index.html", type:"Game" },
+  { id:"basketball-stars", name:"Basketball Stars", icon:"🏀", url:"games/basketball-stars/index.html", type:"Game" },
+  { id:"snow-rider-3d", name:"Snow Rider 3D", icon:"❄️", url:"games/Snow-Rider3D-main/index.html", type:"Game" },
+  { id:"fnaf", name:"FNaF", icon:"🐻", url:"games/fnaf/index.html", type:"Game" },
+  { id:"fnaje", name:"FNaJE", icon:"👻", url:"games/fnaje/index.html", type:"Game" },
+  { id:"rocket-goal", name:"Rocket Goal", icon:"🚀", url:"games/rocket-goal/index.html", type:"Game" },
+  { id:"marty-games", name:"Marty Games", icon:"🎲", url:"apps/marty-games/index.html", type:"Game" },
+  { id:"papas-wingeria", name:"Papas wingeria", icon:"🍔", url:"games/papaswings/index.html", type:"Game" },
+  { id:"minecraft", name:"Minecraft", icon:"⛏️", url:"minec/EaglercraftX_1.8_u53_Offline_Signed.html", type:"Game" },
+  { id:"chatbot", name:"AI Chatbot", icon:"🤖", url:"apps/chatbot/index.html", type:"App" },
+  { id:"music", name:"Frazer Music", icon:"🎵", url:"apps/music/index.html", type:"App" },
+  { id:"google", name:"Frazer Proxy", icon:"🌐", url:"apps/google/index.html", type:"App" },
+  { id:"settings", name:"Settings", icon:"⚙️", url:null, type:"System" }
+];
+
+const desktopItems = Object.fromEntries(
+  desktopCatalog.map(item => [item.id, "desktop-" + item.id])
+);
+
+function getDesktopItem(id){
+  return desktopCatalog.find(item => item.id === id);
+}
+
+function createDesktopIcon(item){
+  const el = document.createElement("div");
+  el.id = "desktop-" + item.id;
+  el.className = "desktop-item";
+  el.title = "Double-click to open";
+  el.ondblclick = () => {
+    if(item.id === "settings") openDesktopSettings();
+    else openApp(item.url, item.name);
+  };
+
+  const icon = document.createElement("div");
+  icon.className = "desktop-icon";
+  icon.textContent = item.icon;
+
+  const label = document.createElement("div");
+  label.textContent = item.name;
+
+  el.appendChild(icon);
+  el.appendChild(label);
+  return el;
+}
+
+function renderDesktopItems(){
+  const desktop = document.getElementById("desktop");
+  if(!desktop) return;
+  desktop.innerHTML = "";
+
+  desktopCatalog.forEach(item => {
+    desktop.appendChild(createDesktopIcon(item));
+  });
+}
+
+function renderDesktopSettings(){
+  const options = document.getElementById("desktop-icon-options");
+  if(!options) return;
+  options.innerHTML = "";
+
+  const games = desktopCatalog.filter(item => item.type === "Game");
+  const apps = desktopCatalog.filter(item => item.type !== "Game");
+
+  const addGroup = (title, items) => {
+    const heading = document.createElement("div");
+    heading.textContent = title;
+    heading.style.cssText = "font-size:12px; opacity:.7; margin-top:4px; margin-bottom:2px;";
+    options.appendChild(heading);
+
+    items.forEach(item => {
+      const label = document.createElement("label");
+      label.style.cssText = "display:flex; align-items:center; gap:8px; font-size:13px;";
+      label.innerHTML = `<input id="desktop-${item.id}-toggle" type="checkbox"> ${item.icon} ${item.name}`;
+
+      const checkbox = label.querySelector("input");
+      checkbox.checked = localStorage.getItem("frazerDesktop_" + item.id) !== "off";
+      checkbox.onchange = () => setDesktopIcon(item.id, checkbox.checked);
+
+      options.appendChild(label);
+    });
+  };
+
+  addGroup("🎮 Games", games);
+  addGroup("📱 Apps", apps);
+}
+
+function setDesktopIcon(name, enabled){
+  const id = desktopItems[name];
+  const item = document.getElementById(id);
+
+  if(item){
+    item.style.display = enabled ? "flex" : "none";
+  }
+
+  localStorage.setItem("frazerDesktop_" + name, enabled ? "on" : "off");
+}
+
+function toggleDesktopItems(enabled){
+  const desktop = document.getElementById("desktop");
+
+  if(desktop){
+    desktop.style.display = enabled ? "block" : "none";
+  }
+
+  localStorage.setItem("frazerDesktopItems", enabled ? "on" : "off");
+
+  const options = document.getElementById("desktop-icon-options");
+  if(options){
+    options.style.opacity = enabled ? "1" : ".45";
+    options.style.pointerEvents = enabled ? "auto" : "none";
+  }
+}
+
+function loadDesktopItemSettings(){
+  renderDesktopItems();
+  renderDesktopSettings();
+
+  const masterEnabled = localStorage.getItem("frazerDesktopItems") !== "off";
+  const master = document.getElementById("desktop-items-toggle");
+  if(master) master.checked = masterEnabled;
+
+  Object.keys(desktopItems).forEach(name => {
+    const saved = localStorage.getItem("frazerDesktop_" + name);
+    const defaultEnabled = ["vex7","minecraft","music","settings"].includes(name);
+    const enabled = saved === null ? defaultEnabled : saved !== "off";
+
+    const checkbox = document.getElementById("desktop-" + name + "-toggle");
+    if(checkbox) checkbox.checked = enabled;
+
+    setDesktopIcon(name, enabled);
+  });
+
+  // Re-apply master switch after individual settings are loaded.
+  toggleDesktopItems(masterEnabled);
+}
+loadDesktopItemSettings();
 
 </script>
 
