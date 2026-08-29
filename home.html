@@ -844,11 +844,18 @@ function createDesktopIcon(item){
   const el = document.createElement("div");
   el.id = "desktop-" + item.id;
   el.className = "desktop-item";
-  el.title = "Double-click to open";
-  el.ondblclick = () => {
+  el.title = "Click to open";
+
+  const launch = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     if(item.id === "settings") openDesktopSettings();
-    else openApp(item.url, item.name);
+    else if(item.url) openApp(item.url, item.name);
   };
+
+  // Open with a normal click; double-click also works.
+  el.addEventListener("click", launch);
+  el.addEventListener("dblclick", launch);
 
   const icon = document.createElement("div");
   icon.className = "desktop-icon";
