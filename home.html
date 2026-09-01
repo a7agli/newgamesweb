@@ -121,6 +121,10 @@ body{
   margin-top:10px;
 }
 
+.search-hidden{
+  display:none !important;
+}
+
 .small-tile{
   background:rgba(255,255,255,0.08);
   border-radius:12px;
@@ -220,12 +224,36 @@ body{
   border-radius:0 !important;
 }
 
+.settings-app-body{flex:1; overflow:auto; background:#1e1e1e; color:white;}
+.settings-app-content{display:block !important; padding:16px;}
+.settings-app-content > .tile:first-child{display:none;}
 .window iframe{
   flex:1;
   width:100%;
   border:none;
   display:block;
   background:white;
+}
+
+/* APP ICONS */
+.app-icon{
+  width:44px;
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  line-height:1;
+  margin:0 auto 7px;
+}
+.app-icon img{
+  width:44px;
+  height:44px;
+  object-fit:contain;
+  border-radius:9px;
+}
+.small-tile .app-name{
+  line-height:1.2;
 }
 
 /* MOBILE */
@@ -253,6 +281,11 @@ body{
     font-size:11px;
     padding:8px;
   }
+}
+
+/* HIDE DESKTOP ICONS WHILE A GAME IS FULLSCREEN/MAXIMIZED */
+body.game-fullscreen #desktop{
+  display:none !important;
 }
 
 /* SETTINGS OPTIONS */
@@ -350,181 +383,40 @@ body.no-animations *{
 <!-- START MENU -->
 <div id="start-menu">
 
-<input class="search" placeholder="Search For Apps, Settings, Etc">
+<input id="app-search" class="search" placeholder="Search For Apps, Settings, Etc" autocomplete="off">
 
 <div id="home-panel" class="panel active">
 
-<div class="grid">
-
-<div class="tile" onclick="openPanel('games')">
-<img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png" width="40">
-<div>Games</div>
-</div>
-
-<div class="tile" onclick="openPanel('apps')">
-<img src="https://www.image2url.com/r2/default/images/1778347690257-4f700930-6b2c-434a-82c6-90a81ab67074.png" width="40">
-<div>Apps</div>
-</div>
-
-<div class="tile" onclick="openPanel('settings')">
-<i class="fa fa-gear"></i>
-<div>Settings</div>
-</div>
-
-</div>
-</div>
-
-<!-- GAMES -->
-<div id="games-panel" class="panel">
-
-<div class="tile" onclick="openPanel('home')">⬅ Back</div>
-
 <div class="big-grid">
-<div class="small-tile" onclick="openApp('games/vex7/index.html','Vex 7')">Vex 7</div>
-<div class="small-tile" onclick="openApp('games/snake/index.html','snake')">Snake</div>
-<div class="small-tile" onclick="openApp('games/slope/index.html','Slope')">Slope</div>
-<div class="small-tile" onclick="openApp('games/drive-mad/index.html','Drive Mad')">Drive Mad</div>
-<div class="small-tile" onclick="openApp('games/retro-bowl/index.html','Retro Bowl')">Retro Bowl</div>
-<div class="small-tile" onclick="openApp('games/googleball/index.html','GBall')">Google baseball</div>
-<div class="small-tile" onclick="openApp('games/moto-x3m/index.html','Moto X3M')">Moto X3M</div>
-<div class="small-tile" onclick="openApp('games/motox3m2/index.html','Moto X3M 2')">Moto X3M 2</div>
-<div class="small-tile" onclick="openApp('games/basketball-stars/index.html','Basketball Stars')">Basketball Stars</div>
-<div class="small-tile" onclick="openApp('games/Snow-Rider3D-main/index.html','Snow Rider 3D')">Snow Rider 3D</div>
-<div class="small-tile" onclick="openApp('games/fnaf/index.html','FNaF')">FNaF</div>
-<div class="small-tile" onclick="openApp('games/fnaje/index.html','FNaJE')">FNaJE</div>
-<div class="small-tile" onclick="openApp('games/rocket-goal/index.html','Rocket Goal')">Rocket Goal</div>
-<div class="small-tile" onclick="openApp('apps/marty-games/index.html','Marty-Games')">Marty Games</div>
-<div class="small-tile" onclick="openApp('games/papaswings/index.html','Papas wingerria')">Papas wingeria</div>
-<div class="small-tile" onclick="openApp('minec/EaglercraftX_1.8_u53_Offline_Signed.html','Minecraft')">Minecraft</div>
-<div class="small-tile" onclick="openApp('games/subwaysurfers/index.html','Subway Surfers')">Subway Surfers</div>
+  <!-- GAMES -->
+  <div class="small-tile" onclick="openApp('games/vex7/index.html','Vex 7','game')">🏃 Vex 7</div>
+  <div class="small-tile" onclick="openApp('games/snake/index.html','snake','game')">Snake</div>
+  <div class="small-tile" onclick="openApp('games/slope/index.html','Slope','game')">🏂 Slope</div>
+  <div class="small-tile" onclick="openApp('games/drive-mad/index.html','Drive Mad','game')">🚗 Drive Mad</div>
+  <div class="small-tile" onclick="openApp('games/retro-bowl/index.html','Retro Bowl','game')">🏈 Retro Bowl</div>
+  <div class="small-tile" onclick="openApp('games/googleball/index.html','GBall','game')">⚾ Google baseball</div>
+  <div class="small-tile" onclick="openApp('games/moto-x3m/index.html','Moto X3M','game')">🏍️ Moto X3M</div>
+  <div class="small-tile" onclick="openApp('games/motox3m2/index.html','Moto X3M 2','game')">🏍️ Moto X3M 2</div>
+  <div class="small-tile" onclick="openApp('games/basketball-stars/index.html','Basketball Stars','game')">🏀 Basketball Stars</div>
+  <div class="small-tile" onclick="openApp('games/Snow-Rider3D-main/index.html','Snow Rider 3D','game')">❄️ Snow Rider 3D</div>
+  <div class="small-tile" onclick="openApp('games/fnaf/index.html','FNaF','game')">🐻 FNaF</div>
+  <div class="small-tile" onclick="openApp('games/fnaje/index.html','FNaJE','game')">😈 FNaJE</div>
+  <div class="small-tile" onclick="openApp('games/rocket-goal/index.html','Rocket Goal','game')">⚽ Rocket Goal</div>
+  <div class="small-tile" onclick="openApp('apps/marty-games/index.html','Marty-Games','game')">🎲 Marty Games</div>
+  <div class="small-tile" onclick="openApp('games/papaswings/index.html','Papas wingerria','game')">🍔 Papas wingeria</div>
+  <div class="small-tile" onclick="openApp('minec/EaglercraftX_1.8_u53_Offline_Signed.html','Minecraft','game')">⛏️ Minecraft</div>
+  <div class="small-tile" onclick="openApp('games/subwaysurfers/index.html','Subway Surfers','game')">🛹 Subway Surfers</div>
+
+  <!-- APPS -->
+  <div class="small-tile" onclick="openApp('apps/chatbot/index.html','Chatbot','app')">🤖 AI Chatbot</div>
+  <div class="small-tile" onclick="alert('Browser coming soon')">🌐 Browser</div>
+  <div class="small-tile" onclick="alert('Files coming soon')">📁 Files</div>
+  <div class="small-tile" onclick="openApp('apps/music/index.html','Frazer Music','app')">🎵 Frazer Music</div>
+  <div class="small-tile" onclick="openApp('apps/google/index.html','Google','app')">🌐 Frazer Proxy</div>
+
+  <!-- SETTINGS -->
+  <div class="small-tile" onclick="openSettingsApp()">⚙️ Settings</div>
 </div>
-
-</div>
-
-<!-- APPS -->
-<div id="apps-panel" class="panel">
-
-<div class="tile" onclick="openPanel('home')">⬅ Back</div>
-
-<div class="big-grid">
-<div class="small-tile" onclick="openApp('apps/chatbot/index.html','Chatbot')">AI Chatbot</div>
-<div class="small-tile" onclick="alert('Browser coming soon')">Browser</div>
-<div class="small-tile" onclick="alert('Files coming soon')">Files</div>
-<div class="small-tile" onclick="openApp('apps/music/index.html','Frazer Music')">Frazer Music</div>
-<div class="small-tile" onclick="openApp('apps/google/index.html','Google')">Frazer Proxy</div>
-</div>
-
-</div>
-
-<!-- SETTINGS -->
-<div id="settings-panel" class="panel">
-
-  <div class="tile" onclick="openPanel('home')">⬅ Back</div>
-
-  <div style="margin-top:14px;">
-    <h3 style="margin:0 0 10px;">Settings</h3>
-    <!-- DESKTOP ITEMS -->
-    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
-      <div style="font-size:14px; margin-bottom:10px;">🖥️ Desktop Items</div>
-
-      <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:10px;">
-        <input id="desktop-items-toggle" type="checkbox" checked onchange="toggleDesktopItems(this.checked)">
-        Show desktop icons
-      </label>
-
-      <div id="desktop-icon-options" style="display:grid; gap:8px; padding-top:2px;">
-        <!-- Existing games/apps are generated here -->
-      </div>
-
-      <div style="font-size:12px; opacity:.75; margin-top:9px;">
-        Your desktop choices stay saved on this device.
-      </div>
-    </div>
-
-
-    <!-- PERSONALIZATION -->
-    <div class="small-tile" style="text-align:left; cursor:default;">
-      <div style="font-size:14px; margin-bottom:8px;">🎨 Background</div>
-
-      <select id="background-select"
-        onchange="changeBackground(this.value)"
-        style="width:100%; padding:10px; border:none; outline:none; border-radius:9px; background:rgba(255,255,255,0.1); color:white;">
-        <option value="default">Default Frazer OS</option>
-        <option value="blue">Blue</option>
-        <option value="purple">Purple</option>
-        <option value="black">Black</option>
-        <option value="gray">Gray</option>
-        <option value="green">Green</option>
-      </select>
-
-      <div style="font-size:12px; opacity:.75; margin-top:8px;">
-        Your choice is saved on this device.
-      </div>
-    </div>
-
-    <div class="small-tile" style="margin-top:10px;" onclick="chooseCustomBackground()">
-      🖼 Choose Image
-    </div>
-
-    <input id="background-file" type="file" accept="image/*" style="display:none"
-      onchange="applyCustomBackground(this.files[0])">
-
-    <!-- FONT SIZE -->
-    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
-      <div style="font-size:14px; margin-bottom:8px;">🔤 Font Size</div>
-
-      <select id="font-size-select"
-        onchange="changeFontSize(this.value)"
-        style="width:100%; padding:10px; border:none; outline:none; border-radius:9px; background:rgba(255,255,255,0.1); color:white;">
-        <option value="small">Small</option>
-        <option value="medium">Medium</option>
-        <option value="large">Large</option>
-        <option value="xlarge">Extra Large</option>
-      </select>
-
-      <div style="font-size:12px; opacity:.75; margin-top:8px;">
-        Changes the main Frazer OS interface text size.
-      </div>
-    </div>
-
-    <!-- TASKBAR -->
-    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
-      <div style="font-size:14px; margin-bottom:8px;">📌 Taskbar Transparency</div>
-
-      <input id="taskbar-opacity" type="range" min="30" max="100" value="70"
-        oninput="changeTaskbarOpacity(this.value)"
-        style="width:100%;">
-
-      <div id="taskbar-opacity-label" style="font-size:12px; opacity:.75; margin-top:5px;">
-        70%
-      </div>
-    </div>
-
-    <!-- ANIMATIONS -->
-    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
-      <div style="font-size:14px; margin-bottom:8px;">✨ Animations</div>
-
-      <label style="display:flex; align-items:center; gap:8px; font-size:13px;">
-        <input id="animations-toggle" type="checkbox" checked onchange="toggleAnimations(this.checked)">
-        Enable animations
-      </label>
-    </div>
-
-    <!-- RESET -->
-    <div class="small-tile" style="margin-top:10px;" onclick="resetSettings()">
-      ♻ Reset Settings
-    </div>
-
-    <!-- ABOUT / FAIR USE -->
-    <div style="margin-top:18px; padding:12px; border-top:1px solid rgba(255,255,255,0.12);">
-      <div style="font-size:12px; opacity:.6; text-align:center; line-height:1.5;">
-        Frazer OS<br>
-        Games and third-party content are provided for<br>
-        <b>fair use / educational purposes.</b><br>
-        Frazer OS does not claim ownership of third-party games.
-      </div>
-    </div>
-  </div>
 
 </div>
 </div>
@@ -541,6 +433,42 @@ body.no-animations *{
 <script>
 let z=2000;
 let windows=[];
+
+
+/* START MENU SEARCH */
+function initAppSearch(){
+  const search=document.getElementById("app-search");
+  const homePanel=document.getElementById("home-panel");
+  if(!search || !homePanel) return;
+
+  const items=[...homePanel.querySelectorAll(".small-tile")];
+
+  search.addEventListener("input",()=>{
+    const query=search.value.trim().toLowerCase();
+
+    items.forEach(item=>{
+      const text=item.textContent.toLowerCase();
+      item.classList.toggle("search-hidden", !!query && !text.includes(query));
+    });
+  });
+
+  search.addEventListener("keydown",(e)=>{
+    if(e.key==="Escape"){
+      search.value="";
+      items.forEach(item=>item.classList.remove("search-hidden"));
+      search.blur();
+    }
+
+    if(e.key==="Enter"){
+      const first=items.find(item=>!item.classList.contains("search-hidden"));
+      if(first){
+        first.click();
+        search.value="";
+        items.forEach(item=>item.classList.remove("search-hidden"));
+      }
+    }
+  });
+}
 
 /* MENU */
 function toggleMenu(){
@@ -574,10 +502,11 @@ function openPanel(name){
 }
 
 /* OPEN APP */
-function openApp(url,title){
+function openApp(url,title,type="app"){
 
   const win=document.createElement("div");
   win.className="window";
+  win.dataset.appType=type;
 
   let topPos=80+windows.length*20;
   let leftPos=80+windows.length*20;
@@ -596,7 +525,7 @@ function openApp(url,title){
 
       <div class="win-controls">
         <div class="win-btn max" onclick="toggleMax(this)"></div>
-        <div class="win-btn close" onclick="this.closest('.window').remove()"></div>
+        <div class="win-btn close" onclick="closeWindow(this)"></div>
       </div>
 
     </div>
@@ -613,11 +542,170 @@ function openApp(url,title){
   win.addEventListener("mousedown",()=>{
     win.style.zIndex=z++;
   });
+
+  return win;
+}
+
+/* SETTINGS APP */
+function openSettingsApp(){
+  const existing = document.querySelector('.window[data-app-type="settings"]');
+  if(existing){
+    existing.style.zIndex=z++;
+    return existing;
+  }
+
+  const win=document.createElement("div");
+  win.className="window settings-window";
+  win.dataset.appType="settings";
+
+  let topPos=Math.min(60, Math.max(10, window.innerHeight-520));
+  let leftPos=Math.max(10, (window.innerWidth-850)/2);
+
+  win.style.top=topPos+"px";
+  win.style.left=leftPos+"px";
+  win.style.zIndex=z++;
+
+  const settingsPanel=document.getElementById("settings-panel");
+
+  win.innerHTML=`
+    <div class="window-header">
+      <span>Settings</span>
+      <div class="win-controls">
+        <div class="win-btn max" onclick="toggleMax(this)"></div>
+        <div class="win-btn close" onclick="closeWindow(this)"></div>
+      </div>
+    </div>
+    <div class="settings-app-body"></div>
+  `;
+
+  const body=win.querySelector(".settings-app-body");
+  if(settingsPanel){
+    const clone=settingsPanel.cloneNode(true);
+    clone.removeAttribute("id");
+    clone.className="settings-app-content";
+    clone.style.display="block";
+    body.appendChild(clone);
+
+    clone.querySelectorAll("[id]").forEach(el=>{
+      const oldId=el.id;
+      el.id=oldId+"-app";
+    });
+
+    const master=clone.querySelector("#desktop-items-toggle-app");
+    if(master) master.onchange=()=>toggleDesktopItems(master.checked);
+
+    const bg=clone.querySelector("#background-select-app");
+    if(bg) bg.onchange=()=>changeBackground(bg.value);
+
+    const bgBtn=clone.querySelector('[onclick="chooseCustomBackground()"]');
+    if(bgBtn) bgBtn.onclick=()=>chooseCustomBackground();
+
+    const bgFile=clone.querySelector("#background-file-app");
+    if(bgFile) bgFile.onchange=()=>applyCustomBackground(bgFile.files[0]);
+
+    const font=clone.querySelector("#font-size-select-app");
+    if(font) font.onchange=()=>changeFontSize(font.value);
+
+    const opacity=clone.querySelector("#taskbar-opacity-app");
+    if(opacity) opacity.oninput=()=>changeTaskbarOpacity(opacity.value);
+
+    const anim=clone.querySelector("#animations-toggle-app");
+    if(anim) anim.onchange=()=>toggleAnimations(anim.checked);
+
+    const reset=clone.querySelector('[onclick="resetSettings()"]');
+    if(reset) reset.onclick=()=>resetSettings();
+  }
+
+  document.getElementById("window-area").appendChild(win);
+  windows.push(win);
+  drag(win);
+
+  win.addEventListener("mousedown",()=>{
+    win.style.zIndex=z++;
+  });
+
+  renderDesktopSettings();
+  syncSettingsApp();
+
+  return win;
+}
+
+function syncSettingsApp(){
+  const app=document.querySelector('.settings-app-content');
+  if(!app) return;
+
+  const master=app.querySelector("#desktop-items-toggle-app");
+  if(master) master.checked = localStorage.getItem("frazerDesktopItems") !== "off";
+
+  const bg=app.querySelector("#background-select-app");
+  if(bg) bg.value = localStorage.getItem("frazerBackground") || "default";
+
+  const font=app.querySelector("#font-size-select-app");
+  if(font) font.value = localStorage.getItem("frazerFontSize") || "medium";
+
+  const opacity=app.querySelector("#taskbar-opacity-app");
+  const savedOpacity=localStorage.getItem("frazerTaskbarOpacity") || "70";
+  if(opacity) opacity.value=savedOpacity;
+
+  const label=app.querySelector("#taskbar-opacity-label-app");
+  if(label) label.textContent=`${savedOpacity}%`;
+
+  const anim=app.querySelector("#animations-toggle-app");
+  if(anim) anim.checked = localStorage.getItem("frazerAnimations") !== "off";
+
+  const options=app.querySelector("#desktop-icon-options-app");
+  if(options){
+    options.innerHTML="";
+    const games=desktopCatalog.filter(item=>item.type==="Game");
+    const apps=desktopCatalog.filter(item=>item.type!=="Game");
+
+    const addGroup=(title,items)=>{
+      const heading=document.createElement("div");
+      heading.textContent=title;
+      heading.style.cssText="font-size:12px; opacity:.7; margin-top:4px; margin-bottom:2px;";
+      options.appendChild(heading);
+
+      items.forEach(item=>{
+        const label=document.createElement("label");
+        label.style.cssText="display:flex; align-items:center; gap:8px; font-size:13px;";
+        label.innerHTML=`<input type="checkbox"> ${item.icon} ${item.name}`;
+        const checkbox=label.querySelector("input");
+        checkbox.checked=localStorage.getItem("frazerDesktop_"+item.id)!=="off";
+        checkbox.onchange=()=>setDesktopIcon(item.id,checkbox.checked);
+        options.appendChild(label);
+      });
+    };
+
+    addGroup("🎮 Games",games);
+    addGroup("📱 Apps",apps);
+  }
+}
+
+function closeWindow(btn){
+  const win=btn.closest(".window");
+  if(!win) return;
+  const wasMax=win.classList.contains("maximized");
+  win.remove();
+  windows=windows.filter(w=>w!==win);
+  if(wasMax) updateGameFullscreenState();
+}
+
+function updateGameFullscreenState(){
+  const gameMaximized=[...document.querySelectorAll('.window[data-app-type="game"].maximized')].length>0;
+  const browserFullscreen=!!document.fullscreenElement;
+  document.body.classList.toggle("game-fullscreen", gameMaximized || browserFullscreen);
 }
 
 /* MAXIMIZE */
+
 function toggleMax(btn){
-  btn.closest(".window").classList.toggle("maximized");
+  const win=btn.closest(".window");
+  if(!win) return;
+
+  win.classList.toggle("maximized");
+
+  // Only game windows hide desktop icons when maximized.
+  updateGameFullscreenState();
 }
 
 /* DRAG */
@@ -803,10 +891,7 @@ function resetSettings(){
 
 
 function openDesktopSettings(){
-  const m=document.getElementById("start-menu");
-  m.style.display="block";
-  setTimeout(()=>m.classList.add("show"),10);
-  openPanel("settings");
+  openSettingsApp();
 }
 
 /* DESKTOP ITEM SETTINGS */
@@ -960,7 +1045,9 @@ function loadDesktopItemSettings(){
   // Re-apply master switch after individual settings are loaded.
   toggleDesktopItems(masterEnabled);
 }
+document.addEventListener("fullscreenchange", updateGameFullscreenState);
 loadDesktopItemSettings();
+initAppSearch();
 
 </script>
 
