@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frazer Games</title>
+<meta name="description" content="Play Vex 7, Retro Bowl, Moto X3M, Minecraft and more, plus a few handy apps, all in one place.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%AE%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#0b0e1a;
+    --bg-2:#141a3d;
+    --surface:#141a2b;
+    --surface-2:#1c2338;
+    --border:rgba(255,255,255,.09);
+    --text:#f4f6fb;
+    --text-muted:#98a2b8;
+    --accent:#ff4d6d;
+    --accent-2:#2dd4bf;
+    --radius-lg:22px;
+    --radius-md:14px;
+    --radius-sm:10px;
+    --font-scale:1;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(1100px 520px at 12% -10%, var(--bg-2), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:calc(16px * var(--font-scale));
+    line-height:1.5;
+  }
+
+  h1,h2,h3,.brand,.card-title,.player-info h3{ font-family:'Space Grotesk','Inter',sans-serif; }
+
+  button, input, select{ font-family:inherit; }
+
+  .wrap{ max-width:1280px; margin:0 auto; padding:0 28px; }
+
+  a{ color:inherit; }
+
+  ::selection{ background:var(--accent); color:#1a0509; }
+
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+
+  img{ max-width:100%; display:block; }
+
+  /* ---------- NAV ---------- */
+  .site-nav{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(11,14,26,.72);
+    backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--border);
+  }
+
+  .nav-inner{
+    display:flex;
+    align-items:center;
+    gap:22px;
+    height:72px;
+  }
+
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:3px;
+    font-weight:700;
+    font-size:1.35rem;
+    text-decoration:none;
+    flex-shrink:0;
+  }
+
+  .brand-accent{ color:var(--accent); }
+
+  .nav-links{ display:flex; gap:4px; }
+
+  .nav-link{
+    text-decoration:none;
+    color:var(--text-muted);
+    font-weight:600;
+    font-size:.95rem;
+    padding:8px 14px;
+    border-radius:999px;
+    transition:background .15s,color .15s;
+  }
+
+  .nav-link:hover{ color:var(--text); background:var(--surface-2); }
+
+  .nav-link.active{ color:#160408; background:var(--accent); }
+
+  .nav-actions{ margin-left:auto; display:flex; align-items:center; gap:10px; }
+
+  .search-wrap input{
+    width:200px;
+    padding:10px 14px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text);
+    outline:none;
+    transition:border-color .15s, box-shadow .15s;
+  }
+
+  .search-wrap input:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(255,255,255,.06); }
+
+  .icon-btn{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text);
+    font-size:1.1rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:background .15s;
+    flex-shrink:0;
+  }
+
+  .icon-btn:hover{ background:var(--surface-2); }
+
+  /* ---------- HERO ---------- */
+  .hero{ padding:60px 0 52px; position:relative; }
+
+  .has-hero-image .hero{
+    background:
+      linear-gradient(180deg, rgba(5,6,11,.35), rgba(5,6,11,.9)),
+      var(--hero-image) center/cover no-repeat;
+    border-radius:0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .hero-inner{
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    gap:44px;
+    align-items:center;
+  }
+
+  .hero-copy h1{ font-size:clamp(2rem,3.6vw,3.1rem); line-height:1.08; font-weight:700; margin:0 0 16px; }
+
+  .hero-copy p{ color:var(--text-muted); max-width:48ch; margin:0 0 26px; font-size:1.03rem; }
+
+  .hero-actions{ display:flex; gap:12px; flex-wrap:wrap; }
+
+  .btn-primary{
+    background:var(--accent);
+    color:#1a0509;
+    border:none;
+    padding:14px 26px;
+    border-radius:12px;
+    font-weight:700;
+    font-size:.98rem;
+    cursor:pointer;
+    box-shadow:0 18px 34px -16px rgba(255,77,109,.55);
+    transition:transform .15s;
+  }
+
+  .btn-primary:hover{ transform:translateY(-2px); }
+
+  .btn-ghost{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:14px 22px;
+    border-radius:12px;
+    font-weight:600;
+    cursor:pointer;
+  }
+
+  .btn-ghost:hover{ background:var(--surface-2); }
+
+  .hero-art{
+    position:relative;
+    aspect-ratio:4/3;
+    border-radius:var(--radius-lg);
+    background:linear-gradient(135deg,var(--hero-c1,var(--accent)),var(--hero-c2,var(--accent-2)));
+    box-shadow:0 30px 60px -24px rgba(0,0,0,.55);
+    animation:heroIn .6s ease both;
+    overflow:hidden;
+  }
+
+  @keyframes heroIn{ from{ opacity:0; transform:translateY(14px) scale(.97); } to{ opacity:1; transform:none; } }
+
+  .hero-tag{
+    position:absolute;
+    top:16px;
+    left:16px;
+    background:rgba(0,0,0,.35);
+    backdrop-filter:blur(6px);
+    padding:6px 13px;
+    border-radius:999px;
+    font-size:.78rem;
+    font-weight:700;
+    z-index:2;
+  }
+
+  .hero-art-media{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:6.6rem;
+  }
+
+  .hero-art-media img{ width:100%; height:100%; object-fit:cover; }
+
+  /* ---------- SECTIONS ---------- */
+  .section{ padding:44px 0; }
+
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:16px;
+  }
+
+  .section-head h2{ font-size:1.45rem; margin:0; font-weight:700; }
+
+  .result-count{ color:var(--text-muted); font-size:.9rem; }
+
+  .recent-row{ display:flex; gap:14px; overflow-x:auto; padding-bottom:8px; }
+
+  .recent-row .card{ flex:0 0 200px; }
+
+  .chip-row{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:16px;
+    margin-bottom:6px;
+  }
+
+  .chip{
+    flex:0 0 auto;
+    padding:8px 16px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text-muted);
+    font-weight:600;
+    font-size:.87rem;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background .15s, color .15s;
+  }
+
+  .chip:hover{ color:var(--text); }
+
+  .chip.active{ background:var(--chip-color,var(--accent)); color:#160408; border-color:transparent; }
+
+  /* ---------- GRID / CARDS ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(228px,1fr));
+    gap:20px;
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-md);
+    overflow:hidden;
+    cursor:pointer;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    transition:transform .16s, border-color .16s, box-shadow .16s;
+  }
+
+  .card:hover, .card:focus-visible{
+    transform:translateY(-4px);
+    border-color:var(--cat-color,var(--accent));
+    box-shadow:0 18px 32px -18px var(--cat-glow, rgba(0,0,0,.5));
+  }
+
+  .card-art{ position:relative; aspect-ratio:16/9; }
+
+  .card-art-media{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:3.2rem;
+  }
+
+  .card-art-media img{ width:100%; height:100%; object-fit:cover; }
+
+  .fav-btn{
+    position:absolute;
+    top:9px;
+    right:9px;
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    border:none;
+    background:rgba(0,0,0,.4);
+    color:#fff;
+    font-size:1rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    z-index:2;
+  }
+
+  .fav-btn.active{ background:var(--accent); color:#1a0509; }
+
+  .card-hover{
+    position:absolute;
+    inset:0;
+    background:rgba(11,14,26,.55);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    transition:opacity .16s;
+    font-weight:700;
+    letter-spacing:.02em;
+  }
+
+  .card:hover .card-hover, .card:focus-visible .card-hover{ opacity:1; }
+
+  .card-body{ padding:13px 15px 15px; display:flex; flex-direction:column; gap:7px; flex:1; }
+
+  .card-title{ font-size:1rem; font-weight:700; margin:0; }
+
+  .tag{
+    align-self:flex-start;
+    font-size:.72rem;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:999px;
+  }
+
+  .empty-state{ text-align:center; color:var(--text-muted); padding:44px 0; }
+
+  /* ---------- FOOTER ---------- */
+  .site-footer{
+    border-top:1px solid var(--border);
+    padding:30px 0 46px;
+    color:var(--text-muted);
+    font-size:.85rem;
+    text-align:center;
+    line-height:1.6;
+  }
+
+  /* ---------- PLAYER OVERLAY ---------- */
+  .player-overlay{
+    position:fixed;
+    inset:0;
+    background:#05060b;
+    z-index:200;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .player-bar{
+    height:58px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:0 18px;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+  }
+
+  .player-tag{
+    font-size:.7rem;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:999px;
+    background:var(--surface-2);
+    color:var(--text-muted);
+  }
+
+  .player-info{ display:flex; align-items:center; gap:10px; min-width:0; }
+
+  .player-info h3{ margin:0; font-size:1.02rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .player-actions{ margin-left:auto; display:flex; gap:8px; }
+
+  .player-body{ flex:1; min-height:0; }
+
+  .player-body iframe{ width:100%; height:100%; border:none; background:#000; }
+
+  /* Code playground tool reused inside the player body */
+  .files-app-body{ height:100%; display:flex; flex-direction:column; background:#0d0d0d; }
+
+  .files-toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    padding:10px;
+    background:#171717;
+    border-bottom:1px solid rgba(255,255,255,.09);
+  }
+
+  .files-toolbar button{
+    border:none;
+    border-radius:8px;
+    padding:8px 12px;
+    background:#2a2a2a;
+    color:#fff;
+    cursor:pointer;
+  }
+
+  .files-toolbar button:hover{ background:#3a3a3a; }
+
+  .files-file-name{
+    min-width:150px;
+    flex:1;
+    padding:8px 10px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,.1);
+    background:#101010;
+    color:#fff;
+    outline:none;
+  }
+
+  .files-editor-wrap{ flex:1; min-height:0; display:grid; grid-template-columns:1fr 1fr; }
+
+  .files-editor{
+    width:100%;
+    height:100%;
+    resize:none;
+    border:none;
+    outline:none;
+    padding:14px;
+    background:#0b0b0b;
+    color:#eaeaea;
+    font:13px/1.5 Consolas,Monaco,monospace;
+    border-right:1px solid rgba(255,255,255,.1);
+  }
+
+  .files-preview{ width:100%; height:100%; border:none; background:#fff; }
+
+  @media(max-width:800px){
+    .files-editor-wrap{ grid-template-columns:1fr; grid-template-rows:1fr 1fr; }
+    .files-editor{ border-right:none; border-bottom:1px solid rgba(255,255,255,.1); }
+  }
+
+  /* ---------- SETTINGS ---------- */
+  .player-overlay[hidden],
+  .settings-overlay[hidden],
+  .settings-panel[hidden]{
+    display:none !important;
+  }
+
+  .settings-overlay{ position:fixed; inset:0; background:rgba(4,5,10,.6); z-index:210; }
+
+  .settings-panel{
+    position:fixed;
+    top:0;
+    right:0;
+    height:100%;
+    width:min(380px,92vw);
+    background:var(--surface);
+    border-left:1px solid var(--border);
+    z-index:211;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .settings-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:20px;
+    border-bottom:1px solid var(--border);
+    flex-shrink:0;
+  }
+
+  .settings-header h3{ margin:0; font-size:1.1rem; }
+
+  .settings-body{ flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:26px; }
+
+  .settings-group h4{ margin:0 0 10px; font-size:.85rem; font-weight:600; color:var(--text-muted); }
+
+  .swatch-row{ display:flex; gap:10px; }
+
+  .swatch{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:2px solid transparent;
+    cursor:pointer;
+    padding:0;
+  }
+
+  .swatch.active{ border-color:#fff; }
+
+  .settings-select{
+    width:100%;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:var(--bg);
+    color:var(--text);
+  }
+
+  .toggle-row{ display:flex; align-items:center; justify-content:space-between; font-size:.92rem; }
+
+  .switch{ position:relative; display:inline-block; width:42px; height:24px; flex-shrink:0; }
+
+  .switch input{ opacity:0; width:0; height:0; }
+
+  .slider{ position:absolute; inset:0; background:var(--surface-2); border-radius:999px; cursor:pointer; transition:.15s; }
+
+  .slider::before{
+    content:"";
+    position:absolute;
+    height:18px;
+    width:18px;
+    left:3px;
+    bottom:3px;
+    background:#fff;
+    border-radius:50%;
+    transition:.15s;
+  }
+
+  .switch input:checked + .slider{ background:var(--accent); }
+
+  .switch input:checked + .slider::before{ transform:translateX(18px); }
+
+  .btn-secondary{
+    padding:10px 16px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:var(--bg);
+    color:var(--text);
+    cursor:pointer;
+    font-weight:600;
+    text-align:left;
+  }
+
+  .btn-secondary:hover{ background:var(--surface-2); }
+
+  .data-actions{ display:flex; flex-direction:column; gap:8px; }
+
+  .about-note{ color:var(--text-muted); font-size:.8rem; line-height:1.6; }
+
+  /* ---------- MOTION / A11Y ---------- */
+  body.no-animations *{ transition:none !important; animation:none !important; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ animation:none !important; transition:none !important; }
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media(max-width:900px){
+    .hero-inner{ grid-template-columns:1fr; }
+    .hero-art{ order:-1; aspect-ratio:16/9; }
+  }
+
+  @media(max-width:640px){
+    .wrap{ padding:0 16px; }
+    .nav-links{ display:none; }
+    .search-wrap input{ width:120px; }
+    .grid{ grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:12px; }
+    .card-art-media{ font-size:2.1rem; }
+    .card-body{ padding:10px 11px 12px; }
+    .card-title{ font-size:.88rem; }
+    .hero{ padding:40px 0 36px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top"><span>Frazer</span><span class="brand-accent">Games</span></a>
+    <nav class="nav-links">
+      <a class="nav-link active" href="#games-section">Games</a>
+      <a class="nav-link" href="#apps-section">Apps</a>
+    </nav>
+    <div class="nav-actions">
+      <div class="search-wrap">
+        <input id="search-input" type="search" placeholder="Search games…" aria-label="Search games">
+      </div>
+      <button class="icon-btn" id="settings-btn" aria-label="Open settings" type="button">⚙</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <h1 id="hero-title">Loading…</h1>
+        <p id="hero-blurb"></p>
+        <div class="hero-actions">
+          <button class="btn-primary" id="hero-play-btn" type="button">▶ Play now</button>
+          <button class="btn-ghost" id="hero-surprise-btn" type="button">🎲 Surprise me</button>
+        </div>
+      </div>
+      <div class="hero-art" id="hero-art">
+        <span class="hero-tag" id="hero-tag"></span>
+        <div class="hero-art-media" id="hero-art-media"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="recent-section" hidden>
+    <div class="wrap">
+      <div class="section-head"><h2>Continue playing</h2></div>
+      <div class="recent-row" id="recent-row"></div>
+    </div>
+  </section>
+
+  <section class="section" id="games-section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>All games</h2>
+        <span class="result-count" id="result-count"></span>
+      </div>
+      <div class="chip-row" id="chip-row"></div>
+      <div class="grid" id="games-grid"></div>
+      <p class="empty-state" id="empty-state" hidden>No games found. Try a different search or category.</p>
+    </div>
+  </section>
+
+  <section class="section" id="apps-section">
+    <div class="wrap">
+      <div class="section-head"><h2>Apps &amp; tools</h2></div>
+      <div class="grid" id="apps-grid"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    Games and apps here are provided for fair use / educational purposes.<br>
+    Frazer Games doesn't claim ownership of third-party games.
+  </div>
+</footer>
+
+<!-- PLAYER OVERLAY -->
+<div class="player-overlay" id="player-overlay" hidden role="dialog" aria-modal="true" aria-label="Game player">
+  <div class="player-bar">
+    <div class="player-info">
+      <span class="player-tag" id="player-tag"></span>
+      <h3 id="player-title"></h3>
+    </div>
+    <div class="player-actions">
+      <button class="icon-btn" id="player-fullscreen" aria-label="Toggle fullscreen" type="button">⛶</button>
+      <button class="icon-btn" id="player-close" aria-label="Close" type="button">✕</button>
+    </div>
+  </div>
+  <div class="player-body" id="player-body"></div>
+</div>
+
+<!-- SETTINGS -->
+<div class="settings-overlay" id="settings-overlay" hidden></div>
+<aside class="settings-panel" id="settings-panel" hidden role="dialog" aria-modal="true" aria-label="Settings">
+  <div class="settings-header">
+    <h3>Settings</h3>
+    <button class="icon-btn" id="settings-close" aria-label="Close settings" type="button">✕</button>
+  </div>
+  <div class="settings-body">
+
+    <div class="settings-group">
+      <h4>Accent color</h4>
+      <div class="swatch-row" id="accent-swatches"></div>
+    </div>
+
+    <div class="settings-group">
+      <h4>Backdrop</h4>
+      <select class="settings-select" id="backdrop-select">
+        <option value="midnight">Midnight (default)</option>
+        <option value="indigo">Indigo</option>
+        <option value="slate">Slate</option>
+        <option value="plum">Plum</option>
+        <option value="custom">Custom image</option>
+      </select>
+      <button class="btn-secondary" id="backdrop-upload-btn" type="button" style="margin-top:10px; display:none;">🖼 Choose image</button>
+      <input type="file" id="backdrop-file" accept="image/*" style="display:none">
+    </div>
+
+    <div class="settings-group">
+      <h4>Text size</h4>
+      <select class="settings-select" id="fontsize-select">
+        <option value="small">Small</option>
+        <option value="medium">Medium</option>
+        <option value="large">Large</option>
+        <option value="xlarge">Extra large</option>
+      </select>
+    </div>
+
+    <div class="settings-group">
+      <div class="toggle-row">
+        <span>Animations</span>
+        <label class="switch">
+          <input type="checkbox" id="animations-toggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <h4>Your data</h4>
+      <div class="data-actions">
+        <button class="btn-secondary" id="clear-favorites-btn" type="button">Clear favorites</button>
+        <button class="btn-secondary" id="clear-recent-btn" type="button">Clear recently played</button>
+        <button class="btn-secondary" id="reset-settings-btn" type="button">Reset all settings</button>
+      </div>
+    </div>
+
+    <p class="about-note">Favorites, recently played, and these settings are saved on this device only.</p>
+
+  </div>
+</aside>
+
+<script>
+/* ============================================================
+   GAME CATALOG
+   To swap the icon+gradient art for a real thumbnail, set the
+   "img" field to an image URL, e.g. img: "https://.../vex7.jpg"
+   Recommended size: at least 480x270px (16:9), jpg/png/webp.
+   ============================================================ */
+const GAMES = [
+  { id:'vex7', name:'Vex 7', icon:'🏃', category:'Action', url:'games/vex7/index.html', img:null, blurb:'Run, jump, and slide through a brutal obstacle course.' },
+  { id:'snake', name:'Snake', icon:'🐍', category:'Arcade', url:'games/snake/index.html', img:null, blurb:'Grow your snake and dodge your own tail in this classic.' },
+  { id:'slope', name:'Slope', icon:'🏂', category:'Arcade', url:'games/slope/index.html', img:null, blurb:'Roll a ball down an impossible neon slope without falling off.' },
+  { id:'drive-mad', name:'Drive Mad', icon:'🚗', category:'Racing', url:'games/drive-mad/index.html', img:null, blurb:'Wreck your way across ridiculous ramps and obstacles.' },
+  { id:'drivemad2', name:'Drive Mad 2', icon:'🚙', category:'Racing', url:'games/drivemad2/index.html', img:null, blurb:'New tracks, tougher ramps, same glorious chaos.' },
+  { id:'retro-bowl', name:'Retro Bowl', icon:'🏈', category:'Sports', url:'games/retro-bowl/index.html', img:null, blurb:'Call the plays and lead your team to the championship.' },
+  { id:'retrobowlcollege', name:'Retro Bowl College', icon:'🏈', category:'Sports', url:'games/retrobowlcollege/index.html', img:null, blurb:'Take a college team from tryouts to the title.' },
+  { id:'gball', name:'GBall', icon:'⚾', category:'Sports', url:'games/gball/index.html', img:null, blurb:'A quick pick-up-and-play baseball game.' },
+  { id:'moto-x3m', name:'Moto X3M', icon:'🏍️', category:'Racing', url:'games/moto-x3m/index.html', img:null, blurb:'Race dirt bikes through explosive, over-the-top stunt tracks.' },
+  { id:'motox3m2', name:'Moto X3M 2', icon:'🏍️', category:'Racing', url:'games/motox3m2/index.html', img:null, blurb:'More stunts, more wipeouts, same two-wheeled chaos.' },
+  { id:'basketball-stars', name:'Basketball Stars', icon:'🏀', category:'Sports', url:'games/basketball-stars/index.html', img:null, blurb:'One-on-one basketball with trick shots and dunks.' },
+  { id:'snow-rider-3d', name:'Snow Rider 3D', icon:'❄️', category:'Arcade', url:'games/Snow-Rider3D-main/index.html', img:null, blurb:'Sled down an endless snowy hill, dodging everything in your path.' },
+  { id:'fnaf', name:'FNaF', icon:'🐻', category:'Horror', url:'games/fnaf/index.html', img:null, blurb:"Survive the night shift, and don't trust the dark." },
+  { id:'fnaje', name:'FNaJE', icon:'😈', category:'Horror', url:'games/fnaje/index.html', img:null, blurb:"A twisted spin-off night shift you won't forget." },
+  { id:'rocket-goal', name:'Rocket Goal', icon:'⚽', category:'Sports', url:'games/rocket-goal/index.html', img:null, blurb:'Rocket-powered cars, one ball, and a goal to defend.' },
+  { id:'marty-games', name:'Marty Games', icon:'🎲', category:'Arcade', url:'apps/marty-games/index.html', img:null, blurb:'A grab-bag collection of quick mini-games.' },
+  { id:'papaswings', name:'Papas Wingeria', icon:'🍔', category:'Simulation', url:'games/papaswings/index.html', img:null, blurb:'Run a wing joint and keep every customer happy.' },
+  { id:'minecraft', name:'Minecraft', icon:'⛏️', category:'Sandbox', url:'minec/EaglercraftX_1.8_u53_Offline_Signed.html', img:null, blurb:'Build, mine, and survive in a blocky sandbox world.' },
+  { id:'subwaysurfers', name:'Subway Surfers', icon:'🛹', category:'Arcade', url:'games/subwaysurfers/index.html', img:null, blurb:'Dash through the subway, dodging trains as you go.' },
+  { id:'bitlife', name:'Bitlife', icon:'👶', category:'Simulation', url:'games/bitl/index.html', img:null, blurb:'Live out an entire life, one decision at a time.' },
+  { id:'crazycattle3d', name:'Crazy Cattle 3D', icon:'🐂', category:'Action', url:'games/crazycattle3d/CrazyCattle3D.html', img:null, blurb:'Headbutt physics chaos as a very angry sheep.' }
+];
+
+const APPS = [
+  { id:'chatbot', name:'AI Chatbot', icon:'🤖', url:'apps/chatbot/index.html', img:null, blurb:'Ask questions and get quick answers.' },
+  { id:'music', name:'Frazer Music', icon:'🎵', url:'apps/music/index.html', img:null, blurb:'Stream and queue up your favorite tracks.' },
+  { id:'google', name:'Frazer Proxy', icon:'🌐', url:'apps/google/index.html', img:null, blurb:'Browse the web from here.' },
+  { id:'files-tool', name:'Code Playground', icon:'📁', url:null, type:'tool', img:null, blurb:'Write, run, and preview your own HTML.' }
+];
+
+const CATEGORY_STYLES = {
+  Action:     { grad:['#ff4d6d','#ff8fa3'], color:'#ff6b81' },
+  Arcade:     { grad:['#7c6cf0','#b47cf0'], color:'#9b8af5' },
+  Racing:     { grad:['#ffb800','#ff7a00'], color:'#ffae00' },
+  Sports:     { grad:['#06b6d4','#2dd4bf'], color:'#22c3c9' },
+  Horror:     { grad:['#3f0d12','#8a1f2b'], color:'#c94a4a' },
+  Simulation: { grad:['#10b981','#34d399'], color:'#22c98d' },
+  Sandbox:    { grad:['#92400e','#f59e0b'], color:'#e08b21' },
+  Apps:       { grad:['#334155','#64748b'], color:'#8291a8' }
+};
+
+const ACCENT_THEMES = {
+  coral:  { accent:'#ff4d6d', accent2:'#2dd4bf' },
+  cyan:   { accent:'#22d3ee', accent2:'#a78bfa' },
+  violet: { accent:'#8b5cf6', accent2:'#f472b6' },
+  amber:  { accent:'#f59e0b', accent2:'#34d399' },
+  green:  { accent:'#22c55e', accent2:'#38bdf8' }
+};
+
+const BACKDROPS = {
+  midnight: { bg:'#0b0e1a', bg2:'#141a3d' },
+  indigo:   { bg:'#0c0f24', bg2:'#1e2a5e' },
+  slate:    { bg:'#0f1115', bg2:'#232733' },
+  plum:     { bg:'#160b1f', bg2:'#3a1a4d' },
+  custom:   { bg:'#0b0e1a', bg2:'#141a3d' }
+};
+
+const state = { category:'All', query:'' };
+let favorites = new Set();
+let recent = [];
+
+/* ---------- storage helpers ---------- */
+const store = {
+  get(key, fallback){
+    try{
+      const v = localStorage.getItem(key);
+      return v === null ? fallback : JSON.parse(v);
+    }catch(e){ return fallback; }
+  },
+  set(key, val){
+    try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+  }
+};
+
+function hexAlpha(hex, alpha){
+  const h = hex.replace('#','');
+  const r = parseInt(h.substring(0,2),16);
+  const g = parseInt(h.substring(2,4),16);
+  const b = parseInt(h.substring(4,6),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function categoryStyle(cat){
+  return CATEGORY_STYLES[cat] || CATEGORY_STYLES.Apps;
+}
+
+/* ---------- cards ---------- */
+function createCard(item, isApp){
+  const cat = item.category || 'Apps';
+  const style = categoryStyle(cat);
+
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.tabIndex = 0;
+  card.dataset.id = item.id;
+  card.style.setProperty('--cat-color', style.color);
+  card.style.setProperty('--cat-glow', hexAlpha(style.color, .45));
+
+  const art = document.createElement('div');
+  art.className = 'card-art';
+
+  const media = document.createElement('div');
+  media.className = 'card-art-media';
+  if(item.img){
+    const img = document.createElement('img');
+    img.src = item.img;
+    img.alt = item.name;
+    img.loading = 'lazy';
+    media.appendChild(img);
+  }else{
+    media.style.background = `linear-gradient(135deg, ${style.grad[0]}, ${style.grad[1]})`;
+    media.textContent = item.icon;
+  }
+  art.appendChild(media);
+
+  if(!isApp){
+    const fav = document.createElement('button');
+    fav.type = 'button';
+    fav.className = 'fav-btn' + (favorites.has(item.id) ? ' active' : '');
+    fav.setAttribute('aria-label', favorites.has(item.id) ? 'Remove from favorites' : 'Save to favorites');
+    fav.textContent = favorites.has(item.id) ? '★' : '☆';
+    fav.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      toggleFavorite(item.id, fav);
+    });
+    art.appendChild(fav);
+  }
+
+  const hover = document.createElement('div');
+  hover.className = 'card-hover';
+  hover.textContent = item.type === 'tool' ? '▶ Open' : '▶ Play';
+  art.appendChild(hover);
+
+  const body = document.createElement('div');
+  body.className = 'card-body';
+
+  const title = document.createElement('h3');
+  title.className = 'card-title';
+  title.textContent = item.name;
+  body.appendChild(title);
+
+  if(item.category){
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.textContent = cat;
+    tag.style.color = style.color;
+    tag.style.background = hexAlpha(style.color, .16);
+    body.appendChild(tag);
+  }
+
+  card.appendChild(art);
+  card.appendChild(body);
+
+  card.addEventListener('click', ()=>openPlayer(item, isApp));
+  card.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      openPlayer(item, isApp);
+    }
+  });
+
+  return card;
+}
+
+/* ---------- filtering + rendering ---------- */
+function getFilteredGames(){
+  return GAMES.filter(g=>{
+    const matchesCat = state.category === 'All' || g.category === state.category;
+    const q = state.query;
+    const matchesQuery = !q || g.name.toLowerCase().includes(q) || g.category.toLowerCase().includes(q);
+    return matchesCat && matchesQuery;
+  });
+}
+
+function renderGamesGrid(){
+  const grid = document.getElementById('games-grid');
+  grid.innerHTML = '';
+  const list = getFilteredGames();
+  list.forEach(g=>grid.appendChild(createCard(g, false)));
+
+  const countEl = document.getElementById('result-count');
+  countEl.textContent = (state.query || state.category !== 'All')
+    ? `${list.length} game${list.length !== 1 ? 's' : ''}`
+    : `${GAMES.length} games`;
+
+  document.getElementById('empty-state').hidden = list.length !== 0;
+}
+
+function renderAppsGrid(){
+  const grid = document.getElementById('apps-grid');
+  grid.innerHTML = '';
+  APPS.forEach(a=>grid.appendChild(createCard(a, true)));
+}
+
+function renderChips(){
+  const row = document.getElementById('chip-row');
+  row.innerHTML = '';
+  const categories = ['All', ...Array.from(new Set(GAMES.map(g=>g.category)))];
+
+  categories.forEach(cat=>{
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip' + (state.category === cat ? ' active' : '');
+    chip.textContent = cat;
+    if(cat !== 'All'){
+      chip.style.setProperty('--chip-color', categoryStyle(cat).color);
+    }
+    chip.addEventListener('click', ()=>{
+      state.category = cat;
+      renderChips();
+      renderGamesGrid();
+    });
+    row.appendChild(chip);
+  });
+}
+
+function renderRecent(){
+  const section = document.getElementById('recent-section');
+  const row = document.getElementById('recent-row');
+  row.innerHTML = '';
+  const items = recent.map(id=>GAMES.find(g=>g.id === id)).filter(Boolean);
+
+  if(items.length === 0){
+    section.hidden = true;
+    return;
+  }
+
+  section.hidden = false;
+  items.forEach(g=>row.appendChild(createCard(g, false)));
+}
+
+/* ---------- favorites / recent ---------- */
+function toggleFavorite(id, btnEl){
+  if(favorites.has(id)) favorites.delete(id);
+  else favorites.add(id);
+
+  store.set('frazerFavorites', Array.from(favorites));
+
+  if(btnEl){
+    btnEl.classList.toggle('active', favorites.has(id));
+    btnEl.textContent = favorites.has(id) ? '★' : '☆';
+    btnEl.setAttribute('aria-label', favorites.has(id) ? 'Remove from favorites' : 'Save to favorites');
+  }
+}
+
+function pushRecent(id){
+  recent = [id, ...recent.filter(x=>x !== id)].slice(0, 6);
+  store.set('frazerRecentGames', recent);
+  renderRecent();
+}
+
+/* ---------- hero ---------- */
+function renderHero(){
+  const featured = GAMES[Math.floor(Math.random() * GAMES.length)];
+  const style = categoryStyle(featured.category);
+
+  document.getElementById('hero-tag').textContent = featured.category;
+  document.getElementById('hero-title').textContent = featured.name;
+  document.getElementById('hero-blurb').textContent = featured.blurb;
+
+  const art = document.getElementById('hero-art');
+  art.style.setProperty('--hero-c1', style.grad[0]);
+  art.style.setProperty('--hero-c2', style.grad[1]);
+
+  const media = document.getElementById('hero-art-media');
+  media.innerHTML = '';
+  if(featured.img){
+    const img = document.createElement('img');
+    img.src = featured.img;
+    img.alt = featured.name;
+    media.appendChild(img);
+  }else{
+    media.textContent = featured.icon;
+  }
+
+  document.getElementById('hero-play-btn').onclick = ()=>openPlayer(featured, false);
+}
+
+document.getElementById('hero-surprise-btn').addEventListener('click', ()=>{
+  const g = GAMES[Math.floor(Math.random() * GAMES.length)];
+  openPlayer(g, false);
+});
+
+/* ---------- code playground tool ---------- */
+function buildFilesTool(){
+  const wrap = document.createElement('div');
+  wrap.className = 'files-app-body';
+  wrap.innerHTML = `
+    <div class="files-toolbar">
+      <input class="files-file-name" value="index.html" aria-label="File name">
+      <button type="button" data-action="new">+ New</button>
+      <button type="button" data-action="open">Open HTML</button>
+      <button type="button" data-action="run">Run</button>
+      <button type="button" data-action="clear">Clear</button>
+      <input type="file" accept=".html,.htm,text/html" class="files-open-input" style="display:none">
+    </div>
+    <div class="files-editor-wrap">
+      <textarea class="files-editor" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My HTML App</title>
+</head>
+<body>
+  <h1>Hello!</h1>
+  <p>Edit this code and press Run.</p>
+</body>
+</html></textarea>
+      <iframe class="files-preview" sandbox="allow-scripts allow-forms"></iframe>
+    </div>
+  `;
+
+  const editor = wrap.querySelector('.files-editor');
+  const preview = wrap.querySelector('.files-preview');
+  const fileName = wrap.querySelector('.files-file-name');
+  const fileInput = wrap.querySelector('.files-open-input');
+
+  const run = ()=>{ preview.srcdoc = editor.value; };
+
+  wrap.querySelector('[data-action="run"]').addEventListener('click', run);
+  wrap.querySelector('[data-action="clear"]').addEventListener('click', ()=>{ editor.value = ''; run(); });
+  wrap.querySelector('[data-action="new"]').addEventListener('click', ()=>{
+    fileName.value = 'index.html';
+    editor.value = '<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <title>New HTML App</title>\n</head>\n<body>\n  \n</body>\n</html>';
+    run();
+  });
+  wrap.querySelector('[data-action="open"]').addEventListener('click', ()=>fileInput.click());
+  fileInput.addEventListener('change', ()=>{
+    const file = fileInput.files && fileInput.files[0];
+    if(!file) return;
+    fileName.value = file.name;
+    const reader = new FileReader();
+    reader.onload = ()=>{ editor.value = String(reader.result || ''); run(); };
+    reader.readAsText(file);
+    fileInput.value = '';
+  });
+
+  setTimeout(run, 0);
+  return wrap;
+}
+
+/* ---------- player overlay ---------- */
+let lastFocused = null;
+
+function openPlayer(item, isApp){
+  lastFocused = document.activeElement;
+
+  const overlay = document.getElementById('player-overlay');
+  const body = document.getElementById('player-body');
+  const title = document.getElementById('player-title');
+  const tag = document.getElementById('player-tag');
+
+  body.innerHTML = '';
+  title.textContent = item.name;
+
+  if(item.category){
+    tag.textContent = item.category;
+    tag.style.display = 'inline-block';
+  }else{
+    tag.style.display = 'none';
+  }
+
+  if(item.type === 'tool'){
+    body.appendChild(buildFilesTool());
+  }else{
+    const iframe = document.createElement('iframe');
+    iframe.src = item.url;
+    iframe.setAttribute('allow', 'fullscreen; autoplay; gamepad; clipboard-write');
+    body.appendChild(iframe);
+  }
+
+  overlay.hidden = false;
+  document.body.style.overflow = 'hidden';
+  document.getElementById('player-close').focus();
+
+  if(!isApp) pushRecent(item.id);
+}
+
+function closePlayer(){
+  const overlay = document.getElementById('player-overlay');
+  const body = document.getElementById('player-body');
+  overlay.hidden = true;
+  body.innerHTML = '';
+  document.body.style.overflow = '';
+  if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+  if(lastFocused) lastFocused.focus();
+}
+
+document.getElementById('player-close').addEventListener('click', closePlayer);
+document.getElementById('player-fullscreen').addEventListener('click', ()=>{
+  const overlay = document.getElementById('player-overlay');
+  if(!document.fullscreenElement){
+    (overlay.requestFullscreen ? overlay.requestFullscreen() : Promise.resolve()).catch(()=>{});
+  }else{
+    document.exitFullscreen();
+  }
+});
+
+document.addEventListener('keydown', (e)=>{
+  if(e.key !== 'Escape') return;
+  if(!document.getElementById('player-overlay').hidden) closePlayer();
+  if(!document.getElementById('settings-panel').hidden) closeSettings();
+});
+
+/* ---------- search ---------- */
+const searchInput = document.getElementById('search-input');
+searchInput.addEventListener('input', ()=>{
+  state.query = searchInput.value.trim().toLowerCase();
+  renderGamesGrid();
+});
+searchInput.addEventListener('keydown', (e)=>{
+  if(e.key !== 'Enter') return;
+  const list = getFilteredGames();
+  if(list.length) openPlayer(list[0], false);
+});
+
+/* ---------- nav active-section highlight ---------- */
+const navLinks = document.querySelectorAll('.nav-link');
+const sectionObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(!entry.isIntersecting) return;
+    navLinks.forEach(l=>l.classList.toggle('active', l.getAttribute('href') === '#' + entry.target.id));
+  });
+}, { rootMargin:'-40% 0px -50% 0px' });
+
+['games-section','apps-section'].forEach(id=>{
+  const el = document.getElementById(id);
+  if(el) sectionObserver.observe(el);
+});
+
+/* ---------- settings: accent ---------- */
+function renderAccentSwatches(){
+  const row = document.getElementById('accent-swatches');
+  row.innerHTML = '';
+  Object.entries(ACCENT_THEMES).forEach(([key, theme])=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'swatch';
+    btn.dataset.key = key;
+    btn.style.background = `linear-gradient(135deg, ${theme.accent}, ${theme.accent2})`;
+    btn.setAttribute('aria-label', key + ' accent');
+    btn.addEventListener('click', ()=>applyAccent(key));
+    row.appendChild(btn);
+  });
+}
+
+function applyAccent(key){
+  const theme = ACCENT_THEMES[key] || ACCENT_THEMES.coral;
+  document.documentElement.style.setProperty('--accent', theme.accent);
+  document.documentElement.style.setProperty('--accent-2', theme.accent2);
+  store.set('frazerAccent', key);
+  document.querySelectorAll('.swatch').forEach(s=>s.classList.toggle('active', s.dataset.key === key));
+}
+
+/* ---------- settings: backdrop ---------- */
+function applyBackdrop(key){
+  if(key === 'custom'){
+    const img = store.get('frazerHeroImage', null);
+    if(img){
+      document.documentElement.style.setProperty('--hero-image', `url("${img}")`);
+      document.body.classList.add('has-hero-image');
+    }else{
+      key = 'midnight';
+      document.body.classList.remove('has-hero-image');
+    }
+  }else{
+    document.body.classList.remove('has-hero-image');
+  }
+
+  const preset = BACKDROPS[key] || BACKDROPS.midnight;
+  document.documentElement.style.setProperty('--bg', preset.bg);
+  document.documentElement.style.setProperty('--bg-2', preset.bg2);
+  store.set('frazerBackdrop', key);
+
+  const select = document.getElementById('backdrop-select');
+  if(select) select.value = key;
+
+  const uploadBtn = document.getElementById('backdrop-upload-btn');
+  if(uploadBtn) uploadBtn.style.display = key === 'custom' ? 'inline-flex' : 'none';
+}
+
+document.getElementById('backdrop-select').addEventListener('change', (e)=>applyBackdrop(e.target.value));
+document.getElementById('backdrop-upload-btn').addEventListener('click', ()=>document.getElementById('backdrop-file').click());
+document.getElementById('backdrop-file').addEventListener('change', (e)=>{
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    store.set('frazerHeroImage', reader.result);
+    applyBackdrop('custom');
+  };
+  reader.readAsDataURL(file);
+});
+
+/* ---------- settings: font size / animations ---------- */
+function applyFontSize(key){
+  const scale = { small:.92, medium:1, large:1.08, xlarge:1.18 }[key] || 1;
+  document.documentElement.style.setProperty('--font-scale', scale);
+  store.set('frazerFontSize', key);
+  document.getElementById('fontsize-select').value = key;
+}
+
+function applyAnimations(enabled){
+  document.body.classList.toggle('no-animations', !enabled);
+  store.set('frazerAnimations', enabled);
+  document.getElementById('animations-toggle').checked = enabled;
+}
+
+document.getElementById('fontsize-select').addEventListener('change', (e)=>applyFontSize(e.target.value));
+document.getElementById('animations-toggle').addEventListener('change', (e)=>applyAnimations(e.target.checked));
+
+/* ---------- settings: data actions ---------- */
+document.getElementById('clear-favorites-btn').addEventListener('click', ()=>{
+  favorites = new Set();
+  store.set('frazerFavorites', []);
+  renderGamesGrid();
+  renderAppsGrid();
+  renderRecent();
+});
+
+document.getElementById('clear-recent-btn').addEventListener('click', ()=>{
+  recent = [];
+  store.set('frazerRecentGames', []);
+  renderRecent();
+});
+
+document.getElementById('reset-settings-btn').addEventListener('click', ()=>{
+  ['frazerAccent','frazerBackdrop','frazerHeroImage','frazerFontSize','frazerAnimations'].forEach(k=>localStorage.removeItem(k));
+  applyAccent('coral');
+  applyBackdrop('midnight');
+  applyFontSize('medium');
+  applyAnimations(true);
+});
+
+/* ---------- settings panel open/close ---------- */
+function openSettings(){
+  document.getElementById('settings-overlay').hidden = false;
+  document.getElementById('settings-panel').hidden = false;
+  document.getElementById('settings-close').focus();
+}
+
+function closeSettings(){
+  document.getElementById('settings-overlay').hidden = true;
+  document.getElementById('settings-panel').hidden = true;
+}
+
+document.getElementById('settings-btn').addEventListener('click', openSettings);
+document.getElementById('settings-close').addEventListener('click', closeSettings);
+document.getElementById('settings-overlay').addEventListener('click', closeSettings);
+
+/* ---------- init ---------- */
+function loadSettings(){
+  applyAccent(store.get('frazerAccent', 'coral'));
+  applyBackdrop(store.get('frazerBackdrop', 'midnight'));
+  applyFontSize(store.get('frazerFontSize', 'medium'));
+  applyAnimations(store.get('frazerAnimations', true));
+}
+
+function init(){
+  favorites = new Set(store.get('frazerFavorites', []));
+  recent = store.get('frazerRecentGames', []);
+
+  renderAccentSwatches();
+  loadSettings();
+  renderHero();
+  renderChips();
+  renderGamesGrid();
+  renderAppsGrid();
+  renderRecent();
+}
+
+init();
+</script>
+
+</body>
+</html>
