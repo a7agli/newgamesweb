@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,7 +59,6 @@
 
   img{ max-width:100%; display:block; }
 
-  /* ---------- NAV ---------- */
   .site-nav{
     position:sticky;
     top:0;
@@ -136,7 +136,6 @@
 
   .icon-btn:hover{ background:var(--surface-2); }
 
-  /* ---------- HERO ---------- */
   .hero{ padding:60px 0 52px; position:relative; }
 
   .has-hero-image .hero{
@@ -222,7 +221,6 @@
 
   .hero-art-media img{ width:100%; height:100%; object-fit:cover; }
 
-  /* ---------- SECTIONS ---------- */
   .section{ padding:44px 0; }
 
   .section-head{
@@ -268,7 +266,6 @@
 
   .chip.active{ background:var(--chip-color,var(--accent)); color:#160408; border-color:transparent; }
 
-  /* ---------- GRID / CARDS ---------- */
   .grid{
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(228px,1fr));
@@ -355,7 +352,6 @@
 
   .empty-state{ text-align:center; color:var(--text-muted); padding:44px 0; }
 
-  /* ---------- FOOTER ---------- */
   .site-footer{
     border-top:1px solid var(--border);
     padding:30px 0 46px;
@@ -365,7 +361,6 @@
     line-height:1.6;
   }
 
-  /* ---------- PLAYER OVERLAY ---------- */
   .player-overlay{
     position:fixed;
     inset:0;
@@ -405,7 +400,6 @@
 
   .player-body iframe{ width:100%; height:100%; border:none; background:#000; }
 
-  /* Code playground tool reused inside the player body */
   .files-app-body{ height:100%; display:flex; flex-direction:column; background:#0d0d0d; }
 
   .files-toolbar{
@@ -461,7 +455,6 @@
     .files-editor{ border-right:none; border-bottom:1px solid rgba(255,255,255,.1); }
   }
 
-  /* ---------- SETTINGS ---------- */
   .player-overlay[hidden],
   .settings-overlay[hidden],
   .settings-panel[hidden]{
@@ -520,6 +513,22 @@
     color:var(--text);
   }
 
+  .settings-input{
+    width:100%;
+    padding:10px 12px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:var(--bg);
+    color:var(--text);
+    outline:none;
+    margin-top:10px;
+  }
+
+  .settings-input:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(255,255,255,.06);
+  }
+
   .toggle-row{ display:flex; align-items:center; justify-content:space-between; font-size:.92rem; }
 
   .switch{ position:relative; display:inline-block; width:42px; height:24px; flex-shrink:0; }
@@ -561,7 +570,6 @@
 
   .about-note{ color:var(--text-muted); font-size:.8rem; line-height:1.6; }
 
-  /* ---------- MOTION / A11Y ---------- */
   body.no-animations *{ transition:none !important; animation:none !important; }
 
   @media (prefers-reduced-motion: reduce){
@@ -569,7 +577,6 @@
     *{ animation:none !important; transition:none !important; }
   }
 
-  /* ---------- RESPONSIVE ---------- */
   @media(max-width:900px){
     .hero-inner{ grid-template-columns:1fr; }
     .hero-art{ order:-1; aspect-ratio:16/9; }
@@ -659,7 +666,6 @@
   </div>
 </footer>
 
-<!-- PLAYER OVERLAY -->
 <div class="player-overlay" id="player-overlay" hidden role="dialog" aria-modal="true" aria-label="Game player">
   <div class="player-bar">
     <div class="player-info">
@@ -681,6 +687,7 @@
     <h3>Settings</h3>
     <button class="icon-btn" id="settings-close" aria-label="Close settings" type="button">✕</button>
   </div>
+
   <div class="settings-body">
 
     <div class="settings-group">
@@ -711,6 +718,39 @@
       </select>
     </div>
 
+    <!-- NEW TAB SETTINGS -->
+    <div class="settings-group">
+      <h4>Tab appearance</h4>
+
+      <select class="settings-select" id="tab-mode-select">
+        <option value="normal">Normal tab</option>
+        <option value="custom">Custom tab name</option>
+        <option value="blank">About:blank</option>
+      </select>
+
+      <input
+        class="settings-input"
+        id="tab-name-input"
+        type="text"
+        maxlength="60"
+        placeholder="Enter tab name..."
+        aria-label="Custom tab name"
+      >
+
+      <button
+        class="btn-secondary"
+        id="apply-tab-btn"
+        type="button"
+        style="margin-top:10px; width:100%;"
+      >
+        Apply tab settings
+      </button>
+
+      <p class="about-note" style="margin-top:8px;">
+        Custom name changes the browser tab title. About:blank opens this site in a new blank tab.
+      </p>
+    </div>
+
     <div class="settings-group">
       <div class="toggle-row">
         <span>Animations</span>
@@ -736,12 +776,6 @@
 </aside>
 
 <script>
-/* ============================================================
-   GAME CATALOG
-   To swap the icon+gradient art for a real thumbnail, set the
-   "img" field to an image URL, e.g. img: "https://.../vex7.jpg"
-   Recommended size: at least 480x270px (16:9), jpg/png/webp.
-   ============================================================ */
 const GAMES = [
   { id:'vex7', name:'Vex 7', icon:'🏃', category:'Action', url:'games/vex7/index.html', img:null, blurb:'Run, jump, and slide through a brutal obstacle course.' },
   { id:'snake', name:'Snake', icon:'🐍', category:'Arcade', url:'games/snake/index.html', img:null, blurb:'Grow your snake and dodge your own tail in this classic.' },
@@ -774,263 +808,271 @@ const APPS = [
 ];
 
 const CATEGORY_STYLES = {
-  Action:     { grad:['#ff4d6d','#ff8fa3'], color:'#ff6b81' },
-  Arcade:     { grad:['#7c6cf0','#b47cf0'], color:'#9b8af5' },
-  Racing:     { grad:['#ffb800','#ff7a00'], color:'#ffae00' },
-  Sports:     { grad:['#06b6d4','#2dd4bf'], color:'#22c3c9' },
-  Horror:     { grad:['#3f0d12','#8a1f2b'], color:'#c94a4a' },
-  Simulation: { grad:['#10b981','#34d399'], color:'#22c98d' },
-  Sandbox:    { grad:['#92400e','#f59e0b'], color:'#e08b21' },
-  Apps:       { grad:['#334155','#64748b'], color:'#8291a8' }
+  Action:{grad:['#ff4d6d','#ff8fa3'],color:'#ff6b81'},
+  Arcade:{grad:['#7c6cf0','#b47cf0'],color:'#9b8af5'},
+  Racing:{grad:['#ffb800','#ff7a00'],color:'#ffae00'},
+  Sports:{grad:['#06b6d4','#2dd4bf'],color:'#22c3c9'},
+  Horror:{grad:['#3f0d12','#8a1f2b'],color:'#c94a4a'},
+  Simulation:{grad:['#10b981','#34d399'],color:'#22c98d'},
+  Sandbox:{grad:['#92400e','#f59e0b'],color:'#e08b21'},
+  Apps:{grad:['#334155','#64748b'],color:'#8291a8'}
 };
 
 const ACCENT_THEMES = {
-  coral:  { accent:'#ff4d6d', accent2:'#2dd4bf' },
-  cyan:   { accent:'#22d3ee', accent2:'#a78bfa' },
-  violet: { accent:'#8b5cf6', accent2:'#f472b6' },
-  amber:  { accent:'#f59e0b', accent2:'#34d399' },
-  green:  { accent:'#22c55e', accent2:'#38bdf8' }
+  coral:{accent:'#ff4d6d',accent2:'#2dd4bf'},
+  cyan:{accent:'#22d3ee',accent2:'#a78bfa'},
+  violet:{accent:'#8b5cf6',accent2:'#f472b6'},
+  amber:{accent:'#f59e0b',accent2:'#34d399'},
+  green:{accent:'#22c55e',accent2:'#38bdf8'}
 };
 
 const BACKDROPS = {
-  midnight: { bg:'#0b0e1a', bg2:'#141a3d' },
-  indigo:   { bg:'#0c0f24', bg2:'#1e2a5e' },
-  slate:    { bg:'#0f1115', bg2:'#232733' },
-  plum:     { bg:'#160b1f', bg2:'#3a1a4d' },
-  custom:   { bg:'#0b0e1a', bg2:'#141a3d' }
+  midnight:{bg:'#0b0e1a',bg2:'#141a3d'},
+  indigo:{bg:'#0c0f24',bg2:'#1e2a5e'},
+  slate:{bg:'#0f1115',bg2:'#232733'},
+  plum:{bg:'#160b1f',bg2:'#3a1a4d'},
+  custom:{bg:'#0b0e1a',bg2:'#141a3d'}
 };
 
-const state = { category:'All', query:'' };
+const state = {category:'All',query:''};
 let favorites = new Set();
 let recent = [];
 
-/* ---------- storage helpers ---------- */
 const store = {
-  get(key, fallback){
+  get(key,fallback){
     try{
-      const v = localStorage.getItem(key);
-      return v === null ? fallback : JSON.parse(v);
-    }catch(e){ return fallback; }
+      const v=localStorage.getItem(key);
+      return v===null?fallback:JSON.parse(v);
+    }catch(e){return fallback;}
   },
-  set(key, val){
-    try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+  set(key,val){
+    try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}
   }
 };
 
-function hexAlpha(hex, alpha){
-  const h = hex.replace('#','');
-  const r = parseInt(h.substring(0,2),16);
-  const g = parseInt(h.substring(2,4),16);
-  const b = parseInt(h.substring(4,6),16);
+function hexAlpha(hex,alpha){
+  const h=hex.replace('#','');
+  const r=parseInt(h.substring(0,2),16);
+  const g=parseInt(h.substring(2,4),16);
+  const b=parseInt(h.substring(4,6),16);
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
 function categoryStyle(cat){
-  return CATEGORY_STYLES[cat] || CATEGORY_STYLES.Apps;
+  return CATEGORY_STYLES[cat]||CATEGORY_STYLES.Apps;
 }
 
-/* ---------- cards ---------- */
-function createCard(item, isApp){
-  const cat = item.category || 'Apps';
-  const style = categoryStyle(cat);
+function createCard(item,isApp){
+  const cat=item.category||'Apps';
+  const style=categoryStyle(cat);
 
-  const card = document.createElement('article');
-  card.className = 'card';
-  card.tabIndex = 0;
-  card.dataset.id = item.id;
-  card.style.setProperty('--cat-color', style.color);
-  card.style.setProperty('--cat-glow', hexAlpha(style.color, .45));
+  const card=document.createElement('article');
+  card.className='card';
+  card.tabIndex=0;
+  card.dataset.id=item.id;
+  card.style.setProperty('--cat-color',style.color);
+  card.style.setProperty('--cat-glow',hexAlpha(style.color,.45));
 
-  const art = document.createElement('div');
-  art.className = 'card-art';
+  const art=document.createElement('div');
+  art.className='card-art';
 
-  const media = document.createElement('div');
-  media.className = 'card-art-media';
+  const media=document.createElement('div');
+  media.className='card-art-media';
+
   if(item.img){
-    const img = document.createElement('img');
-    img.src = item.img;
-    img.alt = item.name;
-    img.loading = 'lazy';
+    const img=document.createElement('img');
+    img.src=item.img;
+    img.alt=item.name;
+    img.loading='lazy';
     media.appendChild(img);
   }else{
-    media.style.background = `linear-gradient(135deg, ${style.grad[0]}, ${style.grad[1]})`;
-    media.textContent = item.icon;
+    media.style.background=`linear-gradient(135deg,${style.grad[0]},${style.grad[1]})`;
+    media.textContent=item.icon;
   }
+
   art.appendChild(media);
 
   if(!isApp){
-    const fav = document.createElement('button');
-    fav.type = 'button';
-    fav.className = 'fav-btn' + (favorites.has(item.id) ? ' active' : '');
-    fav.setAttribute('aria-label', favorites.has(item.id) ? 'Remove from favorites' : 'Save to favorites');
-    fav.textContent = favorites.has(item.id) ? '★' : '☆';
-    fav.addEventListener('click', (e)=>{
+    const fav=document.createElement('button');
+    fav.type='button';
+    fav.className='fav-btn'+(favorites.has(item.id)?' active':'');
+    fav.setAttribute('aria-label',favorites.has(item.id)?'Remove from favorites':'Save to favorites');
+    fav.textContent=favorites.has(item.id)?'★':'☆';
+
+    fav.addEventListener('click',(e)=>{
       e.stopPropagation();
-      toggleFavorite(item.id, fav);
+      toggleFavorite(item.id,fav);
     });
+
     art.appendChild(fav);
   }
 
-  const hover = document.createElement('div');
-  hover.className = 'card-hover';
-  hover.textContent = item.type === 'tool' ? '▶ Open' : '▶ Play';
+  const hover=document.createElement('div');
+  hover.className='card-hover';
+  hover.textContent=item.type==='tool'?'▶ Open':'▶ Play';
   art.appendChild(hover);
 
-  const body = document.createElement('div');
-  body.className = 'card-body';
+  const body=document.createElement('div');
+  body.className='card-body';
 
-  const title = document.createElement('h3');
-  title.className = 'card-title';
-  title.textContent = item.name;
+  const title=document.createElement('h3');
+  title.className='card-title';
+  title.textContent=item.name;
   body.appendChild(title);
 
   if(item.category){
-    const tag = document.createElement('span');
-    tag.className = 'tag';
-    tag.textContent = cat;
-    tag.style.color = style.color;
-    tag.style.background = hexAlpha(style.color, .16);
+    const tag=document.createElement('span');
+    tag.className='tag';
+    tag.textContent=cat;
+    tag.style.color=style.color;
+    tag.style.background=hexAlpha(style.color,.16);
     body.appendChild(tag);
   }
 
   card.appendChild(art);
   card.appendChild(body);
 
-  card.addEventListener('click', ()=>openPlayer(item, isApp));
-  card.addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter' || e.key === ' '){
+  card.addEventListener('click',()=>openPlayer(item,isApp));
+
+  card.addEventListener('keydown',(e)=>{
+    if(e.key==='Enter'||e.key===' '){
       e.preventDefault();
-      openPlayer(item, isApp);
+      openPlayer(item,isApp);
     }
   });
 
   return card;
 }
 
-/* ---------- filtering + rendering ---------- */
 function getFilteredGames(){
   return GAMES.filter(g=>{
-    const matchesCat = state.category === 'All' || g.category === state.category;
-    const q = state.query;
-    const matchesQuery = !q || g.name.toLowerCase().includes(q) || g.category.toLowerCase().includes(q);
-    return matchesCat && matchesQuery;
+    const matchesCat=state.category==='All'||g.category===state.category;
+    const q=state.query;
+    const matchesQuery=!q||g.name.toLowerCase().includes(q)||g.category.toLowerCase().includes(q);
+    return matchesCat&&matchesQuery;
   });
 }
 
 function renderGamesGrid(){
-  const grid = document.getElementById('games-grid');
-  grid.innerHTML = '';
-  const list = getFilteredGames();
-  list.forEach(g=>grid.appendChild(createCard(g, false)));
+  const grid=document.getElementById('games-grid');
+  grid.innerHTML='';
 
-  const countEl = document.getElementById('result-count');
-  countEl.textContent = (state.query || state.category !== 'All')
-    ? `${list.length} game${list.length !== 1 ? 's' : ''}`
-    : `${GAMES.length} games`;
+  const list=getFilteredGames();
+  list.forEach(g=>grid.appendChild(createCard(g,false)));
 
-  document.getElementById('empty-state').hidden = list.length !== 0;
+  const countEl=document.getElementById('result-count');
+
+  countEl.textContent=(state.query||state.category!=='All')
+    ?`${list.length} game${list.length!==1?'s':''}`
+    :`${GAMES.length} games`;
+
+  document.getElementById('empty-state').hidden=list.length!==0;
 }
 
 function renderAppsGrid(){
-  const grid = document.getElementById('apps-grid');
-  grid.innerHTML = '';
-  APPS.forEach(a=>grid.appendChild(createCard(a, true)));
+  const grid=document.getElementById('apps-grid');
+  grid.innerHTML='';
+  APPS.forEach(a=>grid.appendChild(createCard(a,true)));
 }
 
 function renderChips(){
-  const row = document.getElementById('chip-row');
-  row.innerHTML = '';
-  const categories = ['All', ...Array.from(new Set(GAMES.map(g=>g.category)))];
+  const row=document.getElementById('chip-row');
+  row.innerHTML='';
+
+  const categories=['All',...Array.from(new Set(GAMES.map(g=>g.category)))];
 
   categories.forEach(cat=>{
-    const chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = 'chip' + (state.category === cat ? ' active' : '');
-    chip.textContent = cat;
-    if(cat !== 'All'){
-      chip.style.setProperty('--chip-color', categoryStyle(cat).color);
+    const chip=document.createElement('button');
+    chip.type='button';
+    chip.className='chip'+(state.category===cat?' active':'');
+    chip.textContent=cat;
+
+    if(cat!=='All'){
+      chip.style.setProperty('--chip-color',categoryStyle(cat).color);
     }
-    chip.addEventListener('click', ()=>{
-      state.category = cat;
+
+    chip.addEventListener('click',()=>{
+      state.category=cat;
       renderChips();
       renderGamesGrid();
     });
+
     row.appendChild(chip);
   });
 }
 
 function renderRecent(){
-  const section = document.getElementById('recent-section');
-  const row = document.getElementById('recent-row');
-  row.innerHTML = '';
-  const items = recent.map(id=>GAMES.find(g=>g.id === id)).filter(Boolean);
+  const section=document.getElementById('recent-section');
+  const row=document.getElementById('recent-row');
+  row.innerHTML='';
 
-  if(items.length === 0){
-    section.hidden = true;
+  const items=recent.map(id=>GAMES.find(g=>g.id===id)).filter(Boolean);
+
+  if(items.length===0){
+    section.hidden=true;
     return;
   }
 
-  section.hidden = false;
-  items.forEach(g=>row.appendChild(createCard(g, false)));
+  section.hidden=false;
+  items.forEach(g=>row.appendChild(createCard(g,false)));
 }
 
-/* ---------- favorites / recent ---------- */
-function toggleFavorite(id, btnEl){
+function toggleFavorite(id,btnEl){
   if(favorites.has(id)) favorites.delete(id);
   else favorites.add(id);
 
-  store.set('frazerFavorites', Array.from(favorites));
+  store.set('frazerFavorites',Array.from(favorites));
 
   if(btnEl){
-    btnEl.classList.toggle('active', favorites.has(id));
-    btnEl.textContent = favorites.has(id) ? '★' : '☆';
-    btnEl.setAttribute('aria-label', favorites.has(id) ? 'Remove from favorites' : 'Save to favorites');
+    btnEl.classList.toggle('active',favorites.has(id));
+    btnEl.textContent=favorites.has(id)?'★':'☆';
+    btnEl.setAttribute('aria-label',favorites.has(id)?'Remove from favorites':'Save to favorites');
   }
 }
 
 function pushRecent(id){
-  recent = [id, ...recent.filter(x=>x !== id)].slice(0, 6);
-  store.set('frazerRecentGames', recent);
+  recent=[id,...recent.filter(x=>x!==id)].slice(0,6);
+  store.set('frazerRecentGames',recent);
   renderRecent();
 }
 
-/* ---------- hero ---------- */
 function renderHero(){
-  const featured = GAMES[Math.floor(Math.random() * GAMES.length)];
-  const style = categoryStyle(featured.category);
+  const featured=GAMES[Math.floor(Math.random()*GAMES.length)];
+  const style=categoryStyle(featured.category);
 
-  document.getElementById('hero-tag').textContent = featured.category;
-  document.getElementById('hero-title').textContent = featured.name;
-  document.getElementById('hero-blurb').textContent = featured.blurb;
+  document.getElementById('hero-tag').textContent=featured.category;
+  document.getElementById('hero-title').textContent=featured.name;
+  document.getElementById('hero-blurb').textContent=featured.blurb;
 
-  const art = document.getElementById('hero-art');
-  art.style.setProperty('--hero-c1', style.grad[0]);
-  art.style.setProperty('--hero-c2', style.grad[1]);
+  const art=document.getElementById('hero-art');
+  art.style.setProperty('--hero-c1',style.grad[0]);
+  art.style.setProperty('--hero-c2',style.grad[1]);
 
-  const media = document.getElementById('hero-art-media');
-  media.innerHTML = '';
+  const media=document.getElementById('hero-art-media');
+  media.innerHTML='';
+
   if(featured.img){
-    const img = document.createElement('img');
-    img.src = featured.img;
-    img.alt = featured.name;
+    const img=document.createElement('img');
+    img.src=featured.img;
+    img.alt=featured.name;
     media.appendChild(img);
   }else{
-    media.textContent = featured.icon;
+    media.textContent=featured.icon;
   }
 
-  document.getElementById('hero-play-btn').onclick = ()=>openPlayer(featured, false);
+  document.getElementById('hero-play-btn').onclick=()=>openPlayer(featured,false);
 }
 
-document.getElementById('hero-surprise-btn').addEventListener('click', ()=>{
-  const g = GAMES[Math.floor(Math.random() * GAMES.length)];
-  openPlayer(g, false);
+document.getElementById('hero-surprise-btn').addEventListener('click',()=>{
+  const g=GAMES[Math.floor(Math.random()*GAMES.length)];
+  openPlayer(g,false);
 });
 
-/* ---------- code playground tool ---------- */
 function buildFilesTool(){
-  const wrap = document.createElement('div');
-  wrap.className = 'files-app-body';
-  wrap.innerHTML = `
+  const wrap=document.createElement('div');
+  wrap.className='files-app-body';
+
+  wrap.innerHTML=`
     <div class="files-toolbar">
       <input class="files-file-name" value="index.html" aria-label="File name">
       <button type="button" data-action="new">+ New</button>
@@ -1039,6 +1081,7 @@ function buildFilesTool(){
       <button type="button" data-action="clear">Clear</button>
       <input type="file" accept=".html,.htm,text/html" class="files-open-input" style="display:none">
     </div>
+
     <div class="files-editor-wrap">
       <textarea class="files-editor" spellcheck="false"><!DOCTYPE html>
 <html>
@@ -1051,259 +1094,472 @@ function buildFilesTool(){
   <p>Edit this code and press Run.</p>
 </body>
 </html></textarea>
+
       <iframe class="files-preview" sandbox="allow-scripts allow-forms"></iframe>
     </div>
   `;
 
-  const editor = wrap.querySelector('.files-editor');
-  const preview = wrap.querySelector('.files-preview');
-  const fileName = wrap.querySelector('.files-file-name');
-  const fileInput = wrap.querySelector('.files-open-input');
+  const editor=wrap.querySelector('.files-editor');
+  const preview=wrap.querySelector('.files-preview');
+  const fileName=wrap.querySelector('.files-file-name');
+  const fileInput=wrap.querySelector('.files-open-input');
 
-  const run = ()=>{ preview.srcdoc = editor.value; };
+  const run=()=>{
+    preview.srcdoc=editor.value;
+  };
 
-  wrap.querySelector('[data-action="run"]').addEventListener('click', run);
-  wrap.querySelector('[data-action="clear"]').addEventListener('click', ()=>{ editor.value = ''; run(); });
-  wrap.querySelector('[data-action="new"]').addEventListener('click', ()=>{
-    fileName.value = 'index.html';
-    editor.value = '<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <title>New HTML App</title>\n</head>\n<body>\n  \n</body>\n</html>';
+  wrap.querySelector('[data-action="run"]').addEventListener('click',run);
+
+  wrap.querySelector('[data-action="clear"]').addEventListener('click',()=>{
+    editor.value='';
     run();
   });
-  wrap.querySelector('[data-action="open"]').addEventListener('click', ()=>fileInput.click());
-  fileInput.addEventListener('change', ()=>{
-    const file = fileInput.files && fileInput.files[0];
-    if(!file) return;
-    fileName.value = file.name;
-    const reader = new FileReader();
-    reader.onload = ()=>{ editor.value = String(reader.result || ''); run(); };
-    reader.readAsText(file);
-    fileInput.value = '';
+
+  wrap.querySelector('[data-action="new"]').addEventListener('click',()=>{
+    fileName.value='index.html';
+
+    editor.value='<!DOCTYPE html>\\n<html>\\n<head>\\n  <meta charset="UTF-8">\\n  <title>New HTML App</title>\\n</head>\\n<body>\\n  \\n</body>\\n</html>';
+
+    run();
   });
 
-  setTimeout(run, 0);
+  wrap.querySelector('[data-action="open"]').addEventListener('click',()=>fileInput.click());
+
+  fileInput.addEventListener('change',()=>{
+    const file=fileInput.files&&fileInput.files[0];
+    if(!file)return;
+
+    fileName.value=file.name;
+
+    const reader=new FileReader();
+
+    reader.onload=()=>{
+      editor.value=String(reader.result||'');
+      run();
+    };
+
+    reader.readAsText(file);
+    fileInput.value='';
+  });
+
+  setTimeout(run,0);
+
   return wrap;
 }
 
-/* ---------- player overlay ---------- */
-let lastFocused = null;
+let lastFocused=null;
 
-function openPlayer(item, isApp){
-  lastFocused = document.activeElement;
+function openPlayer(item,isApp){
+  lastFocused=document.activeElement;
 
-  const overlay = document.getElementById('player-overlay');
-  const body = document.getElementById('player-body');
-  const title = document.getElementById('player-title');
-  const tag = document.getElementById('player-tag');
+  const overlay=document.getElementById('player-overlay');
+  const body=document.getElementById('player-body');
+  const title=document.getElementById('player-title');
+  const tag=document.getElementById('player-tag');
 
-  body.innerHTML = '';
-  title.textContent = item.name;
+  body.innerHTML='';
+  title.textContent=item.name;
 
   if(item.category){
-    tag.textContent = item.category;
-    tag.style.display = 'inline-block';
+    tag.textContent=item.category;
+    tag.style.display='inline-block';
   }else{
-    tag.style.display = 'none';
+    tag.style.display='none';
   }
 
-  if(item.type === 'tool'){
+  if(item.type==='tool'){
     body.appendChild(buildFilesTool());
   }else{
-    const iframe = document.createElement('iframe');
-    iframe.src = item.url;
-    iframe.setAttribute('allow', 'fullscreen; autoplay; gamepad; clipboard-write');
+    const iframe=document.createElement('iframe');
+    iframe.src=item.url;
+    iframe.setAttribute('allow','fullscreen; autoplay; gamepad; clipboard-write');
     body.appendChild(iframe);
   }
 
-  overlay.hidden = false;
-  document.body.style.overflow = 'hidden';
+  overlay.hidden=false;
+  document.body.style.overflow='hidden';
   document.getElementById('player-close').focus();
 
-  if(!isApp) pushRecent(item.id);
+  if(!isApp)pushRecent(item.id);
 }
 
 function closePlayer(){
-  const overlay = document.getElementById('player-overlay');
-  const body = document.getElementById('player-body');
-  overlay.hidden = true;
-  body.innerHTML = '';
-  document.body.style.overflow = '';
-  if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
-  if(lastFocused) lastFocused.focus();
+  const overlay=document.getElementById('player-overlay');
+  const body=document.getElementById('player-body');
+
+  overlay.hidden=true;
+  body.innerHTML='';
+  document.body.style.overflow='';
+
+  if(document.fullscreenElement){
+    document.exitFullscreen().catch(()=>{});
+  }
+
+  if(lastFocused)lastFocused.focus();
 }
 
-document.getElementById('player-close').addEventListener('click', closePlayer);
-document.getElementById('player-fullscreen').addEventListener('click', ()=>{
-  const overlay = document.getElementById('player-overlay');
+document.getElementById('player-close').addEventListener('click',closePlayer);
+
+document.getElementById('player-fullscreen').addEventListener('click',()=>{
+  const overlay=document.getElementById('player-overlay');
+
   if(!document.fullscreenElement){
-    (overlay.requestFullscreen ? overlay.requestFullscreen() : Promise.resolve()).catch(()=>{});
+    (overlay.requestFullscreen?overlay.requestFullscreen():Promise.resolve()).catch(()=>{});
   }else{
     document.exitFullscreen();
   }
 });
 
-document.addEventListener('keydown', (e)=>{
-  if(e.key !== 'Escape') return;
-  if(!document.getElementById('player-overlay').hidden) closePlayer();
-  if(!document.getElementById('settings-panel').hidden) closeSettings();
+document.addEventListener('keydown',(e)=>{
+  if(e.key!=='Escape')return;
+
+  if(!document.getElementById('player-overlay').hidden)closePlayer();
+  if(!document.getElementById('settings-panel').hidden)closeSettings();
 });
 
-/* ---------- search ---------- */
-const searchInput = document.getElementById('search-input');
-searchInput.addEventListener('input', ()=>{
-  state.query = searchInput.value.trim().toLowerCase();
+const searchInput=document.getElementById('search-input');
+
+searchInput.addEventListener('input',()=>{
+  state.query=searchInput.value.trim().toLowerCase();
   renderGamesGrid();
 });
-searchInput.addEventListener('keydown', (e)=>{
-  if(e.key !== 'Enter') return;
-  const list = getFilteredGames();
-  if(list.length) openPlayer(list[0], false);
+
+searchInput.addEventListener('keydown',(e)=>{
+  if(e.key!=='Enter')return;
+
+  const list=getFilteredGames();
+
+  if(list.length)openPlayer(list[0],false);
 });
 
-/* ---------- nav active-section highlight ---------- */
-const navLinks = document.querySelectorAll('.nav-link');
-const sectionObserver = new IntersectionObserver((entries)=>{
+const navLinks=document.querySelectorAll('.nav-link');
+
+const sectionObserver=new IntersectionObserver((entries)=>{
   entries.forEach(entry=>{
-    if(!entry.isIntersecting) return;
-    navLinks.forEach(l=>l.classList.toggle('active', l.getAttribute('href') === '#' + entry.target.id));
+    if(!entry.isIntersecting)return;
+
+    navLinks.forEach(l=>{
+      l.classList.toggle(
+        'active',
+        l.getAttribute('href')==='#'+entry.target.id
+      );
+    });
   });
-}, { rootMargin:'-40% 0px -50% 0px' });
+},{rootMargin:'-40% 0px -50% 0px'});
 
 ['games-section','apps-section'].forEach(id=>{
-  const el = document.getElementById(id);
-  if(el) sectionObserver.observe(el);
+  const el=document.getElementById(id);
+  if(el)sectionObserver.observe(el);
 });
 
-/* ---------- settings: accent ---------- */
 function renderAccentSwatches(){
-  const row = document.getElementById('accent-swatches');
-  row.innerHTML = '';
-  Object.entries(ACCENT_THEMES).forEach(([key, theme])=>{
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'swatch';
-    btn.dataset.key = key;
-    btn.style.background = `linear-gradient(135deg, ${theme.accent}, ${theme.accent2})`;
-    btn.setAttribute('aria-label', key + ' accent');
-    btn.addEventListener('click', ()=>applyAccent(key));
+  const row=document.getElementById('accent-swatches');
+  row.innerHTML='';
+
+  Object.entries(ACCENT_THEMES).forEach(([key,theme])=>{
+    const btn=document.createElement('button');
+
+    btn.type='button';
+    btn.className='swatch';
+    btn.dataset.key=key;
+
+    btn.style.background=`linear-gradient(135deg,${theme.accent},${theme.accent2})`;
+
+    btn.setAttribute('aria-label',key+' accent');
+
+    btn.addEventListener('click',()=>applyAccent(key));
+
     row.appendChild(btn);
   });
 }
 
 function applyAccent(key){
-  const theme = ACCENT_THEMES[key] || ACCENT_THEMES.coral;
-  document.documentElement.style.setProperty('--accent', theme.accent);
-  document.documentElement.style.setProperty('--accent-2', theme.accent2);
-  store.set('frazerAccent', key);
-  document.querySelectorAll('.swatch').forEach(s=>s.classList.toggle('active', s.dataset.key === key));
+  const theme=ACCENT_THEMES[key]||ACCENT_THEMES.coral;
+
+  document.documentElement.style.setProperty('--accent',theme.accent);
+  document.documentElement.style.setProperty('--accent-2',theme.accent2);
+
+  store.set('frazerAccent',key);
+
+  document.querySelectorAll('.swatch').forEach(s=>{
+    s.classList.toggle('active',s.dataset.key===key);
+  });
 }
 
-/* ---------- settings: backdrop ---------- */
 function applyBackdrop(key){
-  if(key === 'custom'){
-    const img = store.get('frazerHeroImage', null);
+  if(key==='custom'){
+    const img=store.get('frazerHeroImage',null);
+
     if(img){
-      document.documentElement.style.setProperty('--hero-image', `url("${img}")`);
+      document.documentElement.style.setProperty('--hero-image',`url("${img}")`);
       document.body.classList.add('has-hero-image');
     }else{
-      key = 'midnight';
+      key='midnight';
       document.body.classList.remove('has-hero-image');
     }
   }else{
     document.body.classList.remove('has-hero-image');
   }
 
-  const preset = BACKDROPS[key] || BACKDROPS.midnight;
-  document.documentElement.style.setProperty('--bg', preset.bg);
-  document.documentElement.style.setProperty('--bg-2', preset.bg2);
-  store.set('frazerBackdrop', key);
+  const preset=BACKDROPS[key]||BACKDROPS.midnight;
 
-  const select = document.getElementById('backdrop-select');
-  if(select) select.value = key;
+  document.documentElement.style.setProperty('--bg',preset.bg);
+  document.documentElement.style.setProperty('--bg-2',preset.bg2);
 
-  const uploadBtn = document.getElementById('backdrop-upload-btn');
-  if(uploadBtn) uploadBtn.style.display = key === 'custom' ? 'inline-flex' : 'none';
+  store.set('frazerBackdrop',key);
+
+  const select=document.getElementById('backdrop-select');
+  if(select)select.value=key;
+
+  const uploadBtn=document.getElementById('backdrop-upload-btn');
+
+  if(uploadBtn){
+    uploadBtn.style.display=key==='custom'?'inline-flex':'none';
+  }
 }
 
-document.getElementById('backdrop-select').addEventListener('change', (e)=>applyBackdrop(e.target.value));
-document.getElementById('backdrop-upload-btn').addEventListener('click', ()=>document.getElementById('backdrop-file').click());
-document.getElementById('backdrop-file').addEventListener('change', (e)=>{
-  const file = e.target.files && e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ()=>{
-    store.set('frazerHeroImage', reader.result);
+document.getElementById('backdrop-select').addEventListener('change',(e)=>{
+  applyBackdrop(e.target.value);
+});
+
+document.getElementById('backdrop-upload-btn').addEventListener('click',()=>{
+  document.getElementById('backdrop-file').click();
+});
+
+document.getElementById('backdrop-file').addEventListener('change',(e)=>{
+  const file=e.target.files&&e.target.files[0];
+
+  if(!file)return;
+
+  const reader=new FileReader();
+
+  reader.onload=()=>{
+    store.set('frazerHeroImage',reader.result);
     applyBackdrop('custom');
   };
+
   reader.readAsDataURL(file);
 });
 
-/* ---------- settings: font size / animations ---------- */
 function applyFontSize(key){
-  const scale = { small:.92, medium:1, large:1.08, xlarge:1.18 }[key] || 1;
-  document.documentElement.style.setProperty('--font-scale', scale);
-  store.set('frazerFontSize', key);
-  document.getElementById('fontsize-select').value = key;
+  const scale={
+    small:.92,
+    medium:1,
+    large:1.08,
+    xlarge:1.18
+  }[key]||1;
+
+  document.documentElement.style.setProperty('--font-scale',scale);
+
+  store.set('frazerFontSize',key);
+
+  document.getElementById('fontsize-select').value=key;
 }
 
 function applyAnimations(enabled){
-  document.body.classList.toggle('no-animations', !enabled);
-  store.set('frazerAnimations', enabled);
-  document.getElementById('animations-toggle').checked = enabled;
+  document.body.classList.toggle('no-animations',!enabled);
+
+  store.set('frazerAnimations',enabled);
+
+  document.getElementById('animations-toggle').checked=enabled;
 }
 
-document.getElementById('fontsize-select').addEventListener('change', (e)=>applyFontSize(e.target.value));
-document.getElementById('animations-toggle').addEventListener('change', (e)=>applyAnimations(e.target.checked));
+document.getElementById('fontsize-select').addEventListener('change',(e)=>{
+  applyFontSize(e.target.value);
+});
+
+document.getElementById('animations-toggle').addEventListener('change',(e)=>{
+  applyAnimations(e.target.checked);
+});
+
+
+/* ============================================================
+   TAB SETTINGS
+   ============================================================ */
+
+function applyTabMode(mode,name){
+  const cleanName=(name||'').trim();
+
+  if(mode==='custom'){
+    document.title=cleanName||'Frazer Games';
+    store.set('frazerTabMode','custom');
+    store.set('frazerTabName',cleanName||'Frazer Games');
+    return;
+  }
+
+  if(mode==='normal'){
+    document.title='Frazer Games';
+    store.set('frazerTabMode','normal');
+    store.set('frazerTabName','Frazer Games');
+    return;
+  }
+
+  if(mode==='blank'){
+    store.set('frazerTabMode','blank');
+
+    /*
+      Open the current site inside an about:blank tab.
+      The original page stays open so the button still works.
+    */
+    const blankTab=window.open('about:blank','_blank');
+
+    if(blankTab){
+      const currentURL=window.location.href;
+
+      blankTab.document.open();
+      blankTab.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>about:blank</title>
+          <style>
+            html,body{
+              margin:0;
+              width:100%;
+              height:100%;
+              overflow:hidden;
+              background:#000;
+            }
+            iframe{
+              width:100%;
+              height:100%;
+              border:0;
+            }
+          </style>
+        </head>
+        <body>
+          <iframe src="${currentURL.replace(/"/g,'&quot;')}"></iframe>
+        </body>
+        </html>
+      `);
+      blankTab.document.close();
+
+      document.title='about:blank';
+    }else{
+      alert('Your browser blocked the new tab. Please allow pop-ups for this site.');
+    }
+  }
+}
+
+function loadTabSettings(){
+  const mode=store.get('frazerTabMode','normal');
+  const name=store.get('frazerTabName','Frazer Games');
+
+  const select=document.getElementById('tab-mode-select');
+  const input=document.getElementById('tab-name-input');
+
+  select.value=mode;
+  input.value=name;
+
+  input.style.display=mode==='custom'?'block':'none';
+
+  if(mode==='custom'){
+    document.title=name||'Frazer Games';
+  }else if(mode==='normal'){
+    document.title='Frazer Games';
+  }
+}
+
+document.getElementById('tab-mode-select').addEventListener('change',(e)=>{
+  const mode=e.target.value;
+  const input=document.getElementById('tab-name-input');
+
+  input.style.display=mode==='custom'?'block':'none';
+
+  if(mode==='normal'){
+    applyTabMode('normal');
+  }
+});
+
+document.getElementById('apply-tab-btn').addEventListener('click',()=>{
+  const mode=document.getElementById('tab-mode-select').value;
+  const name=document.getElementById('tab-name-input').value;
+
+  applyTabMode(mode,name);
+});
+
+document.getElementById('tab-name-input').addEventListener('keydown',(e)=>{
+  if(e.key==='Enter'){
+    const mode=document.getElementById('tab-mode-select').value;
+    applyTabMode(mode,e.target.value);
+  }
+});
+
 
 /* ---------- settings: data actions ---------- */
-document.getElementById('clear-favorites-btn').addEventListener('click', ()=>{
-  favorites = new Set();
-  store.set('frazerFavorites', []);
+
+document.getElementById('clear-favorites-btn').addEventListener('click',()=>{
+  favorites=new Set();
+
+  store.set('frazerFavorites',[]);
+
   renderGamesGrid();
   renderAppsGrid();
   renderRecent();
 });
 
-document.getElementById('clear-recent-btn').addEventListener('click', ()=>{
-  recent = [];
-  store.set('frazerRecentGames', []);
+document.getElementById('clear-recent-btn').addEventListener('click',()=>{
+  recent=[];
+
+  store.set('frazerRecentGames',[]);
+
   renderRecent();
 });
 
-document.getElementById('reset-settings-btn').addEventListener('click', ()=>{
-  ['frazerAccent','frazerBackdrop','frazerHeroImage','frazerFontSize','frazerAnimations'].forEach(k=>localStorage.removeItem(k));
+document.getElementById('reset-settings-btn').addEventListener('click',()=>{
+  [
+    'frazerAccent',
+    'frazerBackdrop',
+    'frazerHeroImage',
+    'frazerFontSize',
+    'frazerAnimations',
+    'frazerTabMode',
+    'frazerTabName'
+  ].forEach(k=>localStorage.removeItem(k));
+
   applyAccent('coral');
   applyBackdrop('midnight');
   applyFontSize('medium');
   applyAnimations(true);
+
+  document.getElementById('tab-mode-select').value='normal';
+  document.getElementById('tab-name-input').value='Frazer Games';
+  document.getElementById('tab-name-input').style.display='none';
+
+  document.title='Frazer Games';
 });
 
-/* ---------- settings panel open/close ---------- */
+
 function openSettings(){
-  document.getElementById('settings-overlay').hidden = false;
-  document.getElementById('settings-panel').hidden = false;
+  document.getElementById('settings-overlay').hidden=false;
+  document.getElementById('settings-panel').hidden=false;
+
   document.getElementById('settings-close').focus();
 }
 
 function closeSettings(){
-  document.getElementById('settings-overlay').hidden = true;
-  document.getElementById('settings-panel').hidden = true;
+  document.getElementById('settings-overlay').hidden=true;
+  document.getElementById('settings-panel').hidden=true;
 }
 
-document.getElementById('settings-btn').addEventListener('click', openSettings);
-document.getElementById('settings-close').addEventListener('click', closeSettings);
-document.getElementById('settings-overlay').addEventListener('click', closeSettings);
+document.getElementById('settings-btn').addEventListener('click',openSettings);
 
-/* ---------- init ---------- */
+document.getElementById('settings-close').addEventListener('click',closeSettings);
+
+document.getElementById('settings-overlay').addEventListener('click',closeSettings);
+
+
 function loadSettings(){
-  applyAccent(store.get('frazerAccent', 'coral'));
-  applyBackdrop(store.get('frazerBackdrop', 'midnight'));
-  applyFontSize(store.get('frazerFontSize', 'medium'));
-  applyAnimations(store.get('frazerAnimations', true));
+  applyAccent(store.get('frazerAccent','coral'));
+  applyBackdrop(store.get('frazerBackdrop','midnight'));
+  applyFontSize(store.get('frazerFontSize','medium'));
+  applyAnimations(store.get('frazerAnimations',true));
+  loadTabSettings();
 }
 
 function init(){
-  favorites = new Set(store.get('frazerFavorites', []));
-  recent = store.get('frazerRecentGames', []);
+  favorites=new Set(store.get('frazerFavorites',[]));
+  recent=store.get('frazerRecentGames',[]);
 
   renderAccentSwatches();
   loadSettings();
@@ -1319,3 +1575,4 @@ init();
 
 </body>
 </html>
+```
