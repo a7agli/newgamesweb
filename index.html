@@ -275,100 +275,6 @@
     color: #aaa;
   }
 
-  /* Choice screen */
-  .choice-box {
-    background: white;
-    color: #111;
-    padding: 30px;
-    border-radius: 14px;
-    width: 500px;
-    max-width: 85%;
-    text-align: center;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-    animation: choiceIn 0.65s cubic-bezier(.2,.8,.2,1);
-  }
-
-  @keyframes choiceIn {
-    from {
-      opacity: 0;
-      transform: translateY(24px) scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-
-  .choice-box h2 {
-    margin-top: 0;
-    margin-bottom: 8px;
-  }
-
-  .choice-box p {
-    color: #666;
-    margin-bottom: 25px;
-  }
-
-  .choice-buttons {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-  }
-
-  .version-btn {
-    flex: 1;
-    min-height: 120px;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    background: #f7f7f7;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    transition:
-      transform 0.25s cubic-bezier(.2,.8,.2,1),
-      box-shadow 0.25s ease,
-      background 0.25s ease;
-  }
-
-  .version-btn:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 10px 24px rgba(0,0,0,0.14);
-  }
-
-  .version-btn:active {
-    transform: translateY(-1px) scale(0.98);
-  }
-
-  .version-btn strong {
-    font-size: 24px;
-  }
-
-  .version-btn span {
-    font-size: 14px;
-    color: #555;
-  }
-
-  .og-btn {
-    border-color: #4285f4;
-  }
-
-  .og-btn:hover {
-    background: #f4f8ff;
-    box-shadow: 0 10px 24px rgba(66,133,244,0.18);
-  }
-
-  .new-btn {
-    border-color: #8e44ad;
-  }
-
-  .new-btn:hover {
-    background: #faf5ff;
-    box-shadow: 0 10px 24px rgba(142,68,173,0.18);
-  }
-
   @media (max-width: 600px) {
     .choice-buttons {
       flex-direction: column;
@@ -456,23 +362,7 @@
     <div class="wait-subtitle">Preparing your sign-in</div>
   </div>
 
-  <!-- Version Choice -->
-  <div class="choice-box" id="choiceBox" style="display:none;">
-    <h2>Choose Website Version</h2>
-    <p>Select which version you want to open.</p>
 
-    <div class="choice-buttons">
-      <button class="version-btn og-btn" onclick="goOG()">
-        <strong>OG</strong>
-        <span>Old Regular Website</span>
-      </button>
-
-      <button class="version-btn new-btn" onclick="goNew()">
-        <strong>New</strong>
-        <span>New Different Design</span>
-      </button>
-    </div>
-  </div>
 
 </div>
 
@@ -500,41 +390,25 @@
   function fakeMicrosoft() {
     const loading = document.getElementById("loading");
     const waitContent = document.getElementById("waitContent");
-    const choiceBox = document.getElementById("choiceBox");
 
-    // Reset screen
     loading.classList.remove("hide");
     loading.style.display = "flex";
     loading.classList.add("show");
 
     waitContent.style.display = "flex";
-    choiceBox.style.display = "none";
+    waitContent.style.animation = "none";
+    void waitContent.offsetWidth;
+    waitContent.style.animation = "waitPop 0.55s cubic-bezier(.2,.8,.2,1)";
 
-    // Wait before showing the version choices
+    // Keep the smooth loading screen, then automatically open the OG site.
     setTimeout(() => {
-      waitContent.style.animation = "fadeOut 0.3s ease forwards";
+      loading.classList.remove("show");
+      loading.classList.add("hide");
 
       setTimeout(() => {
-        waitContent.style.display = "none";
-        waitContent.style.animation = "";
-
-        choiceBox.style.display = "block";
-
-        // Restart choice animation smoothly
-        choiceBox.style.animation = "none";
-        void choiceBox.offsetWidth;
-        choiceBox.style.animation = "choiceIn 0.65s cubic-bezier(.2,.8,.2,1)";
-      }, 300);
-
+        window.location.href = "home.html";
+      }, 350);
     }, 1800);
-  }
-
-  function goOG() {
-    window.location.href = "home.html";
-  }
-
-  function goNew() {
-    window.location.href = "new.html";
   }
 </script>
 
