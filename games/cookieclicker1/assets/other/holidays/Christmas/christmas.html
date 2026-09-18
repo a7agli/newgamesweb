@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Christmas Cookie Clicker</title>
+    <link href="christmas.css" rel="stylesheet" type="text/css" />
+    <a href="index.html">
+      <button id="homebutton" onclick="homebutton()">Home</button>
+    </a>
+    <br/>
+    <input type="text" id="bakery" placeholder="Snazzy Blueberry">
+  <button onclick="verifyLogin()" id="saveBakery">Save</button>
+     <br/>
+     <h3 id="codeText"></h3>
+  </head>
+  <body id="body">
+    <h1 id="cookies">0 Cookies</h1>
+    <h3> </h3>
+    <img src="peppermint2.png" height="250px" width="250px" id="cookie" onclick="addcookie()"/>
+    <br/>
+    <button id="showUpgrades" onclick="showAllUpgrades()">Open All Upgrades..</button>
+    <br/>
+    <p>  </p>
+    <button id="upgradebtn" onclick="upgradefunc()">Upgrade Clicks (50 Cookies)</button>
+    <br/>
+    <button id="grandmalol" onclick="grandma()">Hire a Grandma (100 Cookies)</button>
+    <br/>
+    <button id="chef" onclick="chef()">Hire a Chef (200 Cookies)</button>
+    <br/>
+    <button id="factory" onclick="factory()">Create a Factory (1000 cookies)</button>
+    <br/>
+    <button id="HighSpeedProcessor" onclick="processor()">Buy a High-Speed Processor (1500 Cookies)</button>
+    <br/>
+    <button id="CookieHacker" onclick="hacker()">Hire a Cookie Hacker (2000)</button>
+    <br/>
+    <button id="robot" onclick="robot()">Buy a Ultimate Cookie Robot (5,000 Cookies)</button>
+    <br/>
+    <button id="robot2" onclick="robot2()">Buy a Supreme Cookie Robot (10,000 Cookies)</button>
+    <button id="thanos" onclick="thanosgo()">Hire thanos's fingers (15,000 cookies)</button>
+
+    <div id="dev">
+    <article id="backgroundArticle">
+      <button class="buttonsRed" onclick="closedev()">Close</button>
+      <h2 id="newCode"> </h2>
+      <h1 id="header">CC Developer Tools</h1>
+      <button class="buttons" onclick="x10()">x10</button>
+      <button class="buttons" onclick="x100()">x100</button>
+      <button class="buttons" onclick="x1000()">x1000</button>
+      <button class="buttons" onclick="x10000()">x10000</button>
+      <button class="buttons" onclick="x100000()">x100000</button>
+      <br/>
+      <br/>
+      <button class="buttonsRed" onclick="wipedev()">Wipe</button>
+      <button class="buttonsRed" onclick="ruinfun()">Ruin the Fun</button>
+      <br/>
+      <br/>
+      <button class="buttons" onclick="goldcookiess()">Spawn Golden Cookie</button>
+      <button class="buttonsSpecial" onclick="newestCode()">See Newest Code</button>
+      <button class="buttons" onclick="buyeveryupgrade()">Buy Every Upgrade (x100)</button>
+    </article>
+
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
