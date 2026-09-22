@@ -4,8 +4,9 @@
 <head>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7462828797160107"
      crossorigin="anonymous"></script>
+
 <meta charset="UTF-8">
-<title>Login</title>
+<title>Secure Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -17,6 +18,7 @@
     margin: 0;
     font-family: Arial, sans-serif;
     background: linear-gradient(135deg, #4facfe, #8e44ad);
+    color: #111;
   }
 
   .topbar {
@@ -30,7 +32,7 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    z-index: 10;
+    z-index: 1000;
   }
 
   .logo-img {
@@ -49,40 +51,74 @@
   .nav-item {
     position: relative;
     cursor: pointer;
+    padding: 20px 0;
+    height: 60px;
+  }
+
+  .nav-link {
+    color: #111;
+    text-decoration: none;
+    display: block;
   }
 
   .dropdown {
     position: absolute;
-    top: 30px;
+    top: 60px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(-5px);
     background: white;
     padding: 10px 0;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    display: none;
-    min-width: 180px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    min-width: 190px;
     text-align: left;
+    transition:
+      opacity 0.18s ease,
+      transform 0.18s ease,
+      visibility 0.18s ease;
   }
 
-  .dropdown div {
+  /* Invisible bridge so the menu stays open while moving down */
+  .dropdown::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 0;
+    width: 100%;
+    height: 12px;
+  }
+
+  .nav-item:hover .dropdown,
+  .dropdown:hover {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .dropdown a {
+    display: block;
     padding: 10px 15px;
     cursor: pointer;
+    color: #111;
+    text-decoration: none;
+    font-size: 14px;
   }
 
-  .dropdown div:hover {
+  .dropdown a:hover {
     background: #f0f0f0;
   }
 
-  .nav-item:hover .dropdown {
-    display: block;
-  }
-
   .wrapper {
-    height: 100vh;
+    min-height: 100vh;
+    padding: 100px 20px 40px;
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
   }
 
   .container {
@@ -104,6 +140,34 @@
       opacity: 1;
       transform: translateY(0) scale(1);
     }
+  }
+
+  .secure-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #eef8f0;
+    color: #25843e;
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .secure-dot {
+    width: 8px;
+    height: 8px;
+    background: #32c759;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(50,199,89,0.6);
+  }
+
+  .subtitle {
+    color: #777;
+    font-size: 13px;
+    margin-top: -8px;
+    margin-bottom: 18px;
   }
 
   input {
@@ -187,7 +251,124 @@
     margin-top: 10px;
   }
 
-  /* Full screen overlay */
+  .security-box {
+    margin-top: 18px;
+    background: #f7f9fc;
+    border: 1px solid #e2e6ec;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: left;
+  }
+
+  .security-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .demo-label {
+    font-size: 9px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  .security-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 11px;
+    color: #555;
+    margin: 8px 0;
+  }
+
+  .security-icon {
+    width: 23px;
+    height: 23px;
+    border-radius: 6px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+
+  .security-status {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #e3e7ed;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #777;
+  }
+
+  .status-online {
+    color: #2e9b48;
+    font-weight: 600;
+  }
+
+  .info-panel {
+    width: min(700px, 100%);
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    animation: infoIn 0.9s ease;
+  }
+
+  @keyframes infoIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .info-card {
+    background: rgba(255,255,255,0.94);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+  }
+
+  .info-card h4 {
+    margin: 0 0 7px;
+    font-size: 13px;
+  }
+
+  .info-card p {
+    margin: 0;
+    font-size: 11px;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  .tip {
+    width: min(700px, 100%);
+    margin-top: 12px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 10px;
+    padding: 12px 15px;
+    font-size: 11px;
+    color: #555;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    text-align: center;
+  }
+
+  .footer {
+    margin-top: 20px;
+    color: rgba(255,255,255,0.85);
+    font-size: 10px;
+    text-align: center;
+  }
+
   .loading-screen {
     position: fixed;
     inset: 0;
@@ -228,7 +409,6 @@
     }
   }
 
-  /* Please wait screen */
   .wait-content {
     display: flex;
     flex-direction: column;
@@ -276,21 +456,18 @@
   }
 
   @media (max-width: 600px) {
-    .choice-buttons {
-      flex-direction: column;
-    }
-
-    .version-btn {
-      min-height: 100px;
-    }
-
     .nav {
       gap: 15px;
       font-size: 14px;
     }
 
-    .choice-box {
-      padding: 25px;
+    .info-panel {
+      grid-template-columns: 1fr;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 320px;
     }
   }
 </style>
@@ -299,45 +476,67 @@
 <body>
 
 <div class="topbar">
-  <img src="images/secu.png" class="logo-img" onclick="()">
+
+  <img src="images/secu.png" class="logo-img" onclick="goHome()">
 
   <div class="nav">
+
+    <!-- Solutions -->
     <div class="nav-item">
-      Solutions
+      <a href="solutions.html" class="nav-link">Solutions</a>
+
       <div class="dropdown">
-        <div>AI Integration</div>
-        <div>Cloud Storage</div>
-        <div>Security Tools</div>
+        <a href="ai-integration.html">AI Integration</a>
+        <a href="cloud-storage.html">Cloud Storage</a>
+        <a href="security-tools.html">Security Tools</a>
       </div>
     </div>
 
+    <!-- Products -->
     <div class="nav-item">
-      Products
+      <a href="products.html" class="nav-link">Products</a>
+
       <div class="dropdown">
-        <div>Dashboard Pro</div>
-        <div>Analytics Suite</div>
-        <div>Mobile App</div>
+        <a href="dashboard.html">Dashboard Pro</a>
+        <a href="analytics.html">Analytics Suite</a>
+        <a href="mobile.html">Mobile App</a>
       </div>
     </div>
 
+    <!-- Customer Service -->
     <div class="nav-item">
-      Customer Service
+      <a href="support.html" class="nav-link">Customer Service</a>
+
       <div class="dropdown">
-        <div>Help Center</div>
-        <div>Live Chat</div>
-        <div>Contact Support</div>
+        <a href="help.html">Help Center</a>
+        <a href="chat.html">Live Chat</a>
+        <a href="contact.html">Contact Support</a>
       </div>
     </div>
+
   </div>
 </div>
 
 <div class="wrapper">
+
   <div class="container">
+
+    <div class="secure-badge">
+      <span class="secure-dot"></span>
+      Secure Sign-In
+    </div>
+
     <h3>Sign in</h3>
+
+    <div class="subtitle">
+      Access your account securely
+    </div>
 
     <input type="text" id="password" placeholder="Enter email">
 
-    <button class="login-btn" onclick="checkPassword()">Login</button>
+    <button class="login-btn" onclick="checkPassword()">
+      Login
+    </button>
 
     <button class="google-btn" onclick="goGoogle()">
       <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
@@ -345,39 +544,116 @@
     </button>
 
     <button class="microsoft-btn" onclick="fakeMicrosoft()">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" style="width:18px;height:18px;vertical-align:middle;margin-right:10px;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
+           style="width:18px;height:18px;vertical-align:middle;margin-right:10px;">
       Sign in with Microsoft
     </button>
 
-    <div class="error" id="error">Wrong password</div>
+    <div class="error" id="error">
+      Wrong password
+    </div>
+
+    <div class="security-box">
+      <div class="security-title">
+        <span>🛡️ Security Center</span>
+        <span class="demo-label">Interface</span>
+      </div>
+
+      <div class="security-item">
+        <div class="security-icon">🔐</div>
+        <span>Protected sign-in interface</span>
+      </div>
+
+      <div class="security-item">
+        <div class="security-icon">👁️</div>
+        <span>Keep your login details private</span>
+      </div>
+
+      <div class="security-item">
+        <div class="security-icon">⚠️</div>
+        <span>Watch for unusual account activity</span>
+      </div>
+
+      <div class="security-status">
+        <span>Status</span>
+        <span class="status-online">● Online</span>
+      </div>
+    </div>
+
   </div>
+
+  <div class="info-panel">
+
+    <div class="info-card">
+      <h4>🔒 Account Safety</h4>
+      <p>Use passwords that are difficult to guess and avoid sharing them with other people.</p>
+    </div>
+
+    <div class="info-card">
+      <h4>🚨 Security Alerts</h4>
+      <p>Unexpected sign-in activity can be a reason to review your account settings.</p>
+    </div>
+
+    <div class="info-card">
+      <h4>💻 Trusted Access</h4>
+      <p>Only sign in on devices and websites you recognize and trust.</p>
+    </div>
+
+  </div>
+
+  <div class="tip">
+    💡 <strong>Security tip:</strong>
+    Never give your password or verification codes to someone asking for them.
+  </div>
+
+  <div class="footer">
+    Secure Portal • Account Access • Security Center
+  </div>
+
 </div>
 
 <div class="loading-screen" id="loading">
 
-  <!-- Please Wait -->
   <div class="wait-content" id="waitContent">
     <div class="spinner"></div>
     <div class="wait-title">Please wait...</div>
     <div class="wait-subtitle">Preparing your sign-in</div>
   </div>
 
-
-
 </div>
 
 <script>
+
   const correctPassword = "4321";
+  const adminCode = "4500";
 
   function checkPassword() {
-    const input = document.getElementById("password").value;
+
+    const input = document.getElementById("password").value.trim();
+    const error = document.getElementById("error");
+
+    if (input === adminCode) {
+      window.location.href = "admin.html";
+      return;
+    }
 
     if (input === correctPassword) {
       window.location.href = "home.html";
-    } else {
-      document.getElementById("error").style.display = "block";
+      return;
     }
+
+    error.style.display = "block";
   }
+
+  // Enter key
+  document.getElementById("password").addEventListener("keydown", function(event) {
+
+    if (event.key === "Enter") {
+      event.preventDefault();
+      checkPassword();
+    }
+
+  });
 
   function goHome() {
     window.location.href = "home.html";
@@ -388,6 +664,7 @@
   }
 
   function fakeMicrosoft() {
+
     const loading = document.getElementById("loading");
     const waitContent = document.getElementById("waitContent");
 
@@ -397,21 +674,35 @@
 
     waitContent.style.display = "flex";
     waitContent.style.animation = "none";
-    void waitContent.offsetWidth;
-    waitContent.style.animation = "waitPop 0.55s cubic-bezier(.2,.8,.2,1)";
 
-    // Keep the smooth loading screen, then automatically open the OG site.
+    void waitContent.offsetWidth;
+
+    waitContent.style.animation =
+      "waitPop 0.55s cubic-bezier(.2,.8,.2,1)";
+
     setTimeout(() => {
+
       loading.classList.remove("show");
       loading.classList.add("hide");
 
       setTimeout(() => {
         window.location.href = "home.html";
       }, 350);
+
     }, 1800);
+
   }
+
 </script>
 
 </body>
 </html>
 ```
+
+The nav now works like this:
+
+**Solutions** → `solutions.html`
+**Products** → `products.html`
+**Customer Service** → `support.html`
+
+And the dropdown items have their own fake pages too. Just create those HTML files with whatever fake content you want. The hover menu will stay open while you move from the title into the dropdown.
