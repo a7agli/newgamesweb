@@ -8,6 +8,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
     import {
       getDatabase,
       ref,
@@ -22,13 +23,6 @@
       signOut,
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-
-    import {
-      getStorage,
-      ref as storageRef,
-      uploadBytes,
-      getDownloadURL
-    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAJoDdhT8zxq66czyyGfB7-RSYAkFmXu6E",
@@ -45,29 +39,23 @@
 
     window.frazerFirebase = {
       app,
-
       getDatabase,
       ref,
       onValue,
       set,
       serverTimestamp,
-
       getAuth,
       signInWithEmailAndPassword,
       signOut,
       onAuthStateChanged,
-
-      getStorage,
-      storageRef,
-      uploadBytes,
-      getDownloadURL,
-
       databaseConfigured: !firebaseConfig.databaseURL.includes("PASTE_")
     };
   </script>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     :root {
       color-scheme: dark;
@@ -91,7 +79,10 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
-    button, textarea, input {
+    button,
+    textarea,
+    input,
+    select {
       font: inherit;
     }
 
@@ -148,6 +139,7 @@
       border-radius: 16px;
       padding: 20px;
       box-shadow: 0 18px 50px rgba(0,0,0,.22);
+      position: relative;
     }
 
     .panel + .panel {
@@ -160,7 +152,9 @@
       gap: 10px;
     }
 
-    .auth-input {
+    .auth-input,
+    .control-input,
+    .control-select {
       width: 100%;
       padding: 11px 12px;
       border: 1px solid var(--border);
@@ -170,13 +164,34 @@
       outline: none;
     }
 
-    .auth-input:focus {
+    .auth-input:focus,
+    .control-input:focus,
+    .control-select:focus {
       border-color: rgba(79,140,255,.7);
     }
 
+    /*
+      LOCKED ADMIN AREA
+
+      Before login:
+      - blurred
+      - faded
+      - impossible to click
+      - impossible to interact with
+
+      After login:
+      - blur removed
+      - opacity restored
+      - controls enabled
+    */
     .admin-disabled {
-      opacity: .55;
+      opacity: .45;
+      filter: blur(5px);
       pointer-events: none;
+      user-select: none;
+      transition:
+        filter .25s ease,
+        opacity .25s ease;
     }
 
     .panel h2 {
@@ -188,6 +203,28 @@
       margin: 5px 0 16px;
       color: var(--muted);
       font-size: 13px;
+    }
+
+    .notification-options {
+      display: grid;
+      grid-template-columns: 100px 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .field {
+      min-width: 0;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .message-box {
+      margin-top: 10px;
     }
 
     textarea {
@@ -206,34 +243,31 @@
       border-color: rgba(79,140,255,.7);
     }
 
-    .image-upload {
-      margin-top: 10px;
-      padding: 12px;
+    .preview {
+      margin-top: 12px;
+      padding: 12px 14px;
       border: 1px solid var(--border);
       border-radius: 10px;
       background: #0c1016;
     }
 
-    .image-upload-label {
-      display: block;
+    .preview-title {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .preview-content {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .preview-meta {
+      margin-top: 5px;
       color: var(--muted);
       font-size: 12px;
-      margin-bottom: 8px;
-    }
-
-    .image-upload input {
-      width: 100%;
-      color: var(--text);
-    }
-
-    .image-preview {
-      display: none;
-      margin-top: 10px;
-      max-width: 260px;
-      max-height: 180px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      object-fit: contain;
     }
 
     .actions {
@@ -307,6 +341,10 @@
       .auth-grid {
         grid-template-columns: 1fr;
       }
+
+      .notification-options {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 
@@ -314,14 +352,16 @@
 
 <body>
   <main class="admin-page">
-    <header class="admin-header">
-      <h1>Frazer OS Admin</h1>
-      <p>Private control panel · Live site controls · Analytics</p>
-    </header>
 
 ```
+<header class="admin-header">
+  <h1>Frazer OS Admin</h1>
+  <p>Private control panel · Live site controls · Analytics</p>
+</header>
+
 <section class="panel auth-panel" id="auth-panel">
   <h2>Admin sign in</h2>
+
   <div class="panel-sub">
     Use the Firebase Authentication account you created for the admin.
   </div>
@@ -345,19 +385,33 @@
   </div>
 
   <div class="actions">
-    <button class="action action-primary" type="button" id="admin-signin">
+    <button
+      class="action action-primary"
+      type="button"
+      id="admin-signin"
+    >
       Sign in
     </button>
 
-    <button class="action" type="button" id="admin-signout" hidden>
+    <button
+      class="action"
+      type="button"
+      id="admin-signout"
+      hidden
+    >
       Sign out
     </button>
   </div>
 
-  <div class="status" id="auth-status">Not signed in.</div>
+  <div class="status" id="auth-status">
+    Not signed in.
+  </div>
 </section>
 
-<section class="stats" aria-label="Site statistics">
+<!-- EVERYTHING BELOW THIS POINT LOCKS UNTIL LOGIN -->
+
+<section class="stats admin-protected" aria-label="Site statistics">
+
   <div class="stat">
     <div class="stat-label">Current visitors</div>
     <div class="stat-value" id="admin-online">0</div>
@@ -372,44 +426,137 @@
     <div class="stat-label">Connection</div>
     <div class="stat-value" id="admin-connection">Offline</div>
   </div>
+
 </section>
 
-<section class="panel">
+<section class="panel admin-protected">
+
   <h2>Global screen</h2>
+
   <div class="panel-sub">
-    Send a message to everyone currently connected.
+    Create a custom notification and choose exactly how it appears.
   </div>
 
-  <textarea
-    id="admin-message"
-    placeholder="Type something that should appear on everyone's screen..."
-  ></textarea>
+  <div class="notification-options">
 
-  <div class="image-upload">
-    <label class="image-upload-label" for="admin-image">
-      Optional image
+    <div class="field">
+      <label class="field-label" for="admin-icon">
+        Emoji
+      </label>
+
+      <input
+        id="admin-icon"
+        class="control-input"
+        type="text"
+        maxlength="4"
+        value="📢"
+        placeholder="📢"
+      >
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="admin-sender">
+        Sent by
+      </label>
+
+      <input
+        id="admin-sender"
+        class="control-input"
+        type="text"
+        maxlength="50"
+        value="Frazer OS"
+        placeholder="Frazer OS"
+      >
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="admin-duration">
+        Duration
+      </label>
+
+      <select
+        id="admin-duration"
+        class="control-select"
+      >
+        <option value="5">5 seconds</option>
+        <option value="10">10 seconds</option>
+        <option value="15" selected>15 seconds</option>
+        <option value="30">30 seconds</option>
+        <option value="60">1 minute</option>
+        <option value="120">2 minutes</option>
+      </select>
+    </div>
+
+  </div>
+
+  <div class="notification-options">
+
+    <div class="field">
+      <label class="field-label" for="admin-display-mode">
+        Display
+      </label>
+
+      <select
+        id="admin-display-mode"
+        class="control-select"
+        style="grid-column: span 3;"
+      >
+        <option value="fullscreen">
+          Full screen notification
+        </option>
+
+        <option value="announcement">
+          Announcement
+        </option>
+      </select>
+    </div>
+
+  </div>
+
+  <div class="message-box">
+
+    <label class="field-label" for="admin-message">
+      Message
     </label>
 
-    <input
-      id="admin-image"
-      type="file"
-      accept="image/*"
-    >
+    <textarea
+      id="admin-message"
+      placeholder="Type something that should appear on everyone's screen..."
+    ></textarea>
 
-    <img
-      id="admin-image-preview"
-      class="image-preview"
-      alt="Selected image preview"
+  </div>
+
+  <div class="preview">
+
+    <div class="preview-title">
+      Notification preview
+    </div>
+
+    <div
+      class="preview-content"
+      id="notification-preview"
     >
+      📢 <strong>Frazer OS</strong><br>
+      Your message will appear here.
+    </div>
+
+    <div
+      class="preview-meta"
+      id="notification-preview-meta"
+    >
+      Full screen · 15 seconds
+    </div>
+
   </div>
 
   <div class="actions">
+
     <button
       class="action action-primary"
       type="button"
       onclick="sendGlobalMessage()"
     >
-      📢 Show to everyone
+      📢 Send notification
     </button>
 
     <button
@@ -427,68 +574,86 @@
     >
       🧹 Clear everyone
     </button>
+
   </div>
 
   <div class="status" id="admin-status">
-    Enter your Firebase configuration to enable live controls.
+    Sign in to unlock admin controls.
   </div>
 
   <div class="notice">
-    Firebase settings are kept in this file. Configure your Realtime Database
-    and Storage rules so only authorized administrators can write to the live
-    control and image paths.
+    Full screen notifications and announcements use the same live Firebase
+    control. Your home page should read the displayMode field to decide
+    whether to show a full-screen notification or a smaller announcement.
   </div>
+
 </section>
 ```
 
   </main>
 
   <script>
-    /* =========================
-       FRAZER OS LIVE ADMIN
-       ========================= */
-
     let frazerDB = null;
     let frazerLiveRef = null;
     let frazerAuth = null;
-    let frazerStorage = null;
     let frazerAuthenticated = false;
 
     function setAdminStatus(message, type = "") {
-      const el = document.getElementById("admin-status");
+      const el =
+        document.getElementById("admin-status");
+
       if (!el) return;
 
       el.textContent = message;
-      el.className = "status" + (type ? " " + type : "");
+
+      el.className =
+        "status" + (type ? " " + type : "");
     }
 
     function setAuthStatus(message, type = "") {
-      const el = document.getElementById("auth-status");
+      const el =
+        document.getElementById("auth-status");
+
       if (!el) return;
 
       el.textContent = message;
-      el.className = "status" + (type ? " " + type : "");
+
+      el.className =
+        "status" + (type ? " " + type : "");
     }
 
     function setAdminAccess(enabled) {
       document
-        .querySelectorAll(".stats, .panel:not(.auth-panel)")
+        .querySelectorAll(
+          ".admin-protected"
+        )
         .forEach(el => {
-          el.classList.toggle("admin-disabled", !enabled);
+          el.classList.toggle(
+            "admin-disabled",
+            !enabled
+          );
         });
     }
 
     async function signInAdmin() {
       if (!window.frazerFirebase) {
-        setAuthStatus("Firebase SDK did not load.", "error");
+        setAuthStatus(
+          "Firebase SDK did not load.",
+          "error"
+        );
         return;
       }
 
       const email =
-        document.getElementById("admin-email")?.value.trim();
+        document
+          .getElementById("admin-email")
+          ?.value
+          .trim();
 
       const password =
-        document.getElementById("admin-password")?.value;
+        document
+          .getElementById("admin-password")
+          ?.value;
 
       if (!email || !password) {
         setAuthStatus(
@@ -499,20 +664,26 @@
       }
 
       try {
-        const { signInWithEmailAndPassword } =
-          window.frazerFirebase;
-
-        await signInWithEmailAndPassword(
-          frazerAuth,
-          email,
-          password
-        );
+        await window.frazerFirebase
+          .signInWithEmailAndPassword(
+            frazerAuth,
+            email,
+            password
+          );
       } catch (err) {
         console.error(err);
 
+        /*
+          IMPORTANT:
+          Keep the admin area locked after
+          a wrong password.
+        */
+        setAdminAccess(false);
+
         setAuthStatus(
           "Sign-in failed: " +
-          (err?.message || "check your credentials"),
+          (err?.message ||
+            "check your credentials"),
           "error"
         );
       }
@@ -520,297 +691,112 @@
 
     async function signOutAdmin() {
       try {
-        await window.frazerFirebase.signOut(frazerAuth);
+        await window.frazerFirebase.signOut(
+          frazerAuth
+        );
       } catch (err) {
         console.error(err);
-        setAuthStatus("Could not sign out.", "error");
+
+        setAuthStatus(
+          "Could not sign out.",
+          "error"
+        );
       }
     }
 
-    function initImagePreview() {
-      const input = document.getElementById("admin-image");
-      const preview = document.getElementById("admin-image-preview");
+    function getNotificationSettings() {
+      const icon =
+        document
+          .getElementById("admin-icon")
+          ?.value
+          .trim() || "📢";
 
-      if (!input || !preview) return;
+      const sender =
+        document
+          .getElementById("admin-sender")
+          ?.value
+          .trim() || "Frazer OS";
 
-      input.addEventListener("change", () => {
-        const file = input.files?.[0];
+      const durationSeconds =
+        Number(
+          document
+            .getElementById("admin-duration")
+            ?.value || 15
+        );
 
-        if (!file) {
-          preview.style.display = "none";
-          preview.removeAttribute("src");
-          return;
-        }
+      const displayMode =
+        document
+          .getElementById(
+            "admin-display-mode"
+          )
+          ?.value || "fullscreen";
 
-        if (!file.type.startsWith("image/")) {
-          input.value = "";
-          preview.style.display = "none";
-          preview.removeAttribute("src");
+      const message =
+        document
+          .getElementById("admin-message")
+          ?.value
+          .trim() || "";
 
-          setAdminStatus(
-            "Please select an image file.",
-            "error"
-          );
-
-          return;
-        }
-
-        if (file.size > 5 * 1024 * 1024) {
-          input.value = "";
-          preview.style.display = "none";
-          preview.removeAttribute("src");
-
-          setAdminStatus(
-            "Image must be smaller than 5 MB.",
-            "error"
-          );
-
-          return;
-        }
-
-        preview.src = URL.createObjectURL(file);
-        preview.style.display = "block";
-      });
+      return {
+        icon,
+        sender,
+        durationSeconds,
+        displayMode,
+        message
+      };
     }
 
-    async function uploadSelectedImage() {
-      const input = document.getElementById("admin-image");
-      const file = input?.files?.[0];
+    function updateNotificationPreview() {
+      const settings =
+        getNotificationSettings();
 
-      if (!file) {
-        return null;
-      }
+      const preview =
+        document.getElementById(
+          "notification-preview"
+        );
 
-      if (!frazerAuthenticated || !frazerStorage) {
-        throw new Error("Storage is not connected.");
-      }
-
-      if (!file.type.startsWith("image/")) {
-        throw new Error("The selected file is not an image.");
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        throw new Error("Image must be smaller than 5 MB.");
-      }
-
-      const safeName =
-        file.name
-          .replace(/[^a-zA-Z0-9._-]/g, "_")
-          .slice(0, 100);
-
-      const filePath =
-        "global-images/" +
-        frazerAuth.currentUser.uid +
-        "/" +
-        Date.now() +
-        "-" +
-        safeName;
-
-      const {
-        storageRef,
-        uploadBytes,
-        getDownloadURL
-      } = window.frazerFirebase;
-
-      const imageRef = storageRef(
-        frazerStorage,
-        filePath
-      );
-
-      setAdminStatus("Uploading image...", "live");
-
-      await uploadBytes(imageRef, file, {
-        contentType: file.type
-      });
-
-      const imageUrl = await getDownloadURL(imageRef);
-
-      return imageUrl;
-    }
-
-    function clearSelectedImage() {
-      const input = document.getElementById("admin-image");
-      const preview = document.getElementById("admin-image-preview");
-
-      if (input) input.value = "";
+      const meta =
+        document.getElementById(
+          "notification-preview-meta"
+        );
 
       if (preview) {
-        preview.style.display = "none";
-        preview.removeAttribute("src");
+        preview.innerHTML =
+          `${escapeHtml(settings.icon)}
+           <strong>${escapeHtml(settings.sender)}</strong><br>
+           ${escapeHtml(
+             settings.message ||
+             "Your message will appear here."
+           )}`;
+      }
+
+      if (meta) {
+        const mode =
+          settings.displayMode ===
+          "announcement"
+            ? "Announcement"
+            : "Full screen";
+
+        meta.textContent =
+          `${mode} · ${
+            settings.durationSeconds
+          } seconds`;
       }
     }
 
-    function initFrazerLiveAdmin() {
-      if (!window.frazerFirebase?.databaseConfigured) {
-        setAuthStatus(
-          "Firebase is loaded. Add your Realtime Database URL before signing in.",
-          "error"
-        );
-
-        setAdminAccess(false);
-        return;
-      }
-
-      try {
-        const sdk = window.frazerFirebase;
-
-        frazerAuth = sdk.getAuth(sdk.app);
-        frazerDB = sdk.getDatabase(sdk.app);
-        frazerStorage = sdk.getStorage(sdk.app);
-
-        frazerLiveRef = sdk.ref(
-          frazerDB,
-          "frazerLive/global"
-        );
-
-        document
-          .getElementById("admin-signin")
-          ?.addEventListener("click", signInAdmin);
-
-        document
-          .getElementById("admin-signout")
-          ?.addEventListener("click", signOutAdmin);
-
-        initImagePreview();
-
-        sdk.onAuthStateChanged(frazerAuth, user => {
-          frazerAuthenticated = !!user;
-
-          const signInButton =
-            document.getElementById("admin-signin");
-
-          const signOutButton =
-            document.getElementById("admin-signout");
-
-          const emailInput =
-            document.getElementById("admin-email");
-
-          const passwordInput =
-            document.getElementById("admin-password");
-
-          if (signInButton) {
-            signInButton.hidden = !!user;
-          }
-
-          if (signOutButton) {
-            signOutButton.hidden = !user;
-          }
-
-          if (emailInput) {
-            emailInput.disabled = !!user;
-          }
-
-          if (passwordInput) {
-            passwordInput.disabled = !!user;
-          }
-
-          setAdminAccess(!!user);
-
-          if (!user) {
-            setAuthStatus("Not signed in.");
-
-            const connection =
-              document.getElementById("admin-connection");
-
-            if (connection) {
-              connection.textContent = "Signed out";
-            }
-
-            return;
-          }
-
-          setAuthStatus(
-            "Signed in as " +
-            (user.email || user.uid) +
-            ".",
-            "live"
-          );
-
-          sdk.onValue(
-            sdk.ref(frazerDB, ".info/connected"),
-            snap => {
-              const connected = snap.val() === true;
-
-              const status =
-                document.getElementById("admin-connection");
-
-              if (status) {
-                status.textContent =
-                  connected ? "Live" : "Offline";
-              }
-
-              if (connected) {
-                setAdminStatus(
-                  "Realtime Database connected.",
-                  "live"
-                );
-              }
-            }
-          );
-
-          sdk.onValue(
-            sdk.ref(frazerDB, "frazerPresence"),
-            snap => {
-              const el =
-                document.getElementById("admin-online");
-
-              if (el) {
-                el.textContent =
-                  snap.size.toLocaleString();
-              }
-            }
-          );
-
-          sdk.onValue(
-            sdk.ref(frazerDB, "frazerAnalytics/pageViews"),
-            snap => {
-              const el =
-                document.getElementById("admin-views");
-
-              if (el) {
-                el.textContent =
-                  Number(snap.val() || 0).toLocaleString();
-              }
-            }
-          );
-
-          setAdminStatus(
-            "Firebase connected. Live controls ready.",
-            "live"
-          );
-        });
-      } catch (err) {
-        console.error(err);
-
-        setAuthStatus(
-          "Firebase setup error: " +
-          (err?.message || "unknown error"),
-          "error"
-        );
-
-        setAdminAccess(false);
-      }
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
 
     async function sendGlobalMessage() {
       if (!frazerAuthenticated) {
-        setAdminStatus("Sign in first.", "error");
-        return;
-      }
-
-      const message =
-        document.getElementById("admin-message")
-          ?.value.trim();
-
-      const imageInput =
-        document.getElementById("admin-image");
-
-      const hasImage =
-        !!imageInput?.files?.length;
-
-      if (!message && !hasImage) {
         setAdminStatus(
-          "Type a message or select an image first.",
+          "Sign in first.",
           "error"
         );
         return;
@@ -824,42 +810,54 @@
         return;
       }
 
+      const settings =
+        getNotificationSettings();
+
+      if (!settings.message) {
+        setAdminStatus(
+          "Type a message first.",
+          "error"
+        );
+        return;
+      }
+
       try {
         const {
           set,
           serverTimestamp
         } = window.frazerFirebase;
 
-        let imageUrl = null;
-
-        if (hasImage) {
-          imageUrl = await uploadSelectedImage();
-        }
-
-        await set(frazerLiveRef, {
-          active: true,
-          icon: "📢",
-          title: "Message from Frazer OS",
-          text: message || "",
-          type: "message",
-          imageUrl: imageUrl || null,
-          sentAt: serverTimestamp()
-        });
-
-        clearSelectedImage();
+        await set(
+          frazerLiveRef,
+          {
+            active: true,
+            icon: settings.icon,
+            title: settings.sender,
+            sender: settings.sender,
+            text: settings.message,
+            type: "notification",
+            displayMode:
+              settings.displayMode,
+            durationSeconds:
+              settings.durationSeconds,
+            sentAt: serverTimestamp()
+          }
+        );
 
         setAdminStatus(
-          imageUrl
-            ? "Message and image sent to everyone online."
-            : "Message sent to everyone online.",
+          settings.displayMode ===
+            "announcement"
+            ? "Announcement sent to everyone online."
+            : "Full screen notification sent to everyone online.",
           "live"
         );
       } catch (err) {
         console.error(err);
 
         setAdminStatus(
-          "Could not send the message: " +
-          (err?.message || "permission denied"),
+          "Could not send the notification: " +
+          (err?.message ||
+            "permission denied"),
           "error"
         );
       }
@@ -867,7 +865,10 @@
 
     async function sendJumpscare() {
       if (!frazerAuthenticated) {
-        setAdminStatus("Sign in first.", "error");
+        setAdminStatus(
+          "Sign in first.",
+          "error"
+        );
         return;
       }
 
@@ -885,17 +886,20 @@
           serverTimestamp
         } = window.frazerFirebase;
 
-        await set(frazerLiveRef, {
-          active: true,
-          icon: "😈",
-          title: "FRAZER OS",
-          text: "YOU HAVE BEEN NOTIFIED.",
-          type: "jumpscare",
-          imageUrl: null,
-          sentAt: serverTimestamp()
-        });
-
-        clearSelectedImage();
+        await set(
+          frazerLiveRef,
+          {
+            active: true,
+            icon: "😈",
+            title: "FRAZER OS",
+            sender: "Frazer OS",
+            text: "YOU HAVE BEEN NOTIFIED.",
+            type: "jumpscare",
+            displayMode: "fullscreen",
+            durationSeconds: 15,
+            sentAt: serverTimestamp()
+          }
+        );
 
         setAdminStatus(
           "Jumpscare sent to everyone online.",
@@ -906,7 +910,8 @@
 
         setAdminStatus(
           "Could not send the jumpscare: " +
-          (err?.message || "permission denied"),
+          (err?.message ||
+            "permission denied"),
           "error"
         );
       }
@@ -914,7 +919,10 @@
 
     async function clearGlobalMessage() {
       if (!frazerAuthenticated) {
-        setAdminStatus("Sign in first.", "error");
+        setAdminStatus(
+          "Sign in first.",
+          "error"
+        );
         return;
       }
 
@@ -932,12 +940,13 @@
           serverTimestamp
         } = window.frazerFirebase;
 
-        await set(frazerLiveRef, {
-          active: false,
-          sentAt: serverTimestamp()
-        });
-
-        clearSelectedImage();
+        await set(
+          frazerLiveRef,
+          {
+            active: false,
+            sentAt: serverTimestamp()
+          }
+        );
 
         setAdminStatus(
           "Global screen cleared.",
@@ -948,15 +957,263 @@
 
         setAdminStatus(
           "Could not clear the global screen: " +
-          (err?.message || "permission denied"),
+          (err?.message ||
+            "permission denied"),
           "error"
         );
       }
     }
 
-    window.sendGlobalMessage = sendGlobalMessage;
-    window.sendJumpscare = sendJumpscare;
-    window.clearGlobalMessage = clearGlobalMessage;
+    function initFrazerLiveAdmin() {
+      /*
+        Always start locked.
+      */
+      setAdminAccess(false);
+
+      if (
+        !window.frazerFirebase
+          ?.databaseConfigured
+      ) {
+        setAuthStatus(
+          "Firebase is loaded. Add your Realtime Database URL before signing in.",
+          "error"
+        );
+
+        return;
+      }
+
+      try {
+        const sdk =
+          window.frazerFirebase;
+
+        frazerAuth =
+          sdk.getAuth(sdk.app);
+
+        frazerDB =
+          sdk.getDatabase(sdk.app);
+
+        frazerLiveRef =
+          sdk.ref(
+            frazerDB,
+            "frazerLive/global"
+          );
+
+        document
+          .getElementById("admin-signin")
+          ?.addEventListener(
+            "click",
+            signInAdmin
+          );
+
+        document
+          .getElementById("admin-signout")
+          ?.addEventListener(
+            "click",
+            signOutAdmin
+          );
+
+        [
+          "admin-icon",
+          "admin-sender",
+          "admin-duration",
+          "admin-display-mode",
+          "admin-message"
+        ].forEach(id => {
+          document
+            .getElementById(id)
+            ?.addEventListener(
+              "input",
+              updateNotificationPreview
+            );
+
+          document
+            .getElementById(id)
+            ?.addEventListener(
+              "change",
+              updateNotificationPreview
+            );
+        });
+
+        updateNotificationPreview();
+
+        sdk.onAuthStateChanged(
+          frazerAuth,
+          user => {
+            frazerAuthenticated =
+              !!user;
+
+            const signInButton =
+              document.getElementById(
+                "admin-signin"
+              );
+
+            const signOutButton =
+              document.getElementById(
+                "admin-signout"
+              );
+
+            const emailInput =
+              document.getElementById(
+                "admin-email"
+              );
+
+            const passwordInput =
+              document.getElementById(
+                "admin-password"
+              );
+
+            if (signInButton) {
+              signInButton.hidden = !!user;
+            }
+
+            if (signOutButton) {
+              signOutButton.hidden =
+                !user;
+            }
+
+            if (emailInput) {
+              emailInput.disabled =
+                !!user;
+            }
+
+            if (passwordInput) {
+              passwordInput.disabled =
+                !!user;
+            }
+
+            /*
+              THIS is what removes the
+              blur after successful login.
+            */
+            setAdminAccess(!!user);
+
+            if (!user) {
+              setAuthStatus(
+                "Not signed in."
+              );
+
+              const connection =
+                document.getElementById(
+                  "admin-connection"
+                );
+
+              if (connection) {
+                connection.textContent =
+                  "Signed out";
+              }
+
+              setAdminStatus(
+                "Sign in to unlock admin controls."
+              );
+
+              return;
+            }
+
+            setAuthStatus(
+              "Signed in as " +
+              (user.email ||
+                user.uid) +
+              ".",
+              "live"
+            );
+
+            sdk.onValue(
+              sdk.ref(
+                frazerDB,
+                ".info/connected"
+              ),
+              snap => {
+                const connected =
+                  snap.val() === true;
+
+                const status =
+                  document.getElementById(
+                    "admin-connection"
+                  );
+
+                if (status) {
+                  status.textContent =
+                    connected
+                      ? "Live"
+                      : "Offline";
+                }
+
+                if (connected) {
+                  setAdminStatus(
+                    "Realtime Database connected.",
+                    "live"
+                  );
+                }
+              }
+            );
+
+            sdk.onValue(
+              sdk.ref(
+                frazerDB,
+                "frazerPresence"
+              ),
+              snap => {
+                const el =
+                  document.getElementById(
+                    "admin-online"
+                  );
+
+                if (el) {
+                  el.textContent =
+                    snap.size
+                      .toLocaleString();
+                }
+              }
+            );
+
+            sdk.onValue(
+              sdk.ref(
+                frazerDB,
+                "frazerAnalytics/pageViews"
+              ),
+              snap => {
+                const el =
+                  document.getElementById(
+                    "admin-views"
+                  );
+
+                if (el) {
+                  el.textContent =
+                    Number(
+                      snap.val() || 0
+                    ).toLocaleString();
+                }
+              }
+            );
+
+            setAdminStatus(
+              "Firebase connected. Live controls ready.",
+              "live"
+            );
+          }
+        );
+      } catch (err) {
+        console.error(err);
+
+        setAuthStatus(
+          "Firebase setup error: " +
+          (err?.message ||
+            "unknown error"),
+          "error"
+        );
+
+        setAdminAccess(false);
+      }
+    }
+
+    window.sendGlobalMessage =
+      sendGlobalMessage;
+
+    window.sendJumpscare =
+      sendJumpscare;
+
+    window.clearGlobalMessage =
+      clearGlobalMessage;
 
     window.addEventListener(
       "load",
