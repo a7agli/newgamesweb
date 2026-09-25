@@ -697,6 +697,61 @@ body.no-animations *{
 
 </div>
 
+<!-- Firebase global screen overlay: hidden unless the admin activates it. -->
+<style>
+#frazer-global-screen{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-align:center;
+  background:rgba(0,0,0,.96);
+  color:white;
+  z-index:100000;
+  padding:30px;
+}
+#frazer-global-screen.show{
+  display:flex;
+  animation:frazerGlobalPop .25s ease;
+}
+#frazer-global-screen .frazer-global-icon{
+  font-size:clamp(60px,12vw,130px);
+  margin-bottom:18px;
+}
+#frazer-global-screen .frazer-global-title{
+  font-size:clamp(25px,5vw,55px);
+  font-weight:700;
+}
+#frazer-global-screen .frazer-global-text{
+  font-size:clamp(16px,2vw,23px);
+  margin-top:10px;
+  max-width:900px;
+  white-space:pre-wrap;
+}
+#frazer-global-screen .frazer-global-image{
+  display:none;
+  max-width:min(90vw,900px);
+  max-height:55vh;
+  margin:0 0 22px;
+  object-fit:contain;
+  border-radius:12px;
+}
+#frazer-global-screen.has-image .frazer-global-image{display:block}
+@keyframes frazerGlobalPop{
+  from{opacity:0;transform:scale(.97)}
+  to{opacity:1;transform:scale(1)}
+}
+</style>
+
+<div id="frazer-global-screen" aria-live="assertive">
+  <img class="frazer-global-image" id="frazer-global-image" alt="">
+  <div class="frazer-global-icon" id="frazer-global-icon">📢</div>
+  <div class="frazer-global-title" id="frazer-global-title">Frazer OS</div>
+  <div class="frazer-global-text" id="frazer-global-text"></div>
+</div>
+
 <script>
 let z=2000;
 let windows=[];
@@ -1012,6 +1067,9 @@ function openFilesApp(){
 <body>
   <h1>Hello from Frazer OS!</h1>
   <p>Edit this code and press Run.</p>
+
+
+
 </body>
 </html></textarea>
         <iframe class="files-preview" sandbox="allow-scripts allow-forms"></iframe>
@@ -1544,5 +1602,99 @@ setInterval(updateWeatherWidget, 10 * 60 * 1000);
 
 </script>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import {
+    getDatabase,
+    ref,
+    set,
+    onValue,
+    onDisconnect,
+    runTransaction
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAJoDdhT8zxq66czyyGfB7-RSYAkFmXu6E",
+    authDomain: "frazeros.firebaseapp.com",
+    databaseURL: "https://frazeros-default-rtdb.firebaseio.com",
+    projectId: "frazeros",
+    storageBucket: "frazeros.firebasestorage.app",
+    messagingSenderId: "60815979501",
+    appId: "1:60815979501:web:aaaae6a20a8bbd5ae26de4",
+    measurementId: "G-XG229W97FC"
+  };
+
+  try {
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Unique visitor/session presence.
+    const sessionId =
+      "s_" +
+      (globalThis.crypto?.randomUUID
+        ? crypto.randomUUID()
+        : Math.random().toString(36).slice(2) + Date.now());
+
+    const presenceRef = ref(db, "frazerPresence/" + sessionId);
+
+    await set(presenceRef, {
+      online: true,
+      at: Date.now()
+    });
+
+    onDisconnect(presenceRef).remove();
+
+    // Count one page view for this page load.
+    runTransaction(ref(db, "frazerAnalytics/pageViews"), current => {
+      return (Number(current) || 0) + 1;
+    }).catch(err => {
+      console.warn("Frazer page-view tracking failed:", err);
+    });
+
+    // Listen for admin broadcasts/jumpscares.
+    const globalRef = ref(db, "frazerLive/global");
+
+    onValue(globalRef, snap => {
+      const data = snap.val();
+      const screen = document.getElementById("frazer-global-screen");
+      const icon = document.getElementById("frazer-global-icon");
+      const title = document.getElementById("frazer-global-title");
+      const text = document.getElementById("frazer-global-text");
+      const image = document.getElementById("frazer-global-image");
+
+      if (!screen) return;
+
+      if (!data || data.active === false) {
+        screen.classList.remove("show", "has-image");
+        if (image) {
+          image.removeAttribute("src");
+          image.alt = "";
+        }
+        return;
+      }
+
+      if (icon) icon.textContent = data.icon || (data.type === "jumpscare" ? "😈" : "📢");
+      if (title) title.textContent = data.title || "Frazer OS";
+      if (text) text.textContent = data.text || "";
+
+      if (image && data.image) {
+        image.src = String(data.image);
+        image.alt = data.title || "Frazer OS";
+        screen.classList.add("has-image");
+      } else {
+        if (image) image.removeAttribute("src");
+        screen.classList.remove("has-image");
+      }
+
+      screen.classList.remove("show");
+      void screen.offsetWidth;
+      screen.classList.add("show");
+    });
+
+    console.log("Frazer Firebase connected.");
+  } catch (err) {
+    console.error("Frazer Firebase initialization failed:", err);
+  }
+</script>
 </body>
 </html>
