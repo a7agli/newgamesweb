@@ -1021,21 +1021,40 @@
 
       entries.forEach(([id, user]) => {
         const online = user.online === true;
+        const game = online ? (user.game || "Browsing") : "Offline";
         const last = user.lastSeen
           ? new Date(Number(user.lastSeen)).toLocaleString()
           : "Unknown";
 
         const row = document.createElement("div");
         row.style.cssText =
-          "padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#0c1016;display:flex;justify-content:space-between;gap:10px;align-items:center;";
-        row.innerHTML =
-          `<div><strong>${escapeHtml(user.name)}</strong><div style="color:var(--muted);font-size:11px;margin-top:3px;">${escapeHtml(user.device || "iPad")} · Last seen: ${escapeHtml(last)}</div></div>` +
-          `<div style="white-space:nowrap;color:${online ? "#7fe0a3" : "var(--muted)"};">${online ? "🟢 Online" : "⚪ Offline"}</div>`;
+          "padding:12px;border:1px solid var(--border);border-radius:10px;background:#0c1016;display:flex;justify-content:space-between;gap:12px;align-items:center;";
+
+        row.innerHTML = `
+          <div style="min-width:0;">
+            <div style="font-size:14px;">
+              <strong>${escapeHtml(user.name)}</strong>
+            </div>
+
+            <div style="color:var(--muted);font-size:11px;margin-top:4px;">
+              ${escapeHtml(user.device || "Desktop")} · Last seen: ${escapeHtml(last)}
+            </div>
+
+            <div style="font-size:13px;margin-top:7px;">
+              🎮 <strong>${escapeHtml(game)}</strong>
+            </div>
+          </div>
+
+          <div style="white-space:nowrap;color:${online ? "#7fe0a3" : "var(--muted)"};font-size:12px;">
+            ${online ? "🟢 Online" : "⚪ Offline"}
+          </div>
+        `;
+
         list.appendChild(row);
 
         const option = document.createElement("option");
         option.value = id;
-        option.textContent = `${user.name}${online ? " — Online" : " — Offline"}`;
+        option.textContent = `${user.name} — ${online ? game : "Offline"}`;
         select.appendChild(option);
       });
     }
