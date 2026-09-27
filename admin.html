@@ -430,6 +430,27 @@
 </section>
 
 <section class="panel admin-protected">
+  <h2>People using Frazer OS</h2>
+  <div class="panel-sub">See who is online and send a private message to one person.</div>
+
+  <div id="frazer-users-list" style="display:grid;gap:8px;margin-bottom:14px;">
+    <div style="color:var(--muted);font-size:13px;">No users detected yet.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr;gap:10px;">
+    <select id="private-recipient" class="control-select">
+      <option value="">Choose a person...</option>
+    </select>
+    <textarea id="private-message" placeholder="Type a private message..."></textarea>
+    <div class="actions" style="margin-top:0;">
+      <button class="action action-primary" type="button" onclick="sendPrivateMessage()">💬 Send private message</button>
+    </div>
+  </div>
+
+  <div class="status" id="private-status"></div>
+</section>
+
+<section class="panel admin-protected">
 
   <h2>Global screen</h2>
 
@@ -597,6 +618,7 @@
     let frazerLiveRef = null;
     let frazerAuth = null;
     let frazerAuthenticated = false;
+    let frazerUsers = {};
 
     function setAdminStatus(message, type = "") {
       const el =
@@ -964,6 +986,110 @@
       }
     }
 
+    function setPrivateStatus(message, type = "") {
+      const el = document.getElementById("private-status");
+      if (!el) return;
+      el.textContent = message;
+      el.className = "status" + (type ? " " + type : "");
+    }
+
+    function renderFrazerUsers(users) {
+      frazerUsers = users || {};
+
+      const list = document.getElementById("frazer-users-list");
+      const select = document.getElementById("private-recipient");
+      if (!list || !select) return;
+
+      const entries = Object.entries(frazerUsers)
+        .filter(([id, user]) => user && user.name);
+
+      list.innerHTML = "";
+      select.innerHTML = '<option value="">Choose a person...</option>';
+
+      if (!entries.length) {
+        list.innerHTML =
+          '<div style="color:var(--muted);font-size:13px;">No users detected yet.</div>';
+        return;
+      }
+
+      entries.sort((a, b) => {
+        const ao = a[1].online ? 1 : 0;
+        const bo = b[1].online ? 1 : 0;
+        if (bo !== ao) return bo - ao;
+        return String(a[1].name).localeCompare(String(b[1].name));
+      });
+
+      entries.forEach(([id, user]) => {
+        const online = user.online === true;
+        const last = user.lastSeen
+          ? new Date(Number(user.lastSeen)).toLocaleString()
+          : "Unknown";
+
+        const row = document.createElement("div");
+        row.style.cssText =
+          "padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#0c1016;display:flex;justify-content:space-between;gap:10px;align-items:center;";
+        row.innerHTML =
+          `<div><strong>${escapeHtml(user.name)}</strong><div style="color:var(--muted);font-size:11px;margin-top:3px;">${escapeHtml(user.device || "iPad")} · Last seen: ${escapeHtml(last)}</div></div>` +
+          `<div style="white-space:nowrap;color:${online ? "#7fe0a3" : "var(--muted)"};">${online ? "🟢 Online" : "⚪ Offline"}</div>`;
+        list.appendChild(row);
+
+        const option = document.createElement("option");
+        option.value = id;
+        option.textContent = `${user.name}${online ? " — Online" : " — Offline"}`;
+        select.appendChild(option);
+      });
+    }
+
+    async function sendPrivateMessage() {
+      if (!frazerAuthenticated) {
+        setPrivateStatus("Sign in first.", "error");
+        return;
+      }
+
+      if (!frazerDB) {
+        setPrivateStatus("Realtime Database isn't connected.", "error");
+        return;
+      }
+
+      const recipient = document.getElementById("private-recipient")?.value;
+      const message = document.getElementById("private-message")?.value.trim();
+
+      if (!recipient) {
+        setPrivateStatus("Choose a person first.", "error");
+        return;
+      }
+
+      if (!message) {
+        setPrivateStatus("Type a message first.", "error");
+        return;
+      }
+
+      try {
+        const { ref, set, serverTimestamp } = window.frazerFirebase;
+        const recipientName = frazerUsers[recipient]?.name || "User";
+
+        await set(ref(frazerDB, "frazerMessages/" + recipient), {
+          active: true,
+          icon: "💬",
+          title: "Message from Admin",
+          sender: "Frazer OS Admin",
+          text: message,
+          durationSeconds: 15,
+          sentAt: serverTimestamp()
+        });
+
+        setPrivateStatus(`Message sent to ${recipientName}.`, "live");
+        document.getElementById("private-message").value = "";
+      } catch (err) {
+        console.error(err);
+        setPrivateStatus(
+          "Could not send the private message: " +
+          (err?.message || "permission denied"),
+          "error"
+        );
+      }
+    }
+
     function initFrazerLiveAdmin() {
       /*
         Always start locked.
@@ -1169,6 +1295,16 @@
             sdk.onValue(
               sdk.ref(
                 frazerDB,
+                "frazerUsers"
+              ),
+              snap => {
+                renderFrazerUsers(snap.val() || {});
+              }
+            );
+
+            sdk.onValue(
+              sdk.ref(
+                frazerDB,
                 "frazerAnalytics/pageViews"
               ),
               snap => {
@@ -1208,6 +1344,9 @@
 
     window.sendGlobalMessage =
       sendGlobalMessage;
+
+    window.sendPrivateMessage =
+      sendPrivateMessage;
 
     window.sendJumpscare =
       sendJumpscare;
