@@ -1,4 +1,4 @@
-j<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -33,21 +33,36 @@ select{
   color-scheme:dark;
 }
 
-/* TASKBAR */
+/* TASKBAR + TASKBAR-SIZED START POPUP */
 .taskbar{
   position:fixed;
+  left:0;
+  right:0;
   bottom:0;
   width:100%;
   height:55px;
-  background:rgba(20,20,20,0.7);
-  backdrop-filter:blur(12px);
+  min-height:55px;
+  background:rgba(20,20,20,0.76);
+  backdrop-filter:blur(18px) saturate(130%);
+  -webkit-backdrop-filter:blur(18px) saturate(130%);
   display:flex;
   justify-content:center;
   align-items:center;
   z-index:9999;
+  overflow:visible;
+  border-top:1px solid rgba(255,255,255,.08);
+  transition:background .3s ease, box-shadow .3s ease;
+}
+
+.taskbar.start-open{
+  box-shadow:0 -8px 28px rgba(0,0,0,.28);
 }
 
 .start-btn{
+  position:absolute;
+  left:50%;
+  bottom:5px;
+  transform:translateX(-50%);
   width:44px;
   height:44px;
   display:flex;
@@ -57,41 +72,170 @@ select{
   cursor:pointer;
   font-size:20px;
   border-radius:10px;
-  transition:0.2s;
+  transition:0.22s ease, transform .35s cubic-bezier(.2,.8,.2,1), background .2s ease;
+  z-index:10003;
+  border:0;
+  outline:0;
+  padding:0;
+  margin:0;
+  background:transparent;
+  font:inherit;
 }
 
 .start-btn:hover{
   background:rgba(255,255,255,0.1);
 }
 
-/* START MENU */
+.taskbar.start-open .start-btn{
+  background:rgba(255,255,255,.12);
+  transform:translateX(-50%) scale(1.04);
+}
+
+/* ACTUAL START MENU POPUP */
 #start-menu{
   position:fixed;
-  bottom:70px;
   left:50%;
-  transform:translateX(-50%) scale(0.95);
-
-  width:min(92vw, 600px);
-  height:min(82vh, 680px);
-
-  background:rgba(25,25,25,0.85);
-  backdrop-filter:blur(20px);
-  border-radius:16px;
-  padding:16px;
-
-  display:none;
+  bottom:65px;
+  width:min(680px, calc(100vw - 24px));
+  height:min(520px, calc(100vh - 90px));
+  padding:18px;
+  background:rgba(20,20,20,.94);
+  backdrop-filter:blur(22px) saturate(130%);
+  -webkit-backdrop-filter:blur(22px) saturate(130%);
   color:white;
+  display:none;
+  flex-direction:column;
+  align-items:stretch;
   opacity:0;
-  transition:0.25s;
-  z-index:9998;
-
-  overflow-y:auto;
+  pointer-events:none;
+  transform:translate(-50%, 16px) scale(.97);
+  transform-origin:bottom center;
+  transition:opacity .22s ease, transform .32s cubic-bezier(.2,.8,.2,1);
+  z-index:10002;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:18px;
+  box-shadow:0 22px 70px rgba(0,0,0,.42), 0 8px 30px rgba(0,0,0,.2);
 }
 
 #start-menu.show{
+  display:flex;
   opacity:1;
-  transform:translateX(-50%) scale(1);
+  pointer-events:auto;
+  transform:translate(-50%, 0) scale(1);
 }
+
+#start-menu.frazer-name-required{
+  justify-content:center;
+}
+
+#start-menu.frazer-name-required > :not(#frazer-name-card){
+  display:none !important;
+}
+
+.taskbar.start-open #taskbar-widgets{
+  opacity:0;
+  transform:translateY(10px);
+  pointer-events:none;
+}
+
+#start-menu.show .search,
+#start-menu.show .big-grid,
+#start-menu.show .panel{
+  animation:frazerStartContentIn .28s cubic-bezier(.2,.8,.2,1) both;
+}
+
+#frazer-start-greeting{
+  animation:frazerGreetingIn .45s cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes frazerStartContentIn{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes frazerGreetingIn{
+  from{opacity:0;transform:translateY(10px) scale(.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* Name onboarding lives inside the taskbar/start menu only. */
+#start-menu.frazer-name-required > :not(#frazer-name-card){
+  display:none !important;
+}
+
+#start-menu:not(.frazer-name-required) #frazer-name-card{
+  display:none;
+}
+
+
+#frazer-name-card{
+  width:100%;
+  min-height:150px;
+  margin:0;
+  padding:7px 10px;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  text-align:left;
+  transform:translateY(8px);
+  opacity:1;
+  transition:transform .32s cubic-bezier(.2,.8,.2,1), opacity .24s ease;
+}
+
+#frazer-name-logo{
+  width:34px;
+  height:34px;
+  flex:0 0 34px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  background:rgba(255,255,255,.08);
+  box-shadow:0 5px 16px rgba(0,0,0,.18);
+}
+
+#frazer-name-title{font-size:15px;font-weight:700;letter-spacing:-.2px;white-space:nowrap}
+#frazer-name-subtitle{display:none}
+#frazer-name-input{
+  box-sizing:border-box;
+  width:min(280px,42vw);
+  padding:9px 12px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.16);
+  outline:none;
+  background:rgba(255,255,255,.08);
+  color:white;
+  font-size:14px;
+  transition:.2s ease;
+}
+#frazer-name-input:focus{
+  border-color:rgba(255,255,255,.38);
+  background:rgba(255,255,255,.11);
+  box-shadow:0 0 0 4px rgba(255,255,255,.05), 0 8px 30px rgba(0,0,0,.16);
+}
+#frazer-name-error{min-width:110px;min-height:18px;margin:0;color:#ff9b9b;font-size:11px;white-space:nowrap}
+#frazer-name-continue{
+  width:auto;
+  min-width:88px;
+  margin-top:0;
+  padding:9px 14px;
+  border:0;
+  border-radius:10px;
+  background:white;
+  color:#111;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  transition:transform .15s ease, box-shadow .2s ease;
+}
+#frazer-name-continue:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(0,0,0,.2)}
+#frazer-name-continue:active{transform:scale(.98)}
 
 .search{
   width:100%;
@@ -158,6 +302,44 @@ select{
 
 .panel.active{
   display:block;
+}
+
+#start-menu:not(.frazer-name-required) #frazer-start-greeting{
+  margin:0 0 12px !important;
+  font-size:22px !important;
+  white-space:nowrap;
+}
+
+#start-menu:not(.frazer-name-required) .search{
+  flex:0 0 auto;
+  width:100%;
+  margin:0 0 12px;
+}
+
+#start-menu:not(.frazer-name-required) #home-panel{
+  display:block;
+  flex:1;
+  min-height:0;
+  overflow:auto;
+}
+
+#start-menu:not(.frazer-name-required) .big-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(115px,1fr));
+  gap:10px;
+  margin-top:0;
+  overflow:auto;
+  max-height:100%;
+  padding-right:2px;
+}
+
+#start-menu:not(.frazer-name-required) .small-tile{
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  white-space:normal;
+  padding:10px;
 }
 
 /* WINDOW AREA */
@@ -357,6 +539,7 @@ select{
   display:flex;
   align-items:center;
   gap:3px;
+  transition:opacity .25s ease, transform .3s ease;
 }
 .taskbar-widget{
   height:42px;
@@ -389,14 +572,52 @@ select{
   .taskbar-widget-time .taskbar-date{display:none}
 }
 
+
+/* No social/people control is shown on the taskbar. */
+
 /* MOBILE */
 @media (max-width:700px){
 
   #start-menu{
-    width:96vw;
-    height:85vh;
-    bottom:65px;
-    padding:12px;
+    width:calc(100vw - 16px);
+    height:min(560px, calc(100vh - 78px));
+    bottom:63px;
+    padding:14px;
+    border-radius:16px;
+  }
+
+  #frazer-name-card{
+    padding:7px 5px;
+    gap:6px;
+  }
+  #frazer-name-logo{
+    width:30px;
+    height:30px;
+    flex-basis:30px;
+    font-size:16px;
+  }
+  #frazer-name-title{
+    font-size:12px;
+  }
+  #frazer-name-input{
+    flex:1 1 auto;
+    width:auto;
+    min-width:70px;
+    padding:8px 9px;
+    font-size:12px;
+  }
+  #frazer-name-error{
+    min-width:0;
+    width:auto;
+    max-width:70px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size:9px;
+  }
+  #frazer-name-continue{
+    min-width:68px;
+    padding:8px 9px;
+    font-size:12px;
   }
 
   .window{
@@ -499,10 +720,11 @@ body.no-animations *{
     height:38px;
   }
 }
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7462828797160107"
-     crossorigin="anonymous"></script>
-  
 </style>
+<script async src="https://pagead2.googlesyndication.com/adsbygoogle.js?client=ca-pub-7462828797160107" crossorigin="anonymous"></script>
+
+
+
 </head>
 
 <body>
@@ -514,57 +736,6 @@ body.no-animations *{
 
 
 <div id="window-area"></div>
-
-<!-- START MENU -->
-<div id="start-menu">
-
-<input id="app-search" class="search" placeholder="Search For Apps, Settings, Etc" autocomplete="off">
-
-<div id="home-panel" class="panel active">
-
-<div class="big-grid">
-  <!-- GAMES -->
-  <div class="small-tile" onclick="openApp('games/vex7/index.html','Vex 7','game')">🏃 Vex 7</div>
-  <div class="small-tile" onclick="openApp('games/snake/index.html','snake','game')">Snake</div>
-  <div class="small-tile" onclick="openApp('games/slope/index.html','Slope','game')">🏂 Slope</div>
-  <div class="small-tile" onclick="openApp('games/drive-mad/index.html','Drive Mad','game')">🚗 Drive Mad</div>
-  <div class="small-tile" onclick="openApp('games/drivemad2/index.html','Drive Mad 2','game')">🚙 Drive Mad 2</div>
-  <div class="small-tile" onclick="openApp('games/retro-bowl/index.html','Retro Bowl','game')">🏈 Retro Bowl</div>
-  <div class="small-tile" onclick="openApp('games/retrobowlcollege/index.html','Retro Bowl College','game')">🏈 Retro Bowl College</div>
-  <div class="small-tile" onclick="openApp('games/gball/index.html','GBall','game')">⚾ Google baseball</div>
-  <div class="small-tile" onclick="openApp('games/moto-x3m/index.html','Moto X3M','game')">🏍️ Moto X3M</div>
-  <div class="small-tile" onclick="openApp('games/motox3m2/index.html','Moto X3M 2','game')">🏍️ Moto X3M 2</div>
-  <div class="small-tile" onclick="openApp('games/basketball-stars/index.html','Basketball Stars','game')">🏀 Basketball Stars</div>
-  <div class="small-tile" onclick="openApp('games/Snow-Rider3D-main/index.html','Snow Rider 3D','game')">❄️ Snow Rider 3D</div>
-  <div class="small-tile" onclick="openApp('games/fnaf/index.html','FNaF','game')">🐻 FNaF</div>
-  <div class="small-tile" onclick="openApp('games/fnaje/index.html','FNaJE','game')">😈 FNaJE</div>
-  <div class="small-tile" onclick="openApp('games/rocket-goal/index.html','Rocket Goal','game')">⚽ Rocket Goal</div>
-  <div class="small-tile" onclick="openApp('apps/marty-games/index.html','Marty-Games','game')">🎲 Marty Games</div>
-  <div class="small-tile" onclick="openApp('games/papaswings/index.html','Papas wingerria','game')">🍔 Papas wingeria</div>
-  <div class="small-tile" onclick="openApp('minec/EaglercraftX_1.8_u53_Offline_Signed.html','Minecraft','game')">⛏️ Minecraft</div>
-  <div class="small-tile" onclick="openApp('games/subwaysurfers/index.html','Subway Surfers','game')">🛹 Subway Surfers</div>
-  <div class="small-tile" onclick="openApp('games/bitl/index.html','bitlife','game')">👶 Bitlife</div>
-  <div class="small-tile" onclick="openApp('games/crazycattle3d/CrazyCattle3D.html','Crazycattle3d','game')">🐂 Crazy cattle 3d</div>
-  <div class="small-tile" onclick="openApp('games/pokered/index.html','Pokemon Red','game')">🔴 Pokemon Red</div>
-  <div class="small-tile" onclick="openApp('games/Ragdollarc/index.html','ragdollarc','game')">🏹 Stickman arrow game</div>
-  <div class="small-tile" onclick="openApp('games/papastacos/index.html','papastacos','game')">🌮 Papa's Tacos</div>
-  <div class="small-tile" onclick="openApp('games/escaperoad1/index.html','escape road','game')">🚓 Escape Road 1</div>
-  <div class="small-tile" onclick="openApp('games/escaperoad2/index.html','escape road 2','game')">🚓 Escape Road 2</div>
-  <div class="small-tile" onclick="openApp('games/cookieclicker1/index.html','Cookie Clicker','game')">🍪 Cookie Clicker</div>
-  
-
-  <!-- APPS -->
-  <div class="small-tile" onclick="openApp('apps/chatbot/index.html','Chatbot','app')">🤖 AI Chatbot</div>
-  <div class="small-tile" onclick="openFilesApp()">📁 Files</div>
-  <div class="small-tile" onclick="openApp('apps/music/index.html','Frazer Music','app')">🎵 Frazer Music</div>
-  <div class="small-tile" onclick="openApp('apps/google/index.html','Google','app')">🌐 Frazer Proxy</div>
-
-  <!-- SETTINGS -->
-  <div class="small-tile" onclick="openSettingsApp()">⚙️ Settings</div>
-</div>
-
-</div>
-</div>
 
 <!-- SETTINGS TEMPLATE (cloned into the Settings window) -->
 <div id="settings-panel" class="panel" style="display:none;">
@@ -680,8 +851,70 @@ body.no-animations *{
 <!-- TASKBAR -->
 <div class="taskbar">
 
-<div class="start-btn" onclick="toggleMenu()">
+<button class="start-btn" id="frazer-windows-button" type="button" aria-label="Open Windows menu" aria-expanded="false">
 <i class="fa-brands fa-windows"></i>
+</button>
+
+<!-- START MENU (MORPHED TASKBAR) -->
+<div id="start-menu" aria-hidden="true">
+
+<div id="frazer-name-card" aria-live="polite">
+  <div id="frazer-name-logo">🪟</div>
+  <div id="frazer-name-title">What's your name?</div>
+  <div id="frazer-name-subtitle">Enter your name to open Games.</div>
+  <input id="frazer-name-input" type="text" maxlength="40" autocomplete="off"
+         placeholder="Enter your name" spellcheck="false">
+  <div id="frazer-name-error"></div>
+  <button id="frazer-name-continue" type="button">Continue</button>
+</div>
+
+<div id="frazer-start-greeting" style="font-size:24px;font-weight:700;margin:4px 4px 16px;">Welcome</div>
+<input id="app-search" class="search" placeholder="Search For Apps, Settings, Etc" autocomplete="off">
+
+<div id="home-panel" class="panel active">
+
+<div class="big-grid">
+  <!-- GAMES -->
+  <div class="small-tile" onclick="openApp('games/vex7/index.html','Vex 7','game')">🏃 Vex 7</div>
+  <div class="small-tile" onclick="openApp('games/snake/index.html','snake','game')">Snake</div>
+  <div class="small-tile" onclick="openApp('games/slope/index.html','Slope','game')">🏂 Slope</div>
+  <div class="small-tile" onclick="openApp('games/drive-mad/index.html','Drive Mad','game')">🚗 Drive Mad</div>
+  <div class="small-tile" onclick="openApp('games/drivemad2/index.html','Drive Mad 2','game')">🚙 Drive Mad 2</div>
+  <div class="small-tile" onclick="openApp('games/retro-bowl/index.html','Retro Bowl','game')">🏈 Retro Bowl</div>
+  <div class="small-tile" onclick="openApp('games/retrobowlcollege/index.html','Retro Bowl College','game')">🏈 Retro Bowl College</div>
+  <div class="small-tile" onclick="openApp('games/gball/index.html','GBall','game')">⚾ Google baseball</div>
+  <div class="small-tile" onclick="openApp('games/moto-x3m/index.html','Moto X3M','game')">🏍️ Moto X3M</div>
+  <div class="small-tile" onclick="openApp('games/motox3m2/index.html','Moto X3M 2','game')">🏍️ Moto X3M 2</div>
+  <div class="small-tile" onclick="openApp('games/basketball-stars/index.html','Basketball Stars','game')">🏀 Basketball Stars</div>
+  <div class="small-tile" onclick="openApp('games/Snow-Rider3D-main/index.html','Snow Rider 3D','game')">❄️ Snow Rider 3D</div>
+  <div class="small-tile" onclick="openApp('games/fnaf/index.html','FNaF','game')">🐻 FNaF</div>
+  <div class="small-tile" onclick="openApp('games/fnaje/index.html','FNaJE','game')">😈 FNaJE</div>
+  <div class="small-tile" onclick="openApp('games/rocket-goal/index.html','Rocket Goal','game')">⚽ Rocket Goal</div>
+  <div class="small-tile" onclick="openApp('apps/marty-games/index.html','Marty-Games','game')">🎲 Marty Games</div>
+  <div class="small-tile" onclick="openApp('games/papaswings/index.html','Papas wingerria','game')">🍔 Papas wingeria</div>
+  <div class="small-tile" onclick="openApp('minec/EaglercraftX_1.8_u53_Offline_Signed.html','Minecraft','game')">⛏️ Minecraft</div>
+  <div class="small-tile" onclick="openApp('games/subwaysurfers/index.html','Subway Surfers','game')">🛹 Subway Surfers</div>
+  <div class="small-tile" onclick="openApp('games/bitl/index.html','bitlife','game')">👶 Bitlife</div>
+  <div class="small-tile" onclick="openApp('games/crazycattle3d/CrazyCattle3D.html','Crazycattle3d','game')">🐂 Crazy cattle 3d</div>
+  <div class="small-tile" onclick="openApp('games/pokered/index.html','Pokemon Red','game')">🔴 Pokemon Red</div>
+  <div class="small-tile" onclick="openApp('games/Ragdollarc/index.html','ragdollarc','game')">🏹 Stickman arrow game</div>
+  <div class="small-tile" onclick="openApp('games/papastacos/index.html','papastacos','game')">🌮 Papa's Tacos</div>
+  <div class="small-tile" onclick="openApp('games/escaperoad1/index.html','escape road','game')">🚓 Escape Road 1</div>
+  <div class="small-tile" onclick="openApp('games/escaperoad2/index.html','escape road 2','game')">🚓 Escape Road 2</div>
+  <div class="small-tile" onclick="openApp('games/cookieclicker1/index.html','Cookie Clicker','game')">🍪 Cookie Clicker</div>
+  
+
+  <!-- APPS -->
+  <div class="small-tile" onclick="openApp('apps/chatbot/index.html','Chatbot','app')">🤖 AI Chatbot</div>
+  <div class="small-tile" onclick="openFilesApp()">📁 Files</div>
+  <div class="small-tile" onclick="openApp('apps/music/index.html','Frazer Music','app')">🎵 Frazer Music</div>
+  <div class="small-tile" onclick="openApp('apps/google/index.html','Google','app')">🌐 Frazer Proxy</div>
+
+  <!-- SETTINGS -->
+  <div class="small-tile" onclick="openSettingsApp()">⚙️ Settings</div>
+</div>
+
+</div>
 </div>
 
 <div id="taskbar-widgets">
@@ -795,25 +1028,77 @@ function initAppSearch(){
 /* MENU */
 function closeStartMenu(){
   const m=document.getElementById("start-menu");
+  const taskbar=document.querySelector(".taskbar");
   if(!m) return;
   m.classList.remove("show");
+  m.setAttribute("aria-hidden","true");
+  taskbar?.classList.remove("start-open");
   setTimeout(()=>{
     m.style.display="none";
-  },200);
+  },350);
 }
 
 function toggleMenu(){
-  const m=document.getElementById("start-menu");
+  const menu = document.getElementById("start-menu");
+  const taskbar = document.querySelector(".taskbar");
+  const startButton = document.getElementById("frazer-windows-button");
 
-  if(m.classList.contains("show")){
+  if(!menu || !taskbar) return;
+
+  const isOpen = menu.classList.contains("show");
+
+  if(isOpen){
     closeStartMenu();
-  }else{
-    m.style.display="block";
-    setTimeout(()=>{
-      m.classList.add("show");
-    },10);
+    return;
   }
+
+  taskbar.classList.add("start-open");
+  menu.style.display = "flex";
+  menu.classList.add("show");
+  menu.setAttribute("aria-hidden","false");
+
+  const savedName = (localStorage.getItem("frazerDisplayName") || "").trim();
+  const greeting = document.getElementById("frazer-start-greeting");
+
+  if(savedName){
+    menu.classList.remove("frazer-name-required");
+    if(greeting) greeting.textContent = `Hello, ${savedName}`;
+  }else{
+    menu.classList.add("frazer-name-required");
+
+    const ensureName = window.frazerEnsureName;
+    if(typeof ensureName === "function") ensureName();
+  }
+
+  if(startButton) startButton.setAttribute("aria-expanded","true");
 }
+
+window.toggleMenu = toggleMenu;
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeStartMenu();
+});
+
+document.addEventListener("mousedown", event => {
+  const menu = document.getElementById("start-menu");
+  const button = document.getElementById("frazer-windows-button");
+  if (menu?.classList.contains("show") && !menu.contains(event.target) && !button?.contains(event.target)) {
+    closeStartMenu();
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const startButton = document.getElementById("frazer-windows-button");
+  if (startButton) {
+    startButton.addEventListener("click", toggleMenu);
+    startButton.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggleMenu();
+      }
+    });
+  }
+});
 
 /* PANELS */
 function openPanel(name){
@@ -826,6 +1111,29 @@ function openPanel(name){
 }
 
 /* OPEN APP */
+function frazerSetLocalCurrentApp(gameName){
+  const value = gameName || "Browsing";
+  window.frazerCurrentGame = value;
+  if(typeof window.frazerSetCurrentGame === "function"){
+    window.frazerSetCurrentGame(value);
+  }
+}
+
+function frazerRefreshCurrentApp(){
+  const openWindows = windows.filter(w => w && document.body.contains(w));
+
+  const topWindow = openWindows
+    .slice()
+    .sort((a,b) => Number(a.style.zIndex || 0) - Number(b.style.zIndex || 0))
+    .pop();
+
+  if(topWindow && topWindow.dataset.appType === "game"){
+    frazerSetLocalCurrentApp(topWindow.dataset.gameTitle || "Game");
+  }else{
+    frazerSetLocalCurrentApp("Browsing");
+  }
+}
+
 function openApp(url,title,type="app"){
 
   closeStartMenu();
@@ -833,6 +1141,7 @@ function openApp(url,title,type="app"){
   const win=document.createElement("div");
   win.className="window";
   win.dataset.appType=type;
+  win.dataset.gameTitle=title || "Game";
 
   let topPos=80+windows.length*20;
   let leftPos=80+windows.length*20;
@@ -867,7 +1176,19 @@ function openApp(url,title,type="app"){
 
   win.addEventListener("mousedown",()=>{
     win.style.zIndex=z++;
+
+    if(win.dataset.appType === "game"){
+      frazerSetLocalCurrentApp(win.dataset.gameTitle || title || "Game");
+    }else{
+      frazerSetLocalCurrentApp("Browsing");
+    }
   });
+
+  if(type === "game"){
+    frazerSetLocalCurrentApp(title || "Game");
+  }else{
+    frazerSetLocalCurrentApp("Browsing");
+  }
 
   return win;
 }
@@ -875,6 +1196,7 @@ function openApp(url,title,type="app"){
 /* SETTINGS APP */
 function openSettingsApp(){
   closeStartMenu();
+  frazerSetLocalCurrentApp("Browsing");
   const existing = document.querySelector('.window[data-app-type="settings"]');
   if(existing){
     existing.style.zIndex=z++;
@@ -1024,6 +1346,7 @@ function syncSettingsApp(){
 }
 
 function openFilesApp(){
+  frazerSetLocalCurrentApp("Browsing");
   const existing=document.querySelector('.window[data-app-type="files"]');
   if(existing){
     existing.style.zIndex=z++;
@@ -1126,6 +1449,7 @@ function closeWindow(btn){
   win.remove();
   windows=windows.filter(w=>w!==win);
   if(wasMax) updateGameFullscreenState();
+  frazerRefreshCurrentApp();
 }
 
 function updateGameFullscreenState(){
@@ -1484,7 +1808,7 @@ function createDesktopIcon(item){
     e.stopPropagation();
     if(item.id === "settings") openDesktopSettings();
     else if(item.id === "files") openFilesApp();
-    else if(item.url) openApp(item.url, item.name);
+    else if(item.url) openApp(item.url, item.name, item.type === "Game" ? "game" : "app");
   };
 
   // Open with a normal click; double-click also works.
@@ -1594,6 +1918,20 @@ function loadDesktopItemSettings(){
   toggleDesktopItems(masterEnabled);
 }
 document.addEventListener("fullscreenchange", updateGameFullscreenState);
+
+// Bind the Windows button directly so it works even when inline handlers are blocked.
+const frazerWindowsButton = document.getElementById("frazer-windows-button");
+if(frazerWindowsButton && !frazerWindowsButton.dataset.bound){
+  frazerWindowsButton.dataset.bound = "1";
+  frazerWindowsButton.addEventListener("click", toggleMenu);
+  frazerWindowsButton.addEventListener("keydown", e => {
+    if(e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      toggleMenu();
+    }
+  });
+}
+
 loadDesktopItemSettings();
 initAppSearch();
 loadWidgetSettings();
@@ -1613,6 +1951,82 @@ setInterval(updateWeatherWidget, 10 * 60 * 1000);
     runTransaction
   } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
+
+  const FRAZER_BAD_WORDS = [
+    "fuck","fucker","fucking","shit","sh1t","bitch","b1tch","asshole","a55hole",
+    "dick","d1ck","piss","pussy","cunt","cock","motherfucker","nigger","nigga",
+    "fag","faggot","slut","whore"
+  ];
+
+  function frazerCleanName(value){
+    return String(value || "")
+      .replace(/[\u0000-\u001F\u007F]/g,"")
+      .trim()
+      .slice(0,40);
+  }
+
+  function frazerNameHasSwearing(name){
+    const normalized = String(name || "").toLowerCase().replace(/[^a-z0-9]+/g," ");
+    return FRAZER_BAD_WORDS.some(word =>
+      new RegExp("(^|[^a-z0-9])" + word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&") + "([^a-z0-9]|$)","i").test(normalized)
+    );
+  }
+
+  let frazerNameResolver;
+  window.frazerNamePromise = new Promise(resolve => { frazerNameResolver = resolve; });
+
+  function showFrazerNameGate(){
+    const saved = localStorage.getItem("frazerDisplayName") || "";
+    const menu=document.getElementById("start-menu");
+    const input=document.getElementById("frazer-name-input");
+    const error=document.getElementById("frazer-name-error");
+    const button=document.getElementById("frazer-name-continue");
+    const greeting=document.getElementById("frazer-start-greeting");
+
+    if(saved.trim()){
+      menu?.classList.remove("frazer-name-required");
+      if(greeting) greeting.textContent=`Hello, ${saved.trim()}`;
+      if(frazerNameResolver) frazerNameResolver(saved.trim());
+      return Promise.resolve(saved.trim());
+    }
+
+    menu?.classList.add("frazer-name-required");
+    if(error) error.textContent="";
+    if(input){ input.value=""; setTimeout(()=>input.focus(),220); }
+
+    return new Promise(resolve=>{
+      const finish=()=>{
+        const name=frazerCleanName(input?.value || "");
+        if(!name){
+          if(error) error.textContent="Please enter a name.";
+          input?.focus();
+          return;
+        }
+        if(frazerNameHasSwearing(name)){
+          if(error) error.textContent="Please choose a different name.";
+          if(input) input.value="";
+          input?.focus();
+          return;
+        }
+
+        localStorage.setItem("frazerDisplayName",name);
+        if(greeting) greeting.textContent=`Hello, ${name}`;
+        menu?.classList.remove("frazer-name-required");
+
+        button?.removeEventListener("click",finish);
+        input?.removeEventListener("keydown",onKey);
+        if(frazerNameResolver) frazerNameResolver(name);
+        resolve(name);
+      };
+      const onKey=e=>{ if(e.key==="Enter") finish(); };
+      button?.addEventListener("click",finish);
+      input?.addEventListener("keydown",onKey);
+    });
+  }
+
+  // The name screen is opened by the Windows/Games button.
+  window.frazerEnsureName = showFrazerNameGate;
+
   const firebaseConfig = {
     apiKey: "AIzaSyAJoDdhT8zxq66czyyGfB7-RSYAkFmXu6E",
     authDomain: "frazeros.firebaseapp.com",
@@ -1628,21 +2042,115 @@ setInterval(updateWeatherWidget, 10 * 60 * 1000);
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Unique visitor/session presence.
-    const sessionId =
-      "s_" +
-      (globalThis.crypto?.randomUUID
-        ? crypto.randomUUID()
-        : Math.random().toString(36).slice(2) + Date.now());
+    // Persistent device identity + display name.
+    // The browser gets one random ID so identical iPads can still be distinguished.
+    let deviceId = localStorage.getItem("frazerDeviceId");
+    if (!deviceId) {
+      deviceId =
+        "d_" +
+        (globalThis.crypto?.randomUUID
+          ? crypto.randomUUID()
+          : Math.random().toString(36).slice(2) + Date.now());
+      localStorage.setItem("frazerDeviceId", deviceId);
+    }
 
-    const presenceRef = ref(db, "frazerPresence/" + sessionId);
+    // Wait until the user opens Windows/Games and completes the full-screen name screen.
+    let displayName = localStorage.getItem("frazerDisplayName") || "";
+    if (!displayName.trim()) {
+      displayName = await window.frazerNamePromise;
+    }
+
+    const presenceRef = ref(db, "frazerPresence/" + deviceId);
+    const userRef = ref(db, "frazerUsers/" + deviceId);
+
+    let currentGame = window.frazerCurrentGame || "Browsing";
+    const deviceType = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ? "Mobile" : "Desktop";
+
+    async function syncFrazerUser(){
+      currentGame = window.frazerCurrentGame || currentGame || "Browsing";
+
+      await set(userRef, {
+        name: displayName,
+        deviceId: deviceId,
+        device: deviceType,
+        online: true,
+        game: currentGame,
+        lastSeen: Date.now()
+      });
+    }
+
+    window.frazerSetCurrentGame = function(game){
+      currentGame = String(game || "Browsing");
+      window.frazerCurrentGame = currentGame;
+      syncFrazerUser().catch(err => {
+        console.warn("Frazer current-game update failed:", err);
+      });
+    };
+
+    await set(userRef, {
+      name: displayName,
+      deviceId: deviceId,
+      device: deviceType,
+      online: true,
+      game: currentGame,
+      lastSeen: Date.now()
+    });
 
     await set(presenceRef, {
+      name: displayName,
+      deviceId: deviceId,
+      device: deviceType,
       online: true,
       at: Date.now()
     });
 
     onDisconnect(presenceRef).remove();
+    onDisconnect(userRef).update({
+      online: false,
+      game: "Offline",
+      lastSeen: Date.now()
+    });
+
+    // Keep the user's game and last-seen timestamp fresh.
+    setInterval(() => {
+      syncFrazerUser().catch(err => {
+        console.warn("Frazer user heartbeat failed:", err);
+      });
+    }, 15000);
+
+
+    // Receive private messages from the admin.
+    const privateMessageRef = ref(db, "frazerMessages/" + deviceId);
+    onValue(privateMessageRef, snap => {
+      const data = snap.val();
+      if (!data || data.active === false) return;
+
+      const screen = document.getElementById("frazer-global-screen");
+      const icon = document.getElementById("frazer-global-icon");
+      const title = document.getElementById("frazer-global-title");
+      const text = document.getElementById("frazer-global-text");
+      const image = document.getElementById("frazer-global-image");
+
+      if (!screen) return;
+
+      if (icon) icon.textContent = data.icon || "💬";
+      if (title) title.textContent = data.title || "Message from Admin";
+      if (text) text.textContent = data.text || "";
+
+      if (image) {
+        image.removeAttribute("src");
+        image.alt = "";
+      }
+      screen.classList.remove("has-image");
+      screen.classList.remove("show");
+      void screen.offsetWidth;
+      screen.classList.add("show");
+
+      // Mark the message as displayed/cleared locally without deleting the record.
+      setTimeout(() => {
+        screen.classList.remove("show");
+      }, Math.max(1000, Number(data.durationSeconds || 15) * 1000));
+    });
 
     // Count one page view for this page load.
     runTransaction(ref(db, "frazerAnalytics/pageViews"), current => {
