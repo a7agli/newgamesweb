@@ -1,38 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<root>
- <title>Cong ty TNHH MTV Vang bac da quy Sai gon : Bang Ty gia vang SJC</title>
- <url>http://www.sjc.com.vn/</url>
- <ratelist updated="03:43:33 PM 11/08/2015" unit="ngàn đồng/lượng">
-  <city name="Hồ Chí Minh">
-   <item buy="32.920" sell="33.060" type="Vàng SJC 1L"></item>
-   <item buy="29.880" sell="30.180" type="Vàng nhẫn SJC 99,99 5p,1c,2c,5c"></item>
-   <item buy="29.380" sell="30.180" type="Vàng nữ trang 99,99%"></item>
-   <item buy="29.081" sell="29.881" type="Vàng nữ trang 99%"></item>
-   <item buy="21.387" sell="22.787" type="Vàng nữ trang 75%"></item>
-   <item buy="16.347" sell="17.747" type="Vàng nữ trang 58,3%"></item>
-   <item buy="11.336" sell="12.736" type="Vàng nữ trang 41,7%"></item>
-  </city>
-  <city name="Hà Nội">
-   <item buy="32.920" sell="33.080" type="Vàng SJC"></item>
-  </city>
-  <city name="Đà  Nẵng">
-   <item buy="32.920" sell="33.080" type="Vàng SJC"></item>
-  </city>
-  <city name="Nha Trang">
-   <item buy="32.910" sell="33.080" type="Vàng SJC"></item>
-  </city>
-  <city name="Cà Mau">
-   <item buy="32.920" sell="33.080" type="Vàng SJC"></item>
-  </city>
-  <city name="Buôn Ma Thuột">
-   <item buy="32.910" sell="33.080" type="Vàng SJC"></item>
-  </city>
-  <city name="Bình Phước">
-   <item buy="32.890" sell="33.090" type="Vàng SJC"></item>
-  </city>
-  <city name="Huế">
-   <item buy="32.920" sell="33.080" type="Vàng SJC"></item>
-  </city>
- </ratelist>
-</root>
-
