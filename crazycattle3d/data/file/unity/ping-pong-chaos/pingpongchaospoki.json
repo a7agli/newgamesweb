@@ -1,0 +1,11 @@
+{
+"TOTAL_MEMORY": 268435456,
+"dataUrl": "pingpongchaospoki.data.unityweb",
+"asmCodeUrl": "pingpongchaospoki.asm.code.unityweb",
+"asmMemoryUrl": "pingpongchaospoki.asm.memory.unityweb",
+"asmFrameworkUrl": "pingpongchaospoki.asm.framework.unityweb",
+"graphicsAPI": ["WebGL 2.0", "WebGL 1.0"],
+"webglContextAttributes": {"preserveDrawingBuffer": false},
+"splashScreenStyle": "Dark",
+"backgroundColor": "#1F6FBF"
+}
