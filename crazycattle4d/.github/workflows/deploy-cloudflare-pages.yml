@@ -1,0 +1,86 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  workflow_run:
+    workflows: ["Build Game with Godot"]
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  deploy-cloudflare-pages:
+    runs-on: ubuntu-latest
+    # Only run if the build workflow succeeded or if manually triggered
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Download the build artifact
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: game-build
+          path: html5/
+          # If triggered by workflow_run, get artifact from that run
+          run-id: ${{ github.event.workflow_run.id || github.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Cloudflare-specific optimizations
+      - name: Compress WASM and PCK with Brotli
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y brotli
+          brotli -f html5/CrazyCattle3D.wasm -o html5/CrazyCattle3D.wasm.br
+          rm html5/CrazyCattle3D.wasm
+          mv html5/CrazyCattle3D.wasm.br html5/CrazyCattle3D.wasm
+          brotli -f html5/CrazyCattle3D.pck -o html5/CrazyCattle3D.pck.br
+          rm html5/CrazyCattle3D.pck
+          mv html5/CrazyCattle3D.pck.br html5/CrazyCattle3D.pck
+
+      - name: Add _headers file
+        run: |
+          echo "/*" > html5/_headers
+          echo "  Cache-Control: max-age=0, must-revalidate" >> html5/_headers
+          echo "" >> html5/_headers
+          echo "/CrazyCattle3D.wasm" >> html5/_headers
+          echo "  Content-Encoding: br" >> html5/_headers
+          echo "  Content-Type: application/wasm" >> html5/_headers
+          echo "" >> html5/_headers
+          echo "/CrazyCattle3D.pck" >> html5/_headers
+          echo "  Content-Encoding: br" >> html5/_headers
+          echo "  Content-Type: application/octet-stream" >> html5/_headers
+
+      # Deploy to Cloudflare Pages
+      - name: Start GitHub Deployment
+        id: start-deploy
+        uses: bobheadxi/deployments@v1
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: production
+
+      - name: Publish to Cloudflare Pages
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '3.42.0'
+          command: pages deploy html5 --project-name=${{ secrets.CF_PAGES_PROJECT_NAME }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Finish GitHub Deployment
+        uses: bobheadxi/deployments@v1
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: production
+          status: success
+          deployment_id: ${{ steps.start-deploy.outputs.deployment_id }}
+          env_url: https://cattle.thoren.co

@@ -1,0 +1,101 @@
+name: Build Game with Godot
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout and setup
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install Terser CLI
+        run: npm install terser
+
+      - name: Install Binaryen
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y binaryen
+
+      # Godot setup
+      - name: Download Godot & HTML5 templates
+        run: |
+          rm -rf godot
+          mkdir -p godot
+          wget -q https://github.com/godotengine/godot-builds/releases/download/4.4.1-stable/Godot_v4.4.1-stable_linux.x86_64.zip
+          unzip -q Godot_v4.4.1-stable_linux.x86_64.zip -d godot
+          chmod +x godot/Godot_v4.4.1-stable_linux.x86_64
+          sudo mv godot/Godot_v4.4.1-stable_linux.x86_64 /usr/local/bin/godot
+          wget -q https://github.com/godotengine/godot/releases/download/4.4.1-stable/Godot_v4.4.1-stable_export_templates.tpz -O export_templates.tpz
+          unzip -q export_templates.tpz -d godot/templates
+          mkdir -p ~/.local/share/godot/export_templates/4.4.1.stable
+          find godot/templates -type f -name 'web*.zip' -exec cp {} ~/.local/share/godot/export_templates/4.4.1.stable/ \;
+
+      # Export game
+      - name: Prepare HTML5 output directory
+        run: mkdir -p html5
+
+      - name: Export HTML5 build (release)
+        run: |
+          godot --headless --path . --export-release Web html5/CrazyCattle3D.html
+
+      - name: Rename exported HTML
+        run: mv html5/CrazyCattle3D.html html5/index.html
+
+      - name: Insert meta description
+        run: |
+          sed -i "/<\/title>/a \
+          <meta name='description' content='Play Crazy Cattle 3D online with NO ADS! Become a sheep and make others explode by building momentum and knocking them over. No download required.'>" html5/index.html
+
+      - name: Insert analytics script
+        run: |
+          sed -i "/<\/body>/i \
+          <script>\n\
+          const beacon = document.createElement('script');\n\
+          beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';\n\
+          beacon.defer = true;\n\
+          beacon.setAttribute('data-cf-beacon', JSON.stringify({ token: 'cae7fb1a7f1f4512a5c1c7edd9b3b243' }));\n\
+          document.head.appendChild(beacon);\n\
+          </script>" html5/index.html
+
+      - name: Minify HTML
+        run: |
+          npm install --no-save html-minifier-terser
+          npx html-minifier-terser html5/index.html \
+            --collapse-whitespace \
+            --remove-comments \
+            --minify-css true \
+            --minify-js true \
+            -o html5/index.html
+
+      - name: Optimize WASM
+        run: |
+          wasm-opt html5/CrazyCattle3D.wasm -O3 -all --vacuum -o html5/optimized.wasm
+          mv html5/optimized.wasm html5/CrazyCattle3D.wasm
+
+      - name: Minify & Tree-shake JS
+        run: |
+          npx terser html5/CrazyCattle3D.js --compress --mangle -o html5/CrazyCattle3D.tmp.js
+          mv html5/CrazyCattle3D.tmp.js html5/CrazyCattle3D.js
+          npx terser html5/CrazyCattle3D.audio.position.worklet.js --compress --mangle -o html5/CrazyCattle3D.audio.position.worklet.tmp.js
+          mv html5/CrazyCattle3D.audio.position.worklet.tmp.js html5/CrazyCattle3D.audio.position.worklet.js
+          npx terser html5/CrazyCattle3D.audio.worklet.js --compress --mangle -o html5/CrazyCattle3D.audio.worklet.tmp.js
+          mv html5/CrazyCattle3D.audio.worklet.tmp.js html5/CrazyCattle3D.audio.worklet.js
+
+      # Upload build artifact
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-build
+          path: html5/
+          retention-days: 7
