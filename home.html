@@ -738,6 +738,116 @@ body.no-animations *{
     height:38px;
   }
 }
+
+
+/* ===== Frazer OS Start menu refresh: Windows 11-inspired acrylic ===== */
+#start-menu{
+  width:min(700px,calc(100vw - 24px));
+  height:min(710px,calc(100vh - 82px));
+  padding:18px 22px 12px;
+  background:rgba(28,30,36,.91);
+  backdrop-filter:blur(34px) saturate(155%);
+  -webkit-backdrop-filter:blur(34px) saturate(155%);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:22px;
+  box-shadow:0 28px 90px rgba(0,0,0,.52),0 6px 24px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.055);
+}
+#start-menu.show{transform:translate(-50%,0) scale(1)}
+.start-shell{position:relative;display:flex;flex:1;min-height:0;flex-direction:column;gap:0;color:#f7f8fb}
+.start-search-bar{
+  height:43px;flex:0 0 43px;display:flex;align-items:center;gap:11px;padding:0 13px;
+  border-radius:9px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.085);
+  box-shadow:0 1px 0 rgba(255,255,255,.04);color:rgba(255,255,255,.76);transition:border-color .18s,background .18s,box-shadow .18s;
+}
+.start-search-bar:focus-within{border-color:rgba(96,165,250,.92);background:rgba(255,255,255,.11);box-shadow:0 0 0 1px rgba(96,165,250,.42)}
+.start-search-bar>i{font-size:14px;color:#9bc8ff}
+#start-menu .start-search-bar #app-search{flex:1;min-width:0;width:100%;height:100%;padding:0;margin:0;border:0;border-radius:0;background:transparent;color:#fff;font-size:13px;outline:0;box-shadow:none}
+#start-menu .search::placeholder{color:rgba(240,243,249,.62)}
+.search-hint{font-size:17px;opacity:.48;line-height:1}
+.start-welcome-line{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 2px 8px;min-height:38px}
+#start-menu:not(.frazer-name-required) #frazer-start-greeting{font-size:12px!important;font-weight:500!important;line-height:1.3;margin:0!important;color:rgba(240,243,249,.68);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.start-brand-pill{display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.2px;color:rgba(240,243,249,.48);white-space:nowrap}
+.brand-dot{width:6px;height:6px;border-radius:50%;background:#65a8ff;box-shadow:0 0 10px rgba(101,168,255,.65)}
+.start-content{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;gap:13px;overflow:hidden}
+.start-section-heading{height:31px;min-height:31px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 2px;color:#f5f6fa;font-size:14px;font-weight:650;letter-spacing:.05px}
+.start-section-heading button,.all-apps-toolbar button{height:27px;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 10px;border:1px solid rgba(255,255,255,.09);border-radius:6px;background:rgba(255,255,255,.07);color:#f2f5fa;font:500 11px Arial,sans-serif;cursor:pointer;transition:background .15s,border-color .15s}
+.start-section-heading button:hover,.all-apps-toolbar button:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.15)}
+.start-section-heading button i,.all-apps-toolbar button i{font-size:9px;opacity:.78}
+.pinned-section,.recommended-section{flex:0 0 auto;min-height:0}
+.pinned-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px 5px}
+.start-pinned-app{min-width:0;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;padding:9px 3px 7px;border:1px solid transparent;border-radius:8px;background:transparent;color:#f4f6fb;font:11px Arial,sans-serif;text-align:center;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.start-pinned-app:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.035)}
+.start-pinned-app:active{transform:scale(.97)}
+.start-pinned-app:focus-visible,.recommended-item:focus-visible,.start-power-button:focus-visible{outline:2px solid #79b8ff;outline-offset:1px}
+.pinned-icon{width:39px;height:39px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:26px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
+.start-pinned-app>span:last-child{width:100%;max-width:95px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:1.2;color:rgba(250,251,255,.92)}
+.recommended-section{padding-top:6px;border-top:1px solid rgba(255,255,255,.085)}
+.recommended-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 8px}
+.recommended-item{min-width:0;height:51px;display:flex;align-items:center;gap:10px;padding:5px 8px;border:1px solid transparent;border-radius:8px;background:transparent;color:white;text-align:left;cursor:pointer;transition:background .15s,border-color .15s}
+.recommended-item:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.04)}
+.recommended-icon{width:34px;height:34px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,.075);font-size:21px}
+.recommended-copy{min-width:0;display:flex;flex-direction:column;gap:4px}
+.recommended-copy strong{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recommended-copy small{font-size:10px;color:rgba(238,242,250,.52);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.start-menu-footer{height:55px;min-height:55px;display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding:6px 3px 0;border-top:1px solid rgba(255,255,255,.09)}
+.start-footer-user{min-width:0;display:flex;align-items:center;gap:10px;padding:5px 9px 5px 5px;border-radius:7px;color:#f4f6fb;font-size:12px;font-weight:500}
+.start-user-avatar{width:31px;height:31px;flex:0 0 31px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:linear-gradient(145deg,#6fb2ff,#2869c7);border:1px solid rgba(255,255,255,.32);font-weight:700;font-size:13px;color:white;box-shadow:0 3px 10px rgba(0,0,0,.2)}
+#frazer-footer-name{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.start-power-button{width:38px;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:7px;background:transparent;color:#f4f6fb;font-size:15px;cursor:pointer;transition:background .15s,border-color .15s}
+.start-power-button:hover,.start-power-button[aria-expanded="true"]{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.06)}
+.start-power-menu{position:absolute;right:3px;bottom:58px;z-index:3;display:none;width:190px;padding:5px;border:1px solid rgba(255,255,255,.13);border-radius:10px;background:rgba(36,38,45,.98);box-shadow:0 12px 35px rgba(0,0,0,.38);backdrop-filter:blur(20px)}
+.start-power-menu.show{display:flex;flex-direction:column;animation:frazerStartContentIn .15s ease both}
+.start-power-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 11px;border:0;border-radius:6px;background:transparent;color:#f6f7fb;font:12px Arial,sans-serif;text-align:left;cursor:pointer}
+.start-power-menu button:hover{background:rgba(255,255,255,.1)}
+.start-power-menu button i{width:15px;color:#b9c7dc;text-align:center}
+#start-menu:not(.frazer-name-required) #home-panel{display:none!important;flex:1;min-height:0;overflow:auto;margin:0;padding:0 2px 4px}
+#start-menu.all-apps-open:not(.frazer-name-required) #home-panel,#start-menu.search-active:not(.frazer-name-required) #home-panel{display:flex!important;flex-direction:column}
+#start-menu.all-apps-open .pinned-section,#start-menu.all-apps-open .recommended-section,#start-menu.search-active .pinned-section,#start-menu.search-active .recommended-section{display:none!important}
+#start-menu.all-apps-open .start-content,#start-menu.search-active .start-content{overflow:hidden}
+.all-apps-toolbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 1px 10px;font-size:14px;font-weight:650}
+#start-menu:not(.frazer-name-required) .big-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(94px,1fr));gap:3px;flex:1;max-height:none;overflow:visible;margin:0;padding:0 0 4px}
+#start-menu:not(.frazer-name-required) .small-tile{min-width:0;min-height:75px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;padding:9px 4px 7px;border:1px solid transparent;border-radius:8px;background:transparent;color:#f3f6fb;font-size:11px;line-height:1.2;text-align:center;word-break:normal;overflow:hidden;transition:background .15s,border-color .15s,transform .15s}
+#start-menu .small-tile:hover{transform:none;background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.04)}
+#start-menu .small-tile:active{transform:scale(.97)}
+.all-app-icon{width:37px;height:37px;flex:0 0 37px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:rgba(255,255,255,.055);font-size:25px;line-height:1}
+.all-app-label{width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:rgba(250,251,255,.92)}
+.start-search-empty{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:none;flex:none;align-items:center;justify-content:center;text-align:center;color:rgba(245,247,251,.55);font-size:13px;padding:25px;pointer-events:none}
+.start-search-empty:not([hidden]){display:flex}
+#start-menu.search-active .start-search-empty{display:none}
+#start-menu.search-active .start-search-empty:not([hidden]){display:flex}
+#start-menu.frazer-name-required{padding:18px 22px}
+#start-menu.frazer-name-required #frazer-name-card{min-height:170px;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:12px;padding:18px}
+#start-menu.frazer-name-required #frazer-name-title{font-size:18px;white-space:normal}
+#start-menu.frazer-name-required #frazer-name-input{width:min(300px,65vw)}
+#start-menu.frazer-name-required #frazer-name-error{width:100%;text-align:center;min-height:14px}
+@media(max-width:700px){
+  #start-menu{width:calc(100vw - 16px);height:min(690px,calc(100vh - 78px));bottom:63px;padding:13px 12px 8px;border-radius:18px}
+  .start-search-bar{height:41px;flex-basis:41px}
+  .start-welcome-line{padding:8px 2px 5px}
+  .pinned-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:0 3px}
+  .start-pinned-app{min-height:69px;padding:6px 2px}
+  .pinned-icon{width:34px;height:34px;font-size:23px}
+  .start-pinned-app>span:last-child{font-size:10px}
+  .recommended-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2px}
+  .recommended-item{height:47px;gap:6px;padding:4px}
+  .recommended-icon{width:29px;height:29px;flex-basis:29px;font-size:18px}
+  .recommended-copy strong{font-size:10px}
+  .recommended-copy small{font-size:9px}
+  #start-menu:not(.frazer-name-required) .big-grid{grid-template-columns:repeat(auto-fill,minmax(82px,1fr))}
+  #start-menu:not(.frazer-name-required) .small-tile{min-height:70px}
+  .start-menu-footer{height:49px;min-height:49px}
+}
+@media(max-height:650px){
+  #start-menu{height:calc(100vh - 76px);padding-top:10px;padding-bottom:7px}
+  .start-content{gap:6px}
+  .pinned-grid{gap:0 3px}
+  .start-pinned-app{min-height:60px;padding:4px 2px;gap:4px}
+  .pinned-icon{width:31px;height:31px;font-size:21px}
+  .recommended-section{padding-top:3px}
+  .recommended-item{height:43px}
+  .start-menu-footer{height:43px;min-height:43px;margin-top:4px}
+}
+
 </style>
 <script async src="https://pagead2.googlesyndication.com/adsbygoogle.js?client=ca-pub-7462828797160107" crossorigin="anonymous"></script>
 
@@ -873,25 +983,69 @@ body.no-animations *{
 <i class="fa-brands fa-windows"></i>
 </button>
 
-<!-- START MENU (MORPHED TASKBAR) -->
+<!-- WINDOWS 11-STYLE FRAZER START MENU -->
 <div id="start-menu" aria-hidden="true">
+  <div id="frazer-name-card" aria-live="polite">
+    <div id="frazer-name-logo">🪟</div>
+    <div id="frazer-name-title">What's your name?</div>
+    <div id="frazer-name-subtitle">Enter your name to open Games.</div>
+    <input id="frazer-name-input" type="text" maxlength="40" autocomplete="off"
+           placeholder="Enter your name" spellcheck="false">
+    <div id="frazer-name-error"></div>
+    <button id="frazer-name-continue" type="button">Continue</button>
+  </div>
 
-<div id="frazer-name-card" aria-live="polite">
-  <div id="frazer-name-logo">🪟</div>
-  <div id="frazer-name-title">What's your name?</div>
-  <div id="frazer-name-subtitle">Enter your name to open Games.</div>
-  <input id="frazer-name-input" type="text" maxlength="40" autocomplete="off"
-         placeholder="Enter your name" spellcheck="false">
-  <div id="frazer-name-error"></div>
-  <button id="frazer-name-continue" type="button">Continue</button>
-</div>
+  <div class="start-shell">
+    <label class="start-search-bar" for="app-search">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      <input id="app-search" class="search" placeholder="Search for apps, settings, and documents" autocomplete="off" aria-label="Search apps">
+      <span class="search-hint">⌕</span>
+    </label>
 
-<div id="frazer-start-greeting" style="font-size:24px;font-weight:700;margin:4px 4px 16px;">Welcome</div>
-<input id="app-search" class="search" placeholder="Search For Apps, Settings, Etc" autocomplete="off">
+    <div class="start-welcome-line">
+      <div id="frazer-start-greeting">Welcome</div>
+      <span class="start-brand-pill"><span class="brand-dot"></span> Frazer OS</span>
+    </div>
 
+    <div class="start-content">
+      <section class="pinned-section" aria-label="Pinned apps">
+        <div class="start-section-heading">
+          <span>Pinned</span>
+          <button id="frazer-all-apps-button" type="button">All apps <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="pinned-grid">
+          <button class="start-pinned-app" type="button" onclick="openApp('games/vex7/index.html','Vex 7','game')"><span class="pinned-icon">🏃</span><span>Vex 7</span></button>
+          <button class="start-pinned-app" type="button" onclick="openApp('games/slope/index.html','Slope','game')"><span class="pinned-icon">🏂</span><span>Slope</span></button>
+          <button class="start-pinned-app" type="button" onclick="openApp('games/retro-bowl/index.html','Retro Bowl','game')"><span class="pinned-icon">🏈</span><span>Retro Bowl</span></button>
+          <button class="start-pinned-app" type="button" onclick="openApp('games/basketball-stars/index.html','Basketball Stars','game')"><span class="pinned-icon">🏀</span><span>Basketball Stars</span></button>
+          <button class="start-pinned-app" type="button" onclick="openApp('games/moto-x3m/index.html','Moto X3M','game')"><span class="pinned-icon">🏍️</span><span>Moto X3M</span></button>
+          <button class="start-pinned-app" type="button" onclick="openApp('minec/EaglercraftX_1.8_u53_Offline_Signed.html','Minecraft','game')"><span class="pinned-icon">⛏️</span><span>Minecraft</span></button>
+          <button class="start-pinned-app" type="button" onclick="openApp('games/drive-mad/index.html','Drive Mad','game')"><span class="pinned-icon">🚗</span><span>Drive Mad</span></button>
+          <button class="start-pinned-app" type="button" onclick="openApp('games/subwaysurfers/index.html','Subway Surfers','game')"><span class="pinned-icon">🛹</span><span>Subway Surfers</span></button>
+          <button class="start-pinned-app" type="button" onclick="openApp('games/snake/index.html','Snake','game')"><span class="pinned-icon">🐍</span><span>Snake</span></button>
+          <button class="start-pinned-app" type="button" onclick="openApp('games/geodash/index.html','Geometry Dash','game')"><span class="pinned-icon">🔴</span><span>Geometry Dash</span></button>
+          <button class="start-pinned-app" type="button" onclick="openFilesApp()"><span class="pinned-icon">📁</span><span>Files</span></button>
+          <button class="start-pinned-app" type="button" onclick="openSettingsApp()"><span class="pinned-icon">⚙️</span><span>Settings</span></button>
+        </div>
+      </section>
+
+      <section class="recommended-section" aria-label="Recommended apps">
+        <div class="start-section-heading"><span>Recommended</span><button id="frazer-recommended-more" type="button">More <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button></div>
+        <div class="recommended-grid">
+          <button class="recommended-item" type="button" onclick="openApp('games/drive-mad/index.html','Drive Mad','game')"><span class="recommended-icon">🚗</span><span class="recommended-copy"><strong>Drive Mad</strong><small>Quick game launch</small></span></button>
+          <button class="recommended-item" type="button" onclick="openApp('games/retrobowlcollege/index.html','Retro Bowl College','game')"><span class="recommended-icon">🏈</span><span class="recommended-copy"><strong>Retro Bowl College</strong><small>Football game</small></span></button>
+          <button class="recommended-item" type="button" onclick="openApp('apps/music/index.html','Frazer Music','app')"><span class="recommended-icon">🎵</span><span class="recommended-copy"><strong>Frazer Music</strong><small>Music app</small></span></button>
+          <button class="recommended-item" type="button" onclick="openFilesApp()"><span class="recommended-icon">📁</span><span class="recommended-copy"><strong>Files</strong><small>Open HTML files</small></span></button>
+        </div>
+      </section>
+
+      <div class="start-search-empty" id="start-search-empty" hidden>No apps found. Try another search.</div>
 <div id="home-panel" class="panel active">
-
-<div class="big-grid">
+  <div class="all-apps-toolbar">
+    <span id="frazer-all-apps-title">All apps</span>
+    <button id="frazer-pinned-button" type="button" aria-label="Back to pinned apps">Back <i class="fa-solid fa-arrow-left"></i></button>
+  </div>
+  <div class="big-grid">
   <!-- GAMES -->
   <div class="small-tile" onclick="openApp('games/vex7/index.html','Vex 7','game')">🏃 Vex 7</div>
   <div class="small-tile" onclick="openApp('games/snake/index.html','snake','game')">Snake</div>
@@ -939,6 +1093,21 @@ body.no-animations *{
 </div>
 
 </div>
+    </div>
+
+    <div class="start-menu-footer">
+      <div class="start-footer-user">
+        <div class="start-user-avatar" id="frazer-user-avatar">F</div>
+        <span id="frazer-footer-name">Guest</span>
+      </div>
+      <button class="start-power-button" id="frazer-power-button" type="button" aria-label="Power options" aria-expanded="false" title="Power options"><i class="fa-solid fa-power-off" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="start-power-menu" id="frazer-power-menu" role="menu" aria-hidden="true">
+      <button type="button" role="menuitem" data-power-action="restart"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Restart Frazer OS</button>
+      <button type="button" role="menuitem" data-power-action="close"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Close Start menu</button>
+    </div>
+  </div>
 </div>
 
 <div id="taskbar-widgets">
@@ -1019,34 +1188,119 @@ let windows=[];
 function initAppSearch(){
   const search=document.getElementById("app-search");
   const homePanel=document.getElementById("home-panel");
-  if(!search || !homePanel) return;
+  const menu=document.getElementById("start-menu");
+  if(!search || !homePanel || !menu) return;
 
   const items=[...homePanel.querySelectorAll(".small-tile")];
+  const empty=document.getElementById("start-search-empty");
+  const allAppsTitle=document.getElementById("frazer-all-apps-title");
 
-  search.addEventListener("input",()=>{
-    const query=search.value.trim().toLowerCase();
-
-    items.forEach(item=>{
-      const text=item.textContent.toLowerCase();
-      item.classList.toggle("search-hidden", !!query && !text.includes(query));
+  // Turn the existing catalog entries into icon + label tiles without changing their click actions.
+  const iconMap={
+    "snake":"🐍","bitlife":"👶","frazer proxy":"🌐","google":"🌐","files":"📁",
+    "frazer music":"🎵","settings":"⚙️","ai chatbot":"🤖","pokemon red":"🔴",
+    "geometry dash":"🔴","brawl starrs":"⭐","crossy road":"🐔","minecraft 1.8":"⛏️",
+    "minecraft 1.12":"⛏️","crazycattle3d":"🐂","papas wingerria":"🍔","papastacos":"🌮"
+  };
+  items.forEach(item=>{
+    if(item.querySelector(".all-app-icon")) return;
+    const raw=item.textContent.replace(/\s+/g," ").trim();
+    const label=raw.replace(/^[^\p{L}\p{N}]+/u,"").trim() || raw;
+    const prefix=raw.slice(0,Math.max(0,raw.indexOf(label))).trim();
+    const icon=prefix || iconMap[label.toLowerCase()] || "🎮";
+    item.textContent="";
+    const iconNode=document.createElement("span");
+    iconNode.className="all-app-icon";
+    iconNode.setAttribute("aria-hidden","true");
+    iconNode.textContent=icon;
+    const labelNode=document.createElement("span");
+    labelNode.className="all-app-label";
+    labelNode.textContent=label;
+    item.append(iconNode,labelNode);
+    item.setAttribute("aria-label",label);
+    if(!item.hasAttribute("role")) item.setAttribute("role","button");
+    if(!item.hasAttribute("tabindex")) item.setAttribute("tabindex","0");
+    item.addEventListener("keydown",event=>{
+      if(event.key==="Enter" || event.key===" "){event.preventDefault();item.click();}
     });
   });
 
-  search.addEventListener("keydown",(e)=>{
-    if(e.key==="Escape"){
-      search.value="";
-      items.forEach(item=>item.classList.remove("search-hidden"));
+  const setSearchState=()=>{
+    const query=search.value.trim().toLowerCase();
+    if(query){
+      menu.classList.add("search-active");
+      menu.classList.remove("all-apps-open");
+      if(allAppsTitle) allAppsTitle.textContent="Search results";
+    }else{
+      menu.classList.remove("search-active");
+      if(allAppsTitle) allAppsTitle.textContent="All apps";
+    }
+    let visible=0;
+    items.forEach(item=>{
+      const label=item.textContent.toLowerCase();
+      const match=!query || label.includes(query);
+      item.classList.toggle("search-hidden",!match);
+      if(match) visible++;
+    });
+    if(empty) empty.hidden=visible!==0 || !query;
+  };
+  search.addEventListener("input",setSearchState);
+
+  const showAllApps=()=>{
+    search.value="";
+    setSearchState();
+    menu.classList.remove("search-active");
+    menu.classList.add("all-apps-open");
+    if(allAppsTitle) allAppsTitle.textContent="All apps";
+    search.blur();
+  };
+  document.getElementById("frazer-all-apps-button")?.addEventListener("click",showAllApps);
+  document.getElementById("frazer-recommended-more")?.addEventListener("click",showAllApps);
+  document.getElementById("frazer-pinned-button")?.addEventListener("click",()=>{
+    menu.classList.remove("all-apps-open","search-active");
+    search.value="";
+    setSearchState();
+  });
+
+  search.addEventListener("keydown",event=>{
+    if(event.key==="Escape"){
+      if(search.value){
+        search.value="";
+        setSearchState();
+      }else if(menu.classList.contains("all-apps-open")){
+        menu.classList.remove("all-apps-open");
+      }else{
+        closeStartMenu();
+      }
       search.blur();
     }
-
-    if(e.key==="Enter"){
+    if(event.key==="Enter"){
       const first=items.find(item=>!item.classList.contains("search-hidden"));
-      if(first){
-        first.click();
-        search.value="";
-        items.forEach(item=>item.classList.remove("search-hidden"));
-      }
+      if(first) first.click();
     }
+  });
+
+  const powerButton=document.getElementById("frazer-power-button");
+  const powerMenu=document.getElementById("frazer-power-menu");
+  const closePowerMenu=()=>{
+    powerMenu?.classList.remove("show");
+    powerMenu?.setAttribute("aria-hidden","true");
+    powerButton?.setAttribute("aria-expanded","false");
+  };
+  powerButton?.addEventListener("click",event=>{
+    event.stopPropagation();
+    const open=!powerMenu?.classList.contains("show");
+    if(open){powerMenu?.classList.add("show");powerMenu?.setAttribute("aria-hidden","false");powerButton.setAttribute("aria-expanded","true");}
+    else closePowerMenu();
+  });
+  powerMenu?.querySelectorAll("[data-power-action]").forEach(button=>button.addEventListener("click",()=>{
+    const action=button.dataset.powerAction;
+    closePowerMenu();
+    if(action==="restart") location.reload();
+    if(action==="close") closeStartMenu();
+  }));
+  document.addEventListener("mousedown",event=>{
+    if(powerMenu?.classList.contains("show") && !powerMenu.contains(event.target) && !powerButton?.contains(event.target)) closePowerMenu();
   });
 }
 
@@ -1058,10 +1312,22 @@ function closeStartMenu(){
   m.classList.remove("show");
   m.setAttribute("aria-hidden","true");
   taskbar?.classList.remove("start-open");
+  document.getElementById("frazer-windows-button")?.setAttribute("aria-expanded","false");
+  document.getElementById("frazer-power-menu")?.classList.remove("show");
+  document.getElementById("frazer-power-menu")?.setAttribute("aria-hidden","true");
+  document.getElementById("frazer-power-button")?.setAttribute("aria-expanded","false");
   setTimeout(()=>{
     m.style.display="none";
   },350);
 }
+
+window.frazerUpdateStartProfile = function(name){
+  const clean=String(name || "Guest").trim() || "Guest";
+  const label=document.getElementById("frazer-footer-name");
+  const avatar=document.getElementById("frazer-user-avatar");
+  if(label) label.textContent=clean;
+  if(avatar) avatar.textContent=(clean.match(/[\p{L}\p{N}]/u)?.[0] || "F").toUpperCase();
+};
 
 function toggleMenu(){
   const menu = document.getElementById("start-menu");
@@ -1088,6 +1354,7 @@ function toggleMenu(){
   if(savedName){
     menu.classList.remove("frazer-name-required");
     if(greeting) greeting.textContent = `Hello, ${savedName}`;
+    window.frazerUpdateStartProfile(savedName);
   }else{
     menu.classList.add("frazer-name-required");
 
@@ -2150,6 +2417,7 @@ setInterval(updateWeatherWidget, 10 * 60 * 1000);
     if(saved.trim()){
       menu?.classList.remove("frazer-name-required");
       if(greeting) greeting.textContent=`Hello, ${saved.trim()}`;
+      window.frazerUpdateStartProfile?.(saved.trim());
       if(frazerNameResolver) frazerNameResolver(saved.trim());
       return Promise.resolve(saved.trim());
     }
@@ -2175,6 +2443,7 @@ setInterval(updateWeatherWidget, 10 * 60 * 1000);
 
         localStorage.setItem("frazerDisplayName",name);
         if(greeting) greeting.textContent=`Hello, ${name}`;
+        window.frazerUpdateStartProfile?.(name);
         menu?.classList.remove("frazer-name-required");
 
         button?.removeEventListener("click",finish);
