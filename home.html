@@ -848,6 +848,62 @@ body.no-animations *{
   .start-menu-footer{height:43px;min-height:43px;margin-top:4px}
 }
 
+/* Keep the Start menu fitted to the usable viewport on desktops, tablets and phones. */
+#start-menu{
+  width:min(720px,calc(100vw - 20px));
+  height:min(710px,calc(100vh - 74px));
+  height:min(710px,calc(100dvh - 74px));
+  max-height:calc(100dvh - 74px);
+  min-height:min(320px,calc(100dvh - 74px));
+  bottom:calc(55px + env(safe-area-inset-bottom,0px) + 8px);
+  padding:clamp(10px,2vw,20px) clamp(10px,2.5vw,22px) 10px;
+}
+#start-menu .start-content{flex:1 1 auto;min-height:0;overflow:hidden;gap:clamp(5px,1.2vh,13px)}
+#start-menu .pinned-section{display:flex;flex:1 1 auto;flex-direction:column;min-height:0}
+#start-menu .pinned-grid{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  align-content:start;
+  grid-auto-rows:minmax(68px,auto);
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,.24) transparent;
+}
+#start-menu .pinned-grid::-webkit-scrollbar{width:6px}
+#start-menu .pinned-grid::-webkit-scrollbar-thumb{background:rgba(255,255,255,.24);border-radius:8px}
+.start-pin-group-heading{font-size:12px;color:rgba(240,243,249,.64);padding:8px 2px 2px}
+.start-pin-option{display:flex;align-items:center;gap:8px;min-height:29px;font-size:12px;line-height:1.25;color:rgba(250,251,255,.9);cursor:pointer}
+.start-pin-option input{flex:0 0 auto;accent-color:#60a5fa}
+.start-pin-option-icon{width:22px;text-align:center;font-size:15px}
+.start-pin-option-name{overflow-wrap:anywhere}
+.start-pins-empty{grid-column:1/-1;padding:20px 8px;color:rgba(245,247,251,.62);font-size:12px;text-align:center}
+@media(max-width:900px){
+  #start-menu{width:min(680px,calc(100vw - 18px))}
+  .pinned-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media(max-width:700px){
+  #start-menu{width:calc(100vw - 16px);height:min(690px,calc(100dvh - 76px));bottom:calc(55px + env(safe-area-inset-bottom,0px) + 8px);padding:12px 11px 7px}
+  .pinned-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:0 3px}
+  .start-pinned-app{min-height:66px;padding:6px 2px;gap:5px}
+  .pinned-icon{width:34px;height:34px;font-size:23px}
+  .recommended-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:390px){
+  #start-menu{padding-left:9px;padding-right:9px}
+  .pinned-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .start-welcome-line{gap:5px}
+  .start-brand-pill{font-size:9px}
+}
+@media(max-height:520px){
+  #start-menu{height:calc(100dvh - 70px);min-height:0;padding-top:7px;padding-bottom:5px}
+  #start-menu .recommended-section{display:none}
+  .start-welcome-line{min-height:27px;padding:4px 2px}
+  .start-menu-footer{height:40px;min-height:40px;margin-top:3px}
+  .start-pinned-app{min-height:57px;padding:3px 2px;gap:3px}
+  .pinned-icon{width:29px;height:29px;font-size:20px}
+}
+
 </style>
 <script async src="https://pagead2.googlesyndication.com/adsbygoogle.js?client=ca-pub-7462828797160107" crossorigin="anonymous"></script>
 
@@ -885,6 +941,12 @@ body.no-animations *{
       <div style="font-size:12px; opacity:.75; margin-top:9px;">
         Your desktop choices stay saved on this device.
       </div>
+    </div>
+
+    <div class="small-tile start-pin-settings" style="margin-top:10px; text-align:left; cursor:default;">
+      <div style="font-size:14px; margin-bottom:8px;">📌 Start Menu Pins</div>
+      <div style="font-size:12px; opacity:.75; margin-bottom:8px;">Choose any app or game to show in the Start menu's Pinned section. Your choices are saved on this device.</div>
+      <div id="start-pin-options" style="display:grid; gap:8px; max-height:300px; overflow:auto; padding:8px 4px 4px;"></div>
     </div>
 
     <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
@@ -1013,19 +1075,8 @@ body.no-animations *{
           <span>Pinned</span>
           <button id="frazer-all-apps-button" type="button">All apps <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
         </div>
-        <div class="pinned-grid">
-          <button class="start-pinned-app" type="button" onclick="openApp('games/vex7/index.html','Vex 7','game')"><span class="pinned-icon">🏃</span><span>Vex 7</span></button>
-          <button class="start-pinned-app" type="button" onclick="openApp('games/slope/index.html','Slope','game')"><span class="pinned-icon">🏂</span><span>Slope</span></button>
-          <button class="start-pinned-app" type="button" onclick="openApp('games/retrobowlsim/index.html','Retro Bowl','game')"><span class="pinned-icon">🏈</span><span>Retro Bowl</span></button>
-          <button class="start-pinned-app" type="button" onclick="openApp('games/basketball-stars/index.html','Basketball Stars','game')"><span class="pinned-icon">🏀</span><span>Basketball Stars</span></button>
-          <button class="start-pinned-app" type="button" onclick="openApp('games/moto-x3m/index.html','Moto X3M','game')"><span class="pinned-icon">🏍️</span><span>Moto X3M</span></button>
-          <button class="start-pinned-app" type="button" onclick="openApp('minec/EaglercraftX_1.8_u53_Offline_Signed.html','Minecraft','game')"><span class="pinned-icon">⛏️</span><span>Minecraft</span></button>
-          <button class="start-pinned-app" type="button" onclick="openApp('games/drive-mad/index.html','Drive Mad','game')"><span class="pinned-icon">🚗</span><span>Drive Mad</span></button>
-          <button class="start-pinned-app" type="button" onclick="openApp('games/subwaysurfers/index.html','Subway Surfers','game')"><span class="pinned-icon">🛹</span><span>Subway Surfers</span></button>
-          <button class="start-pinned-app" type="button" onclick="openApp('games/snake/index.html','Snake','game')"><span class="pinned-icon">🐍</span><span>Snake</span></button>
-          <button class="start-pinned-app" type="button" onclick="openApp('games/geodash/index.html','Geometry Dash','game')"><span class="pinned-icon">🔴</span><span>Geometry Dash</span></button>
-          <button class="start-pinned-app" type="button" onclick="openFilesApp()"><span class="pinned-icon">📁</span><span>Files</span></button>
-          <button class="start-pinned-app" type="button" onclick="openSettingsApp()"><span class="pinned-icon">⚙️</span><span>Settings</span></button>
+        <div class="pinned-grid" id="start-pinned-grid" aria-label="Pinned apps">
+          <!-- Pinned apps are built from the saved choices in Settings. -->
         </div>
       </section>
 
@@ -1403,6 +1454,198 @@ function openPanel(name){
   document.getElementById(name+"-panel").classList.add("active");
 }
 
+/* START MENU PINNING
+   The All apps list is the source of truth, so every app/game already listed there
+   can be pinned without maintaining a second, incomplete list. */
+const FRAZER_START_PINS_KEY = "frazerStartPinnedApps";
+const FRAZER_DEFAULT_START_PINS = [
+  "app:games/vex7/index.html",
+  "app:games/slope/index.html",
+  "app:games/retrobowlsim/index.html",
+  "app:games/basketball-stars/index.html",
+  "app:games/moto-x3m/index.html",
+  "app:minec/EaglercraftX_1.8_u53_Offline_Signed.html",
+  "app:games/drive-mad/index.html",
+  "app:games/subwaysurfers/index.html",
+  "app:games/snake/index.html",
+  "app:games/geodash/index.html",
+  "system:files",
+  "system:settings"
+];
+
+function getStartAppCatalog(){
+  const tiles = [...document.querySelectorAll("#home-panel .small-tile")];
+  const catalog = [];
+
+  tiles.forEach(tile => {
+    const action = tile.getAttribute("onclick") || "";
+    const label = tile.querySelector(".all-app-label")?.textContent?.trim() || tile.textContent.trim();
+    const icon = tile.querySelector(".all-app-icon")?.textContent?.trim() || "🎮";
+
+    if (/\bopenFilesApp\s*\(/.test(action)) {
+      catalog.push({id:"system:files", name:label || "Files", launchTitle:"Files", icon:"📁", type:"system", url:null, systemAction:"files"});
+      return;
+    }
+    if (/\bopenSettingsApp\s*\(/.test(action)) {
+      catalog.push({id:"system:settings", name:label || "Settings", launchTitle:"Settings", icon:"⚙️", type:"system", url:null, systemAction:"settings"});
+      return;
+    }
+
+    const match = action.match(/openApp\(\s*(['"])(.*?)\1\s*,\s*(['"])(.*?)\3(?:\s*,\s*(['"])(.*?)\5)?\s*\)/);
+    if (!match) return;
+
+    const url = match[2].trim();
+    const launchTitle = match[4].trim() || label || "App";
+    const explicitType = (match[6] || "").trim().toLowerCase();
+    const type = explicitType || (/^apps\//i.test(url) ? "app" : "game");
+    catalog.push({
+      id:"app:" + url,
+      name:label || launchTitle,
+      launchTitle,
+      icon,
+      type:type === "game" ? "game" : "app",
+      url,
+      systemAction:null
+    });
+  });
+
+  // Keep only the first item if the same URL appears twice.
+  return [...new Map(catalog.map(item => [item.id, item])).values()];
+}
+
+function getStartPinnedIds(){
+  const raw = localStorage.getItem(FRAZER_START_PINS_KEY);
+  if(raw === null) return [...FRAZER_DEFAULT_START_PINS];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter(id => typeof id === "string") : [...FRAZER_DEFAULT_START_PINS];
+  } catch {
+    return [...FRAZER_DEFAULT_START_PINS];
+  }
+}
+
+function launchStartMenuApp(item){
+  if(!item) return;
+  if(item.systemAction === "files") openFilesApp();
+  else if(item.systemAction === "settings") openSettingsApp();
+  else if(item.url) openApp(item.url, item.launchTitle || item.name, item.type === "game" ? "game" : "app");
+}
+
+function renderStartPinnedApps(){
+  const grid = document.getElementById("start-pinned-grid");
+  if(!grid) return;
+  const catalog = getStartAppCatalog();
+  const availableIds = new Set(catalog.map(item => item.id));
+  const pinnedIds = getStartPinnedIds().filter(id => availableIds.has(id));
+  grid.replaceChildren();
+
+  if(!pinnedIds.length){
+    const empty = document.createElement("div");
+    empty.className = "start-pins-empty";
+    empty.textContent = "Nothing pinned yet. Open Settings to pin your favorite apps and games.";
+    grid.appendChild(empty);
+    return;
+  }
+
+  const byId = new Map(catalog.map(item => [item.id, item]));
+  pinnedIds.forEach(id => {
+    const item = byId.get(id);
+    if(!item) return;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "start-pinned-app";
+    button.title = item.name;
+    button.setAttribute("aria-label", "Open " + item.name);
+
+    const icon = document.createElement("span");
+    icon.className = "pinned-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = item.icon;
+
+    const label = document.createElement("span");
+    label.textContent = item.name;
+    button.append(icon, label);
+    button.addEventListener("click", () => launchStartMenuApp(item));
+    grid.appendChild(button);
+  });
+}
+
+function renderStartPinSettings(container){
+  if(!container) return;
+  const catalog = getStartAppCatalog();
+  const pinnedIds = new Set(getStartPinnedIds());
+  container.replaceChildren();
+
+  const groups = [
+    {title:"🎮 Games", items:catalog.filter(item => item.type === "game")},
+    {title:"📱 Apps", items:catalog.filter(item => item.type === "app")},
+    {title:"🛠 System", items:catalog.filter(item => item.type === "system")}
+  ];
+
+  groups.forEach(group => {
+    if(!group.items.length) return;
+    const heading = document.createElement("div");
+    heading.className = "start-pin-group-heading";
+    heading.textContent = group.title;
+    container.appendChild(heading);
+
+    group.items.forEach(item => {
+      const label = document.createElement("label");
+      label.className = "start-pin-option";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = pinnedIds.has(item.id);
+      checkbox.dataset.startPinId = item.id;
+      checkbox.addEventListener("change", () => setStartMenuPinned(item.id, checkbox.checked));
+
+      const icon = document.createElement("span");
+      icon.className = "start-pin-option-icon";
+      icon.textContent = item.icon;
+      icon.setAttribute("aria-hidden", "true");
+
+      const name = document.createElement("span");
+      name.className = "start-pin-option-name";
+      name.textContent = item.name;
+
+      label.append(checkbox, icon, name);
+      container.appendChild(label);
+    });
+  });
+}
+
+function refreshStartPinCheckboxes(){
+  const pinned = new Set(getStartPinnedIds());
+  document.querySelectorAll("[data-start-pin-id]").forEach(checkbox => {
+    checkbox.checked = pinned.has(checkbox.dataset.startPinId);
+  });
+}
+
+function setStartMenuPinned(id, enabled){
+  const pinned = new Set(getStartPinnedIds());
+  if(enabled) pinned.add(id);
+  else pinned.delete(id);
+  localStorage.setItem(FRAZER_START_PINS_KEY, JSON.stringify([...pinned]));
+  renderStartPinnedApps();
+  refreshStartPinCheckboxes();
+}
+
+function initStartMenuPins(){
+  const catalog = getStartAppCatalog();
+  if(localStorage.getItem(FRAZER_START_PINS_KEY) === null){
+    const available = new Set(catalog.map(item => item.id));
+    const defaults = FRAZER_DEFAULT_START_PINS.filter(id => available.has(id));
+    localStorage.setItem(FRAZER_START_PINS_KEY, JSON.stringify(defaults));
+  }else{
+    // Remove stale IDs if an app was removed from the All apps list.
+    const available = new Set(catalog.map(item => item.id));
+    const cleaned = getStartPinnedIds().filter(id => available.has(id));
+    localStorage.setItem(FRAZER_START_PINS_KEY, JSON.stringify(cleaned));
+  }
+  renderStartPinnedApps();
+  renderStartPinSettings(document.getElementById("start-pin-options"));
+}
+
 /* OPEN APP */
 function frazerSetLocalCurrentApp(gameName){
   const value = gameName || "Browsing";
@@ -1609,6 +1852,9 @@ function syncSettingsApp(){
 
   const weather=app.querySelector("#weather-widget-toggle-app");
   if(weather) weather.checked = localStorage.getItem("frazerWeatherWidget") !== "off";
+
+  const pinOptions=app.querySelector("#start-pin-options-app");
+  if(pinOptions) renderStartPinSettings(pinOptions);
 
   const options=app.querySelector("#desktop-icon-options-app");
   if(options){
@@ -2105,6 +2351,8 @@ function resetSettings(){
   localStorage.setItem("frazerWeatherWidget", "on");
   localStorage.removeItem("frazerDesktopItems");
   Object.keys(desktopItems).forEach(name => localStorage.removeItem("frazerDesktop_" + name));
+  localStorage.removeItem(FRAZER_START_PINS_KEY);
+  initStartMenuPins();
 
   // Reset now means the dark Windows 11 wallpaper.
   applyBackground(darkWindows11Background);
@@ -2366,6 +2614,7 @@ if(frazerWindowsButton && !frazerWindowsButton.dataset.bound){
 
 loadDesktopItemSettings();
 initAppSearch();
+initStartMenuPins();
 loadWidgetSettings();
 setInterval(updateClockWidget, 1000);
 setInterval(updateWeatherWidget, 10 * 60 * 1000);
