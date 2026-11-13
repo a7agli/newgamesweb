@@ -1933,14 +1933,6 @@ function openFilesApp(){
 
 
 
-
-<style>
-#frazer-account-launcher{position:fixed;right:14px;top:12px;z-index:99999;border:1px solid #ffffff30;border-radius:999px;padding:9px 14px;background:#20242ddd;color:#fff;font:600 12px system-ui;cursor:pointer;backdrop-filter:blur(12px)}
-#frazer-account-launcher:hover{background:#343a46}
-</style>
-<button id="frazer-account-launcher" type="button" onclick="openFrazerAccount()">☁ Account / Saves</button>
-
-<script type="module" src="./account.js"></script>
 </body>
 </html></textarea>
         <iframe class="files-preview" sandbox="allow-scripts allow-forms"></iframe>
@@ -1965,15 +1957,7 @@ function openFilesApp(){
   };
   win.querySelector('[data-action="new"]').onclick=()=>{
     fileName.value="index.html";
-    editor.value=`<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <title>New HTML App</title>\n</head>\n<body>\n  \n
-<style>
-#frazer-account-launcher{position:fixed;right:14px;top:12px;z-index:99999;border:1px solid #ffffff30;border-radius:999px;padding:9px 14px;background:#20242ddd;color:#fff;font:600 12px system-ui;cursor:pointer;backdrop-filter:blur(12px)}
-#frazer-account-launcher:hover{background:#343a46}
-</style>
-<button id="frazer-account-launcher" type="button" onclick="openFrazerAccount()">☁ Account / Saves</button>
-
-<script type="module" src="./account.js"></script>
-</body>\n</html>`;
+    editor.value=`<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <title>New HTML App</title>\n</head>\n<body>\n  \n</body>\n</html>`;
     run();
   };
   win.querySelector('[data-action="open"]').onclick=()=>fileInput.click();
@@ -2904,13 +2888,5 @@ setInterval(updateWeatherWidget, 10 * 60 * 1000);
     console.error("Frazer Firebase initialization failed:", err);
   }
 </script>
-
-<style>
-#frazer-account-launcher{position:fixed;right:14px;top:12px;z-index:99999;border:1px solid #ffffff30;border-radius:999px;padding:9px 14px;background:#20242ddd;color:#fff;font:600 12px system-ui;cursor:pointer;backdrop-filter:blur(12px)}
-#frazer-account-launcher:hover{background:#343a46}
-</style>
-<button id="frazer-account-launcher" type="button" onclick="openFrazerAccount()">☁ Account / Saves</button>
-
-<script type="module" src="./account.js"></script>
 </body>
 </html>
