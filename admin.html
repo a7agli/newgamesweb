@@ -24,6 +24,11 @@
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
+    import {
+      getFunctions,
+      httpsCallable
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyAJoDdhT8zxq66czyyGfB7-RSYAkFmXu6E",
       authDomain: "frazeros.firebaseapp.com",
@@ -48,6 +53,8 @@
       signInWithEmailAndPassword,
       signOut,
       onAuthStateChanged,
+      getFunctions,
+      httpsCallable,
       databaseConfigured: !firebaseConfig.databaseURL.includes("PASTE_")
     };
   </script>
@@ -429,6 +436,58 @@
 
 </section>
 
+<section class="panel admin-protected" id="account-manager-panel">
+  <h2>Create a game account</h2>
+  <div class="panel-sub">
+    Make a username and password for someone to use on the games website.
+    They do not need an email address.
+  </div>
+
+  <div class="auth-grid">
+    <div class="field">
+      <label class="field-label" for="new-account-username">Username</label>
+      <input
+        id="new-account-username"
+        class="control-input"
+        type="text"
+        minlength="3"
+        maxlength="20"
+        autocomplete="off"
+        autocapitalize="none"
+        spellcheck="false"
+        placeholder="e.g. player123"
+      >
+    </div>
+    <div class="field">
+      <label class="field-label" for="new-account-password">Password</label>
+      <input
+        id="new-account-password"
+        class="control-input"
+        type="password"
+        minlength="6"
+        maxlength="128"
+        autocomplete="new-password"
+        placeholder="At least 6 characters"
+      >
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="action action-primary" type="button" id="create-game-account">
+      ＋ Create account
+    </button>
+  </div>
+
+  <div class="status" id="account-create-status">
+    Sign in as admin to create accounts.
+  </div>
+  <div class="notice">
+    Usernames must be 3–20 characters and can contain lowercase letters,
+    numbers, and underscores. Passwords must be at least 6 characters.
+    The admin sign-in above remains your existing Firebase admin login.
+  </div>
+</section>
+
 <section class="panel admin-protected">
   <h2>People using Frazer OS</h2>
   <div class="panel-sub">See who is online and send a private message to one person.</div>
@@ -619,6 +678,7 @@
     let frazerAuth = null;
     let frazerAuthenticated = false;
     let frazerUsers = {};
+    let frazerCreateUsernameAccount = null;
 
     function setAdminStatus(message, type = "") {
       const el =
@@ -723,6 +783,74 @@
           "Could not sign out.",
           "error"
         );
+      }
+    }
+
+    function setAccountCreateStatus(message, type = "") {
+      const el = document.getElementById("account-create-status");
+      if (!el) return;
+      el.textContent = message;
+      el.className = "status" + (type ? " " + type : "");
+    }
+
+    async function createGameAccount() {
+      if (!frazerAuthenticated || !frazerCreateUsernameAccount) {
+        setAccountCreateStatus("Sign in as admin first.", "error");
+        return;
+      }
+
+      const usernameInput = document.getElementById("new-account-username");
+      const passwordInput = document.getElementById("new-account-password");
+      const button = document.getElementById("create-game-account");
+
+      const username = (usernameInput?.value || "").trim().toLowerCase();
+      const password = passwordInput?.value || "";
+
+      if (!/^[a-z0-9_]{3,20}$/.test(username)) {
+        setAccountCreateStatus(
+          "Username must be 3–20 characters using only letters, numbers, or underscores.",
+          "error"
+        );
+        return;
+      }
+
+      if (password.length < 6 || password.length > 128) {
+        setAccountCreateStatus("Password must be between 6 and 128 characters.", "error");
+        return;
+      }
+
+      if (button) button.disabled = true;
+      setAccountCreateStatus("Creating account...");
+
+      try {
+        const result = await frazerCreateUsernameAccount({ username, password });
+        const createdUsername = result?.data?.username || username;
+
+        setAccountCreateStatus(
+          `Account "${createdUsername}" created. They can now sign in using that username and password.`,
+          "live"
+        );
+
+        if (usernameInput) usernameInput.value = "";
+        if (passwordInput) passwordInput.value = "";
+      } catch (err) {
+        console.error("Account creation failed:", err);
+        const code = String(err?.code || "").replace(/^functions\//, "");
+        let message = err?.message || "Could not create the account.";
+
+        if (code === "permission-denied") {
+          message = "This admin account is not authorized to create users. Check the admin email in functions/index.js.";
+        } else if (code === "already-exists") {
+          message = "That username is already taken. Try another one.";
+        } else if (code === "unauthenticated") {
+          message = "Your admin session expired. Sign in again.";
+        } else if (code === "unavailable" || code === "not-found") {
+          message = "The account function is not deployed yet. Follow the setup instructions in the ZIP.";
+        }
+
+        setAccountCreateStatus(message, "error");
+      } finally {
+        if (button) button.disabled = false;
       }
     }
 
@@ -1137,6 +1265,16 @@
         frazerDB =
           sdk.getDatabase(sdk.app);
 
+        const frazerFunctions = sdk.getFunctions(sdk.app, "us-central1");
+        frazerCreateUsernameAccount = sdk.httpsCallable(
+          frazerFunctions,
+          "createUsernameAccount"
+        );
+
+        document
+          .getElementById("create-game-account")
+          ?.addEventListener("click", createGameAccount);
+
         frazerLiveRef =
           sdk.ref(
             frazerDB,
@@ -1236,6 +1374,7 @@
               setAuthStatus(
                 "Not signed in."
               );
+              setAccountCreateStatus("Sign in as admin to create accounts.");
 
               const connection =
                 document.getElementById(
@@ -1259,6 +1398,10 @@
               (user.email ||
                 user.uid) +
               ".",
+              "live"
+            );
+            setAccountCreateStatus(
+              "Admin signed in. You can create game accounts.",
               "live"
             );
 
