@@ -1,699 +1,812 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7462828797160107"
-     crossorigin="anonymous"></script>
-
 <meta charset="UTF-8">
-<title>Secure Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
 
 <style>
-  * {
-    box-sizing: border-box;
-  }
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
 
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #4facfe, #8e44ad);
-    color: #111;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  .topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    background: rgba(255,255,255,0.95);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    z-index: 1000;
-  }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
 
-  .logo-img {
-    position: absolute;
-    left: 20px;
-    height: 40px;
-    cursor: pointer;
-  }
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: #1d1d1f;
+  background: #f5f5f7;
+}
 
-  .nav {
-    display: flex;
-    gap: 40px;
-    font-weight: 500;
-  }
+/* NAVIGATION */
 
-  .nav-item {
-    position: relative;
-    cursor: pointer;
-    padding: 20px 0;
-    height: 60px;
-  }
+nav {
+  height: 76px;
+  padding: 0 8%;
+  background: rgba(255,255,255,.95);
+  backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid #eeeeef;
+}
 
-  .nav-link {
-    color: #111;
-    text-decoration: none;
-    display: block;
-  }
+.navlinks {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+}
 
-  .dropdown {
-    position: absolute;
-    top: 60px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-5px);
-    background: white;
-    padding: 10px 0;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.12);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    min-width: 190px;
-    text-align: left;
-    transition:
-      opacity 0.18s ease,
-      transform 0.18s ease,
-      visibility 0.18s ease;
-  }
+.navlinks a,
+.login {
+  font-family: inherit;
+  text-decoration: none;
+  color: #626267;
+  font-size: 13px;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
 
-  /* Invisible bridge so the menu stays open while moving down */
-  .dropdown::before {
-    content: "";
-    position: absolute;
-    top: -12px;
-    left: 0;
-    width: 100%;
-    height: 12px;
-  }
+.navlinks a:hover,
+.login:hover {
+  color: #0071e3;
+}
 
-  .nav-item:hover .dropdown,
-  .dropdown:hover {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
-  }
+.right {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
 
-  .dropdown a {
-    display: block;
-    padding: 10px 15px;
-    cursor: pointer;
-    color: #111;
-    text-decoration: none;
-    font-size: 14px;
-  }
+.login-wrapper {
+  position: relative;
+}
 
-  .dropdown a:hover {
-    background: #f0f0f0;
-  }
+.login-button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
 
-  .wrapper {
-    min-height: 100vh;
-    padding: 100px 20px 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
+.login {
+  font-size: 13px;
+  font-weight: 600;
+}
 
-  .container {
-    background: white;
-    padding: 40px;
-    width: 320px;
-    text-align: center;
-    border-radius: 12px;
-    box-shadow: 0 6px 25px rgba(0,0,0,0.15);
-    animation: containerIn 0.7s cubic-bezier(.2,.8,.2,1);
-  }
+.provider-logos {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
 
-  @keyframes containerIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px) scale(0.97);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
+.provider-logos svg {
+  width: 17px;
+  height: 17px;
+}
 
-  .secure-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: #eef8f0;
-    color: #25843e;
-    padding: 7px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
+.login-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 38px;
+  width: 195px;
+  padding: 8px;
+  background: white;
+  border: 1px solid #eeeeef;
+  border-radius: 16px;
+  box-shadow: 0 12px 35px #00000015;
+}
 
-  .secure-dot {
-    width: 8px;
-    height: 8px;
-    background: #32c759;
-    border-radius: 50%;
-    box-shadow: 0 0 8px rgba(50,199,89,0.6);
-  }
+.login-menu.show {
+  display: block;
+  animation: drop .18s ease;
+}
 
-  .subtitle {
-    color: #777;
-    font-size: 13px;
-    margin-top: -8px;
-    margin-bottom: 18px;
-  }
+.login-menu a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #303036;
+  padding: 13px 14px;
+  font-size: 14px;
+  border-radius: 10px;
+}
 
-  input {
-    width: 100%;
-    padding: 10px;
-    margin: 15px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  }
+.login-menu a:hover {
+  background: #f2f2f7;
+}
 
-  input:focus {
-    outline: none;
-    border-color: #4285f4;
-    box-shadow: 0 0 0 3px rgba(66,133,244,0.12);
-  }
+.login-menu svg {
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+}
 
-  button {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    border: none;
-    transition:
-      transform 0.2s ease,
-      box-shadow 0.2s ease,
-      filter 0.2s ease;
-  }
+.contact {
+  background: #0071e3;
+  color: white;
+  text-decoration: none;
+  padding: 11px 19px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 600;
+}
 
-  button:hover {
-    transform: translateY(-1px);
-  }
+.contact:hover {
+  background: #005bb9;
+}
 
-  button:active {
-    transform: scale(0.98);
-  }
+/* HERO */
 
-  .login-btn {
-    background: #4285f4;
-    color: white;
-  }
+.hero {
+  min-height: 570px;
+  background: #78aaf0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 65px 20px;
+  position: relative;
+  overflow: hidden;
+}
 
-  .login-btn:hover {
-    box-shadow: 0 5px 14px rgba(66,133,244,0.28);
-  }
+.hero-card {
+  width: min(850px, 95%);
+  min-height: 325px;
+  padding: 55px 85px;
+  text-align: center;
+  background: #fffdf7;
+  border-radius: 27px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 15px 45px #325d9630;
+}
 
-  .google-btn {
-    margin-top: 10px;
-    background: white;
-    border: 1px solid #ccc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-  }
+.tag {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #92999c;
+  margin-bottom: 15px;
+}
 
-  .google-btn:hover {
-    background: #fafafa;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  }
+.hero-card h1 {
+  max-width: 590px;
+  font-size: clamp(29px, 4vw, 39px);
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+  margin-bottom: 17px;
+  font-weight: 800;
+}
 
-  .google-btn img {
-    width: 18px;
-  }
+.hero-description {
+  max-width: 520px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #777b80;
+}
 
-  .microsoft-btn {
-    margin-top: 10px;
-    background: #2F2F2F;
-    color: white;
-  }
+.cta {
+  display: inline-block;
+  text-decoration: none;
+  background: #f18a16;
+  color: white;
+  padding: 14px 34px;
+  border-radius: 9px;
+  margin-top: 25px;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: .2s;
+}
 
-  .microsoft-btn:hover {
-    background: #242424;
-    box-shadow: 0 5px 14px rgba(0,0,0,0.2);
-  }
+.cta:hover {
+  background: #d9770c;
+  transform: translateY(-2px);
+}
 
-  .error {
-    color: red;
-    font-size: 14px;
-    display: none;
-    margin-top: 10px;
-  }
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #e68c45;
+  font-size: 38px;
+  cursor: pointer;
+  padding: 10px;
+}
 
-  .security-box {
-    margin-top: 18px;
-    background: #f7f9fc;
-    border: 1px solid #e2e6ec;
-    border-radius: 10px;
-    padding: 14px;
-    text-align: left;
-  }
+.arrow:hover {
+  color: #b85e24;
+}
 
-  .security-title {
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+.left { left: 12px; }
+.right-arrow { right: 12px; }
 
-  .demo-label {
-    font-size: 9px;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-  }
+.circle {
+  position: absolute;
+  width: 420px;
+  height: 250px;
+  background: #d7eacb;
+  border-radius: 50% 50% 0 0;
+  bottom: -160px;
+  left: 50%;
+  transform: translateX(-50%);
+}
 
-  .security-item {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    font-size: 11px;
-    color: #555;
-    margin: 8px 0;
-  }
+.star {
+  position: absolute;
+  right: 12%;
+  bottom: 70px;
+  font-size: 75px;
+  color: #f9d34b;
+}
 
-  .security-icon {
-    width: 23px;
-    height: 23px;
-    border-radius: 6px;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-  }
+.decor {
+  position: absolute;
+  top: 65px;
+  left: 15%;
+  font-size: 35px;
+  color: #fff3bd;
+  transform: rotate(-20deg);
+}
 
-  .security-status {
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px solid #e3e7ed;
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    color: #777;
-  }
+/* MAIN CONTENT */
 
-  .status-online {
-    color: #2e9b48;
-    font-weight: 600;
-  }
+main {
+  background: #f5f5f7;
+  padding: 30px 0 70px;
+}
 
-  .info-panel {
-    width: min(700px, 100%);
-    margin-top: 18px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+.content-section {
+  padding: 65px 8%;
+  scroll-margin-top: 76px;
+}
+
+.section-heading {
+  margin-bottom: 25px;
+}
+
+.section-heading h2 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -1.2px;
+  color: #1d1d1f;
+}
+
+.section-heading p {
+  margin-top: 7px;
+  font-size: 14px;
+  color: #86868b;
+}
+
+/* HORIZONTAL CARDS */
+
+.card-row {
+  display: flex;
+  gap: 22px;
+  overflow-x: auto;
+  padding: 5px 3px 22px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: #c7c7cc transparent;
+}
+
+.product-card {
+  flex: 0 0 310px;
+  min-height: 245px;
+  padding: 27px;
+  border-radius: 25px;
+  background: white;
+  border: 1px solid #e9e9ed;
+  box-shadow: 0 4px 18px #00000007;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  scroll-snap-align: start;
+  transition: transform .25s, box-shadow .25s;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 13px 30px #00000012;
+}
+
+.product-icon {
+  width: 49px;
+  height: 49px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background: #ffffffb5;
+  margin-bottom: 20px;
+}
+
+.product-card h3 {
+  font-size: 21px;
+  letter-spacing: -.5px;
+  margin-bottom: 9px;
+  color: #1d1d1f;
+}
+
+.product-card p {
+  color: #727278;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.product-link {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0071e3;
+  text-decoration: none;
+}
+
+.product-link:hover {
+  text-decoration: underline;
+}
+
+/* CARD COLORS */
+
+.blue-card {
+  background: linear-gradient(145deg, #dceaff, #f5f8ff);
+}
+
+.purple-card {
+  background: linear-gradient(145deg, #e7deff, #f7f4ff);
+}
+
+.orange-card {
+  background: linear-gradient(145deg, #ffedd9, #fff8ed);
+}
+
+.green-card {
+  background: linear-gradient(145deg, #dff5e5, #f5fff7);
+}
+
+.pink-card {
+  background: linear-gradient(145deg, #ffe2ed, #fff5f9);
+}
+
+.dark-card {
+  background: linear-gradient(145deg, #252a36, #414b60);
+}
+
+.dark-card h3 { color: white; }
+.dark-card p { color: #d0d4dd; }
+.dark-card .product-link { color: #8fc5ff; }
+
+/* CONTACT */
+
+.contact-section {
+  padding: 65px 8%;
+  background: white;
+}
+
+.contact-box {
+  padding: 50px;
+  border-radius: 28px;
+  background: linear-gradient(120deg, #dceaff, #f1eaff);
+  text-align: center;
+}
+
+.contact-box h2 {
+  font-size: 30px;
+  letter-spacing: -1px;
+  margin-bottom: 10px;
+}
+
+.contact-box p {
+  color: #727278;
+  font-size: 14px;
+}
+
+.contact-box a {
+  display: inline-block;
+  margin-top: 22px;
+  padding: 12px 25px;
+  background: #0071e3;
+  color: white;
+  text-decoration: none;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+footer {
+  padding: 30px 8%;
+  background: #f5f5f7;
+  color: #86868b;
+  font-size: 12px;
+  text-align: center;
+}
+
+@keyframes drop {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* MOBILE */
+
+@media(max-width: 700px) {
+  nav {
+    height: auto;
+    min-height: 65px;
+    padding: 15px 4%;
     gap: 12px;
-    animation: infoIn 0.9s ease;
   }
 
-  @keyframes infoIn {
-    from {
-      opacity: 0;
-      transform: translateY(15px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .navlinks {
+    gap: 13px;
+    flex-wrap: wrap;
   }
 
-  .info-card {
-    background: rgba(255,255,255,0.94);
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 5px 18px rgba(0,0,0,0.08);
-  }
-
-  .info-card h4 {
-    margin: 0 0 7px;
-    font-size: 13px;
-  }
-
-  .info-card p {
-    margin: 0;
+  .navlinks a,
+  .login {
     font-size: 11px;
-    color: #666;
-    line-height: 1.5;
   }
 
-  .tip {
-    width: min(700px, 100%);
-    margin-top: 12px;
-    background: rgba(255,255,255,0.9);
-    border-radius: 10px;
-    padding: 12px 15px;
-    font-size: 11px;
-    color: #555;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-    text-align: center;
+  .right { gap: 10px; }
+  .contact { display: none; }
+  .provider-logos svg { width: 14px; height: 14px; }
+
+  .hero {
+    min-height: 500px;
+    padding: 45px 12px;
   }
 
-  .footer {
-    margin-top: 20px;
-    color: rgba(255,255,255,0.85);
-    font-size: 10px;
-    text-align: center;
-  }
+  .hero-card { padding: 55px 34px; }
+  .hero-card h1 { font-size: 29px; }
+  .hero-description { font-size: 13px; }
 
-  .loading-screen {
-    position: fixed;
-    inset: 0;
-    background: #111;
-    color: white;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    z-index: 100;
-    opacity: 0;
-  }
-
-  .loading-screen.show {
-    display: flex;
-    animation: fadeIn 0.35s ease forwards;
-  }
-
-  .loading-screen.hide {
-    animation: fadeOut 0.35s ease forwards;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes fadeOut {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-  }
-
-  .wait-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    animation: waitPop 0.55s cubic-bezier(.2,.8,.2,1);
-  }
-
-  @keyframes waitPop {
-    from {
-      opacity: 0;
-      transform: scale(0.92) translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
-  }
-
-  .spinner {
-    width: 48px;
-    height: 48px;
-    border: 4px solid rgba(255,255,255,0.2);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.85s linear infinite;
-    margin-bottom: 18px;
-  }
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  .wait-title {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-
-  .wait-subtitle {
-    font-size: 14px;
-    color: #aaa;
-  }
-
-  @media (max-width: 600px) {
-    .nav {
-      gap: 15px;
-      font-size: 14px;
-    }
-
-    .info-panel {
-      grid-template-columns: 1fr;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 320px;
-    }
-  }
+  .content-section { padding: 45px 20px; }
+  .section-heading h2 { font-size: 27px; }
+  .product-card { flex-basis: 270px; }
+  .contact-box { padding: 35px 20px; }
+}
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-
-  <img src="images/secu.png" class="logo-img" onclick="goHome()">
-
-  <div class="nav">
-
-    <!-- Solutions -->
-    <div class="nav-item">
-      <a href="solutions.html" class="nav-link">Solutions</a>
-
-      <div class="dropdown">
-        <a href="ai-integration.html">AI Integration</a>
-        <a href="cloud-storage.html">Cloud Storage</a>
-        <a href="security-tools.html">Security Tools</a>
-      </div>
-    </div>
-
-    <!-- Products -->
-    <div class="nav-item">
-      <a href="products.html" class="nav-link">Products</a>
-
-      <div class="dropdown">
-        <a href="dashboard.html">Dashboard Pro</a>
-        <a href="analytics.html">Analytics Suite</a>
-        <a href="mobile.html">Mobile App</a>
-      </div>
-    </div>
-
-    <!-- Customer Service -->
-    <div class="nav-item">
-      <a href="support.html" class="nav-link">Customer Service</a>
-
-      <div class="dropdown">
-        <a href="help.html">Help Center</a>
-        <a href="chat.html">Live Chat</a>
-        <a href="contact.html">Contact Support</a>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div class="wrapper">
-
-  <div class="container">
-
-    <div class="secure-badge">
-      <span class="secure-dot"></span>
-      Secure Sign-In
-    </div>
-
-    <h3>Sign in</h3>
-
-    <div class="subtitle">
-      Access your account securely
-    </div>
-
-    <input type="text" id="password" placeholder="Enter email">
-
-    <button class="login-btn" onclick="checkPassword()">
-      Login
-    </button>
-
-    <button class="google-btn" onclick="fakeMicrosoft()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
-      Sign in with Google
-    </button>
-
-    <button class="microsoft-btn" onclick="fakeMicrosoft()">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
-           style="width:18px;height:18px;vertical-align:middle;margin-right:10px;">
-      Sign in with Microsoft
-    </button>
-
-    <div class="error" id="error">
-      Wrong password Or email
-    </div>
-
-    <div class="security-box">
-      <div class="security-title">
-        <span>🛡️ Security Center</span>
-        <span class="demo-label">Interface</span>
-      </div>
-
-      <div class="security-item">
-        <div class="security-icon">🔐</div>
-        <span>Protected sign-in interface</span>
-      </div>
-
-      <div class="security-item">
-        <div class="security-icon">👁️</div>
-        <span>Keep your login details private</span>
-      </div>
-
-      <div class="security-item">
-        <div class="security-icon">⚠️</div>
-        <span>Watch for unusual account activity</span>
-      </div>
-
-      <div class="security-status">
-        <span>Status</span>
-        <span class="status-online">● Online</span>
-      </div>
-    </div>
-
+<nav>
+  <div class="navlinks">
+    <a href="#products">Products</a>
+    <a href="#resources">Resources</a>
+    <a href="#community">Community</a>
+    <a href="#plans">Plans</a>
   </div>
 
-  <div class="info-panel">
+  <div class="right">
 
-    <div class="info-card">
-      <h4>🔒 Account Safety</h4>
-      <p>Use passwords that are difficult to guess and avoid sharing them with other people.</p>
+    <div class="login-wrapper">
+      <button class="login-button" onclick="toggleLogin()">
+        <span class="login">Log In</span>
+
+        <span class="provider-logos">
+          <!-- Google icon -->
+          <svg viewBox="0 0 48 48" aria-label="Google">
+            <path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11c-.5 2.5-2 4.6-4.1 6v5h6.6c3.8-3.5 6.1-8.5 6.1-14.7z"/>
+            <path fill="#34A853" d="M24 44c5.4 0 9.9-1.8 13.2-4.8l-6.6-5c-1.8 1.2-4 2-6.6 2-5.1 0-9.5-3.4-11.1-8H6.1v5.2C9.4 39.7 16.1 44 24 44z"/>
+            <path fill="#FBBC05" d="M12.9 28.2c-.4-1.2-.7-2.6-.7-4s.3-2.8.7-4v-5.2H6.1C4.7 17.8 4 21 4 24.2s.7 6.4 2.1 9.2z"/>
+            <path fill="#EA4335" d="M24 12.2c2.9 0 5.5 1 7.6 3l5.7-5.7C33.8 6.2 29.4 4.4 24 4.4c-7.9 0-14.6 4.3-17.9 10.6l6.8 5.2c1.6-4.6 6-8 11.1-8z"/>
+          </svg>
+
+          <!-- Microsoft icon -->
+          <svg viewBox="0 0 24 24" aria-label="Microsoft">
+            <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+            <rect x="13" y="1" width="10" height="10" fill="#7FBA00"/>
+            <rect x="1" y="13" width="10" height="10" fill="#00A4EF"/>
+            <rect x="13" y="13" width="10" height="10" fill="#FFB900"/>
+          </svg>
+        </span>
+      </button>
+
+      <div class="login-menu" id="loginMenu">
+
+        <a href="https://google.com" target="_blank" rel="noopener">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11c-.5 2.5-2 4.6-4.1 6v5h6.6c3.8-3.5 6.1-8.5 6.1-14.7z"/>
+            <path fill="#34A853" d="M24 44c5.4 0 9.9-1.8 13.2-4.8l-6.6-5c-1.8 1.2-4 2-6.6 2-5.1 0-9.5-3.4-11.1-8H6.1v5.2C9.4 39.7 16.1 44 24 44z"/>
+            <path fill="#FBBC05" d="M12.9 28.2c-.4-1.2-.7-2.6-.7-4s.3-2.8.7-4v-5.2H6.1C4.7 17.8 4 21 4 24.2s.7 6.4 2.1 9.2z"/>
+            <path fill="#EA4335" d="M24 12.2c2.9 0 5.5 1 7.6 3l5.7-5.7C33.8 6.2 29.4 4.4 24 4.4c-7.9 0-14.6 4.3-17.9 10.6l6.8 5.2c1.6-4.6 6-8 11.1-8z"/>
+          </svg>
+          Google
+        </a>
+
+        <a href="homer.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+            <rect x="13" y="1" width="10" height="10" fill="#7FBA00"/>
+            <rect x="1" y="13" width="10" height="10" fill="#00A4EF"/>
+            <rect x="13" y="13" width="10" height="10" fill="#FFB900"/>
+          </svg>
+          Microsoft
+        </a>
+
+      </div>
     </div>
 
-    <div class="info-card">
-      <h4>🚨 Security Alerts</h4>
-      <p>Unexpected sign-in activity can be a reason to review your account settings.</p>
+    <a href="#contact" class="contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+  <div class="circle"></div>
+  <div class="decor">✦ ✎</div>
+  <div class="star">✳</div>
+
+  <div class="hero-card">
+    <div class="tag" id="tag">WELCOME</div>
+
+    <button class="arrow left" onclick="changeSlide(-1)" aria-label="Previous slide">‹</button>
+
+    <h1 id="heading">Learning that starts with curiosity</h1>
+
+    <p class="hero-description" id="description">
+      Discover interactive learning experiences, fun activities,
+      and educational resources designed to make learning exciting.
+    </p>
+
+    <a href="explore.html" class="cta" id="exploreButton">
+      Explore All Products
+    </a>
+
+    <button class="arrow right-arrow" onclick="changeSlide(1)" aria-label="Next slide">›</button>
+  </div>
+</section>
+
+<main>
+
+  <!-- PRODUCTS -->
+
+  <section class="content-section" id="products">
+    <div class="section-heading">
+      <h2>Explore Products</h2>
+      <p>Everything you need, all in one place.</p>
     </div>
 
-    <div class="info-card">
-      <h4>💻 Trusted Access</h4>
-      <p>Only sign in on devices and websites you recognize and trust.</p>
+    <div class="card-row">
+
+      <div class="product-card blue-card">
+        <div>
+          <div class="product-icon">🎮</div>
+          <h3>Learning Games</h3>
+          <p>Discover games and interactive experiences.</p>
+        </div>
+        <a href="explore.html" class="product-link">Explore Games →</a>
+      </div>
+
+      <div class="product-card purple-card">
+        <div>
+          <div class="product-icon">📚</div>
+          <h3>Learning</h3>
+          <p>Explore new topics and educational content.</p>
+        </div>
+        <a href="explore.html" class="product-link">Discover →</a>
+      </div>
+
+      <div class="product-card orange-card">
+        <div>
+          <div class="product-icon">✨</div>
+          <h3>Discover</h3>
+          <p>Find something new to explore every day.</p>
+        </div>
+        <a href="explore.html" class="product-link">Explore →</a>
+      </div>
+
+      <div class="product-card green-card">
+        <div>
+          <div class="product-icon">🧩</div>
+          <h3>Activities</h3>
+          <p>Explore fun activities and experiences.</p>
+        </div>
+        <a href="explore.html" class="product-link">View Activities →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RESOURCES -->
+
+  <section class="content-section" id="resources">
+    <div class="section-heading">
+      <h2>Resources</h2>
+      <p>Tools and resources to explore.</p>
     </div>
 
+    <div class="card-row">
+
+      <div class="product-card green-card">
+        <div>
+          <div class="product-icon">🌐</div>
+          <h3>Web Resources</h3>
+          <p>Discover useful websites and tools.</p>
+        </div>
+        <a href="explore.html" class="product-link">Explore →</a>
+      </div>
+
+      <div class="product-card blue-card">
+        <div>
+          <div class="product-icon">🧰</div>
+          <h3>Tools</h3>
+          <p>Find helpful tools for everyday use.</p>
+        </div>
+        <a href="explore.html" class="product-link">View Tools →</a>
+      </div>
+
+      <div class="product-card pink-card">
+        <div>
+          <div class="product-icon">💡</div>
+          <h3>Ideas</h3>
+          <p>Discover new ideas and inspiration.</p>
+        </div>
+        <a href="explore.html" class="product-link">Discover →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- COMMUNITY -->
+
+  <section class="content-section" id="community">
+    <div class="section-heading">
+      <h2>Community</h2>
+      <p>Discover more things to explore.</p>
+    </div>
+
+    <div class="card-row">
+
+      <div class="product-card purple-card">
+        <div>
+          <div class="product-icon">💬</div>
+          <h3>Community</h3>
+          <p>Discover more experiences and activities.</p>
+        </div>
+        <a href="explore.html" class="product-link">Explore →</a>
+      </div>
+
+      <div class="product-card orange-card">
+        <div>
+          <div class="product-icon">🚀</div>
+          <h3>What's New</h3>
+          <p>Find something new to try.</p>
+        </div>
+        <a href="explore.html" class="product-link">Check it out →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PLANS -->
+
+  <section class="content-section" id="plans">
+    <div class="section-heading">
+      <h2>Plans</h2>
+      <p>Find the right experience.</p>
+    </div>
+
+    <div class="card-row">
+
+      <div class="product-card dark-card">
+        <div>
+          <div class="product-icon">⭐</div>
+          <h3>Explore Everything</h3>
+          <p>Check out all the available experiences.</p>
+        </div>
+        <a href="explore.html" class="product-link">Get Started →</a>
+      </div>
+
+      <div class="product-card blue-card">
+        <div>
+          <div class="product-icon">🎯</div>
+          <h3>Get Started</h3>
+          <p>Jump into the experience.</p>
+        </div>
+        <a href="explore.html" class="product-link">Continue →</a>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- CONTACT -->
+
+<section class="contact-section" id="contact">
+  <div class="contact-box">
+    <h2>Ready to explore?</h2>
+    <p>Discover everything that's available.</p>
+    <a href="explore.html">Get Started →</a>
   </div>
+</section>
 
-  <div class="tip">
-    💡 <strong>Security tip:</strong>
-    Never give your password or verification codes to someone asking for them.
-  </div>
-
-  <div class="footer">
-    Secure Portal • Account Access • Security Center
-  </div>
-
-</div>
-
-<div class="loading-screen" id="loading">
-
-  <div class="wait-content" id="waitContent">
-    <div class="spinner"></div>
-    <div class="wait-title">Please wait...</div>
-    <div class="wait-subtitle">Preparing your sign-in</div>
-  </div>
-
-</div>
+<footer>
+  © 2026
+</footer>
 
 <script>
 
-  const correctPassword = "4321";
-  const adminCode = "4500";
+/* LOGIN DROPDOWN */
 
-  function checkPassword() {
+function toggleLogin() {
+  document.getElementById("loginMenu").classList.toggle("show");
+}
 
-    const input = document.getElementById("password").value.trim();
-    const error = document.getElementById("error");
+document.addEventListener("click", function(event) {
+  const wrapper = document.querySelector(".login-wrapper");
 
-    if (input === adminCode) {
-      window.location.href = "admin.html";
-      return;
-    }
-
-    if (input === correctPassword) {
-      window.location.href = "homer.html";
-      return;
-    }
-
-    error.style.display = "block";
+  if (!wrapper.contains(event.target)) {
+    document.getElementById("loginMenu").classList.remove("show");
   }
+});
 
-  // Enter key
-  document.getElementById("password").addEventListener("keydown", function(event) {
+/* HERO CAROUSEL */
 
-    if (event.key === "Enter") {
-      event.preventDefault();
-      checkPassword();
-    }
-
-  });
-
-  function goHome() {
-    window.location.href = "homer.html";
+const slides = [
+  {
+    tag: "WELCOME",
+    heading: "Learning that starts with curiosity",
+    description: "Discover interactive learning experiences, fun activities, and educational resources designed to make learning exciting.",
+    button: "Explore All Products"
+  },
+  {
+    tag: "DISCOVER",
+    heading: "Explore something new every day",
+    description: "Find new topics, discover interesting ideas, and build knowledge through interactive experiences.",
+    button: "Start Exploring"
+  },
+  {
+    tag: "LEARN",
+    heading: "Make learning more exciting",
+    description: "Turn everyday learning into an adventure with engaging activities and helpful resources.",
+    button: "Learn More"
   }
+];
 
-  function goGoogle() {
-    window.location.href = "https://www.google.com";
-  }
+let currentSlide = 0;
 
-  function fakeMicrosoft() {
+function changeSlide(direction) {
+  currentSlide = (currentSlide + direction + slides.length) % slides.length;
 
-    const loading = document.getElementById("loading");
-    const waitContent = document.getElementById("waitContent");
+  const slide = slides[currentSlide];
 
-    loading.classList.remove("hide");
-    loading.style.display = "flex";
-    loading.classList.add("show");
-
-    waitContent.style.display = "flex";
-    waitContent.style.animation = "none";
-
-    void waitContent.offsetWidth;
-
-    waitContent.style.animation =
-      "waitPop 0.55s cubic-bezier(.2,.8,.2,1)";
-
-    setTimeout(() => {
-
-      loading.classList.remove("show");
-      loading.classList.add("hide");
-
-      setTimeout(() => {
-        window.location.href = "homer.html";
-      }, 350);
-
-    }, 1800);
-
-  }
+  document.getElementById("tag").textContent = slide.tag;
+  document.getElementById("heading").textContent = slide.heading;
+  document.getElementById("description").textContent = slide.description;
+  document.getElementById("exploreButton").textContent = slide.button;
+}
 
 </script>
 
 </body>
 </html>
-
