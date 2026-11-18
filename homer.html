@@ -1027,7 +1027,7 @@ body.no-animations *{
         About:Blank ↗
       </button>
       <div style="font-size:12px; opacity:.75; margin-top:8px;">
-        Opens a completely empty browser tab. Your shortcut preference saves automatically on this device.
+        Opens Frazer OS inside an about:blank tab. Your shortcut preference saves automatically on this device. The website can still be visible to network filters and logs.
       </div>
     </div>
 
@@ -1449,7 +1449,10 @@ document.addEventListener("mousedown", event => {
 
 document.addEventListener("DOMContentLoaded", () => {
   const startButton = document.getElementById("frazer-windows-button");
-  if (startButton) {
+  // The button is also bound once near the end of the main script. Guard this
+  // fallback so one physical click can never toggle the menu twice.
+  if (startButton && !startButton.dataset.bound) {
+    startButton.dataset.bound = "1";
     startButton.addEventListener("click", toggleMenu);
     startButton.addEventListener("keydown", event => {
       if (event.key === "Enter" || event.key === " ") {
@@ -2180,10 +2183,37 @@ function toggleAboutBlankShortcut(enabled){
 }
 
 function openAboutBlankTab(){
-  // Open a genuinely blank page; do not load or embed Frazer OS in it.
+  // Keep the new tab's address bar on about:blank and show this Frazer OS
+  // page inside it. This is a visual URL-hiding wrapper, not a network filter bypass.
+  const frazerUrl = window.location.href;
+  if(!/^https?:\/\//i.test(frazerUrl)){
+    alert("Open Frazer OS from its website first, then try About:Blank again.");
+    return;
+  }
+
+  // Open synchronously from the Settings button click so popup blockers allow it.
   const blankTab = window.open("about:blank", "_blank");
   if(!blankTab){
     alert("Your browser blocked the new tab. Allow pop-ups for this site and try again.");
+    return;
+  }
+
+  try{
+    const doc = blankTab.document;
+    doc.title = "about:blank";
+    doc.documentElement.style.cssText = "width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#fff;";
+    doc.body.style.cssText = "width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#fff;";
+
+    const frame = doc.createElement("iframe");
+    frame.title = "Frazer OS";
+    frame.src = frazerUrl;
+    frame.setAttribute("allow", "fullscreen; autoplay; clipboard-read; clipboard-write");
+    frame.style.cssText = "position:fixed;inset:0;width:100%;height:100%;border:0;display:block;background:#fff;";
+    doc.body.appendChild(frame);
+  }catch(error){
+    console.error("Could not open Frazer OS in the about:blank tab:", error);
+    blankTab.close();
+    alert("Your browser could not create the About:Blank view. Try opening Frazer OS in a regular tab.");
   }
 }
 
