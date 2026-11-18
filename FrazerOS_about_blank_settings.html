@@ -1,0 +1,2932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frazer OS</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+  background:url("https://msftstories.thesourcemediaassets.com/sites/620/2021/09/Windows-11-Bloom-Screensaver-Dark-1000x562.jpg") center/cover no-repeat;
+  background-size:cover;
+}
+
+/* DARK SELECT MENUS */
+select,
+select option{
+  background:#111 !important;
+  color:white !important;
+}
+
+select{
+  color-scheme:dark;
+}
+
+/* TASKBAR + TASKBAR-SIZED START POPUP */
+.taskbar{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  width:100%;
+  height:55px;
+  min-height:55px;
+  background:rgba(20,20,20,0.76);
+  backdrop-filter:blur(18px) saturate(130%);
+  -webkit-backdrop-filter:blur(18px) saturate(130%);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+  overflow:visible;
+  border-top:1px solid rgba(255,255,255,.08);
+  transition:background .3s ease, box-shadow .3s ease;
+}
+
+.taskbar.start-open{
+  box-shadow:0 -8px 28px rgba(0,0,0,.28);
+}
+
+.start-btn{
+  position:absolute;
+  left:50%;
+  bottom:5px;
+  transform:translateX(-50%);
+  width:44px;
+  height:44px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:white;
+  cursor:pointer;
+  font-size:20px;
+  border-radius:10px;
+  transition:0.22s ease, transform .35s cubic-bezier(.2,.8,.2,1), background .2s ease;
+  z-index:10003;
+  border:0;
+  outline:0;
+  padding:0;
+  margin:0;
+  background:transparent;
+  font:inherit;
+}
+
+.start-btn:hover{
+  background:rgba(255,255,255,0.1);
+}
+
+.taskbar.start-open .start-btn{
+  background:rgba(255,255,255,.12);
+  transform:translateX(-50%) scale(1.04);
+}
+
+/* ACTUAL START MENU POPUP */
+#start-menu{
+  position:fixed;
+  left:50%;
+  bottom:65px;
+  width:min(680px, calc(100vw - 24px));
+  height:min(520px, calc(100vh - 90px));
+  padding:18px;
+  background:rgba(20,20,20,.94);
+  backdrop-filter:blur(22px) saturate(130%);
+  -webkit-backdrop-filter:blur(22px) saturate(130%);
+  color:white;
+  display:none;
+  flex-direction:column;
+  align-items:stretch;
+  opacity:0;
+  pointer-events:none;
+  transform:translate(-50%, 16px) scale(.97);
+  transform-origin:bottom center;
+  transition:opacity .22s ease, transform .32s cubic-bezier(.2,.8,.2,1);
+  z-index:10002;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:18px;
+  box-shadow:0 22px 70px rgba(0,0,0,.42), 0 8px 30px rgba(0,0,0,.2);
+}
+
+#start-menu.show{
+  display:flex;
+  opacity:1;
+  pointer-events:auto;
+  transform:translate(-50%, 0) scale(1);
+}
+
+#start-menu.frazer-name-required{
+  justify-content:center;
+}
+
+#start-menu.frazer-name-required > :not(#frazer-name-card){
+  display:none !important;
+}
+
+.taskbar.start-open #taskbar-widgets{
+  opacity:0;
+  transform:translateY(10px);
+  pointer-events:none;
+}
+
+#start-menu.show .search,
+#start-menu.show .big-grid,
+#start-menu.show .panel{
+  animation:frazerStartContentIn .28s cubic-bezier(.2,.8,.2,1) both;
+}
+
+#frazer-start-greeting{
+  animation:frazerGreetingIn .45s cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes frazerStartContentIn{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes frazerGreetingIn{
+  from{opacity:0;transform:translateY(10px) scale(.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* Name onboarding lives inside the taskbar/start menu only. */
+#start-menu.frazer-name-required > :not(#frazer-name-card){
+  display:none !important;
+}
+
+#start-menu:not(.frazer-name-required) #frazer-name-card{
+  display:none;
+}
+
+
+#frazer-name-card{
+  width:100%;
+  min-height:150px;
+  margin:0;
+  padding:7px 10px;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  text-align:left;
+  transform:translateY(8px);
+  opacity:1;
+  transition:transform .32s cubic-bezier(.2,.8,.2,1), opacity .24s ease;
+}
+
+#frazer-name-logo{
+  width:34px;
+  height:34px;
+  flex:0 0 34px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  background:rgba(255,255,255,.08);
+  box-shadow:0 5px 16px rgba(0,0,0,.18);
+}
+
+#frazer-name-title{font-size:15px;font-weight:700;letter-spacing:-.2px;white-space:nowrap}
+#frazer-name-subtitle{display:none}
+#frazer-name-input{
+  box-sizing:border-box;
+  width:min(280px,42vw);
+  padding:9px 12px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.16);
+  outline:none;
+  background:rgba(255,255,255,.08);
+  color:white;
+  font-size:14px;
+  transition:.2s ease;
+}
+#frazer-name-input:focus{
+  border-color:rgba(255,255,255,.38);
+  background:rgba(255,255,255,.11);
+  box-shadow:0 0 0 4px rgba(255,255,255,.05), 0 8px 30px rgba(0,0,0,.16);
+}
+#frazer-name-error{min-width:110px;min-height:18px;margin:0;color:#ff9b9b;font-size:11px;white-space:nowrap}
+#frazer-name-continue{
+  width:auto;
+  min-width:88px;
+  margin-top:0;
+  padding:9px 14px;
+  border:0;
+  border-radius:10px;
+  background:white;
+  color:#111;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  transition:transform .15s ease, box-shadow .2s ease;
+}
+#frazer-name-continue:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(0,0,0,.2)}
+#frazer-name-continue:active{transform:scale(.98)}
+
+.search{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  outline:none;
+  background:rgba(255,255,255,0.1);
+  color:white;
+  margin-bottom:12px;
+  font-size:15px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:10px;
+}
+
+.tile{
+  background:rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:12px;
+  text-align:center;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.tile:hover{
+  transform:scale(1.05);
+  background:rgba(255,255,255,0.15);
+}
+
+.big-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+
+.search-hidden{
+  display:none !important;
+}
+
+.small-tile{
+  background:rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:10px;
+  text-align:center;
+  font-size:12px;
+  cursor:pointer;
+  transition:0.2s;
+  word-wrap:break-word;
+}
+
+.small-tile:hover{
+  transform:scale(1.05);
+  background:rgba(255,255,255,0.18);
+}
+
+.panel{
+  display:none;
+}
+
+.panel.active{
+  display:block;
+}
+
+#start-menu:not(.frazer-name-required) #frazer-start-greeting{
+  margin:0 0 12px !important;
+  font-size:22px !important;
+  white-space:nowrap;
+}
+
+#start-menu:not(.frazer-name-required) .search{
+  flex:0 0 auto;
+  width:100%;
+  margin:0 0 12px;
+}
+
+#start-menu:not(.frazer-name-required) #home-panel{
+  display:block;
+  flex:1;
+  min-height:0;
+  overflow:auto;
+}
+
+#start-menu:not(.frazer-name-required) .big-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(115px,1fr));
+  gap:10px;
+  margin-top:0;
+  overflow:auto;
+  max-height:100%;
+  padding-right:2px;
+}
+
+#start-menu:not(.frazer-name-required) .small-tile{
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  white-space:normal;
+  padding:10px;
+}
+
+/* WINDOW AREA */
+#window-area{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+/* WINDOWS */
+.window{
+  position:absolute;
+
+  width:min(90vw, 850px);
+  height:min(80vh, 520px);
+
+  background:#1e1e1e;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 10px 40px rgba(0,0,0,0.5);
+  pointer-events:auto;
+
+  display:flex;
+  flex-direction:column;
+
+  resize:both;
+
+  min-width:280px;
+  min-height:200px;
+  max-width:100vw;
+  max-height:calc(100vh - 55px);
+}
+
+.window-header{
+  height:42px;
+  flex-shrink:0;
+  background:rgba(255,255,255,0.08);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 12px;
+  cursor:move;
+  color:white;
+  user-select:none;
+}
+
+.win-controls{
+  display:flex;
+  gap:6px;
+}
+
+.win-btn{
+  width:14px;
+  height:14px;
+  border-radius:4px;
+  cursor:pointer;
+}
+
+.close{
+  background:#ff5f57;
+}
+
+.max{
+  background:#ffbd2e;
+}
+
+.window.maximized{
+  top:0 !important;
+  left:0 !important;
+  width:100% !important;
+  height:calc(100% - 55px) !important;
+  border-radius:0 !important;
+}
+
+.settings-app-body{flex:1; overflow:auto; background:#1e1e1e; color:white;}
+.settings-app-content{display:block !important; padding:16px;}
+.settings-app-content > .tile:first-child{display:none;}
+.window iframe{
+  flex:1;
+  width:100%;
+  border:none;
+  display:block;
+  background:white;
+}
+
+/* FILES / HTML RUNNER */
+.files-app-body{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  background:#0d0d0d;
+  color:white;
+}
+.files-toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  padding:10px;
+  background:#171717;
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+.files-toolbar button{
+  border:none;
+  border-radius:8px;
+  padding:8px 12px;
+  background:#2a2a2a;
+  color:white;
+  cursor:pointer;
+}
+.files-toolbar button:hover{background:#3a3a3a;}
+.files-file-name{
+  min-width:150px;
+  flex:1;
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.1);
+  background:#101010;
+  color:white;
+  outline:none;
+}
+.files-editor-wrap{
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+}
+.files-editor{
+  width:100%;
+  height:100%;
+  min-height:220px;
+  resize:none;
+  border:none;
+  outline:none;
+  padding:14px;
+  background:#0b0b0b;
+  color:#eaeaea;
+  font:13px/1.5 Consolas,Monaco,monospace;
+  border-right:1px solid rgba(255,255,255,.1);
+}
+.files-preview{
+  width:100%;
+  height:100%;
+  border:none;
+  background:white;
+}
+@media(max-width:800px){
+  .files-editor-wrap{grid-template-columns:1fr;}
+  .files-preview{min-height:300px;}
+}
+
+/* APP ICONS */
+.app-icon{
+  width:44px;
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  line-height:1;
+  margin:0 auto 7px;
+}
+.app-icon img{
+  width:44px;
+  height:44px;
+  object-fit:contain;
+  border-radius:9px;
+}
+.small-tile .app-name{
+  line-height:1.2;
+}
+
+
+/* WIDGETS */
+#desktop-clock{
+  display:none;
+  position:fixed;
+  top:18px;
+  right:20px;
+  z-index:50;
+  color:white;
+  text-align:right;
+  text-shadow:0 2px 8px rgba(0,0,0,.7);
+  pointer-events:none;
+  user-select:none;
+}
+#desktop-clock .widget-time{font-size:30px;font-weight:600;line-height:1.05;letter-spacing:.3px}
+#desktop-clock .widget-date{font-size:12px;opacity:.82;margin-top:4px}
+#taskbar-widgets{
+  position:absolute;
+  right:10px;
+  top:0;
+  height:55px;
+  display:flex;
+  align-items:center;
+  gap:3px;
+  transition:opacity .25s ease, transform .3s ease;
+}
+.taskbar-widget{
+  height:42px;
+  min-width:56px;
+  color:white;
+  padding:5px 8px;
+  border-radius:10px;
+  font-size:12px;
+  line-height:1.1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  background:rgba(255,255,255,.055);
+  white-space:nowrap;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);
+}
+.taskbar-widget-time .taskbar-time{font-size:13px;font-weight:600}
+.taskbar-widget-time .taskbar-date{font-size:9px;opacity:.68;margin-top:2px}
+.taskbar-weather .weather-temp{font-size:13px;font-weight:600}
+.taskbar-weather{cursor:pointer}.taskbar-weather:hover{background:rgba(255,255,255,.1)}
+.taskbar-weather .weather-desc{font-size:9px;opacity:.72;margin-top:2px}
+@media(max-width:700px){
+  #desktop-clock{top:10px;right:12px}
+  #desktop-clock .widget-time{font-size:22px}
+  #desktop-clock .widget-date{font-size:10px}
+  #taskbar-widgets{right:5px;height:55px}
+  .taskbar-widget{min-width:49px;padding:5px 5px;font-size:10px}
+  .taskbar-weather .weather-desc{display:none}
+  .taskbar-widget-time .taskbar-date{display:none}
+}
+
+
+/* No social/people control is shown on the taskbar. */
+
+
+/* WEATHER APP */
+.weather-app-body{flex:1;min-height:0;overflow:auto;background:linear-gradient(180deg,#102b4d,#173f6d 44%,#0d2340);color:#fff}
+.weather-app{min-height:100%;padding:22px}.weather-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.weather-location-name{font-size:22px;font-weight:700;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.weather-location-sub{margin-top:3px;font-size:12px;opacity:.72}
+.weather-search{display:flex;gap:7px;width:min(360px,48%)}.weather-search input{flex:1;min-width:0;border:1px solid rgba(255,255,255,.16);outline:none;border-radius:11px;padding:9px 11px;background:rgba(255,255,255,.11);color:#fff}.weather-search input::placeholder{color:rgba(255,255,255,.6)}
+.weather-search button,.weather-source-pill,.weather-site-open{border:0;border-radius:10px;padding:9px 12px;background:rgba(255,255,255,.16);color:#fff;cursor:pointer;font-weight:700}.weather-tabs{display:flex;gap:6px;padding:5px;margin-bottom:14px;width:max-content;max-width:100%;border-radius:12px;background:rgba(0,0,0,.18)}
+.weather-tab{border:0;border-radius:9px;padding:8px 12px;background:transparent;color:rgba(255,255,255,.72);cursor:pointer;font-weight:700}.weather-tab.active{color:#fff;background:rgba(255,255,255,.16)}
+.weather-panel{display:none}.weather-panel.active{display:block}.weather-hero{overflow:hidden;border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:22px;background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.06));box-shadow:0 14px 40px rgba(0,0,0,.15)}
+.weather-hero-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.weather-condition-icon{font-size:66px;line-height:1}.weather-current-temp{font-size:78px;line-height:.95;font-weight:300;letter-spacing:-4px}.weather-current-condition{margin-top:7px;font-size:18px;font-weight:700}.weather-hi-lo{margin-top:5px;font-size:13px;opacity:.78}.weather-updated{margin-top:12px;font-size:11px;opacity:.58}
+.weather-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:18px}.weather-metric{padding:12px;border-radius:14px;background:rgba(255,255,255,.09)}.weather-metric-label{font-size:10px;opacity:.62}.weather-metric-value{margin-top:4px;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.weather-section{margin-top:14px;padding:16px;border:1px solid rgba(255,255,255,.11);border-radius:19px;background:rgba(255,255,255,.08)}.weather-section-title{margin:0 0 12px;font-size:13px;font-weight:800}
+.weather-hourly{display:flex;gap:9px;overflow-x:auto;padding-bottom:3px}.weather-hour{flex:0 0 73px;text-align:center;padding:11px 8px;border-radius:13px;background:rgba(255,255,255,.06)}.weather-hour-time{font-size:10px;opacity:.72}.weather-hour-icon{font-size:22px;margin:7px 0}.weather-hour-temp{font-size:13px;font-weight:800}.weather-rain{font-size:9px;opacity:.58;margin-top:4px}
+.weather-days{display:grid;gap:7px}.weather-day{display:grid;grid-template-columns:1.2fr .6fr 2fr .7fr;gap:10px;align-items:center;padding:10px 11px;border-radius:12px;background:rgba(255,255,255,.055)}.weather-day-name{font-size:12px;font-weight:700}.weather-day-icon{font-size:20px;text-align:center}.weather-day-cond{font-size:11px;opacity:.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.weather-day-temps{font-size:12px;font-weight:700;text-align:right}
+.weather-source-row{display:flex;flex-wrap:wrap;gap:8px}.weather-source-pill{font-size:11px}.weather-source-note,.weather-source-footer{margin-top:9px;font-size:10px;opacity:.55;line-height:1.5}.weather-multiview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.weather-site-card{overflow:hidden;min-height:290px;border:1px solid rgba(255,255,255,.11);border-radius:18px;background:rgba(255,255,255,.08)}.weather-site-head{height:42px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 11px;border-bottom:1px solid rgba(255,255,255,.1)}.weather-site-title{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.weather-site-open{padding:6px 8px;font-size:10px}.weather-site-frame{width:100%;height:248px;border:0;display:block;background:#fff}.weather-loading{padding:24px;text-align:center;font-size:13px;opacity:.68}
+@media(max-width:700px){.weather-app{padding:14px}.weather-topbar{align-items:stretch;flex-direction:column}.weather-search{width:100%}.weather-current-temp{font-size:60px;letter-spacing:-3px}.weather-condition-icon{font-size:50px}.weather-metrics{grid-template-columns:repeat(2,1fr)}.weather-day{grid-template-columns:.9fr .5fr 1.4fr .7fr}.weather-day-cond{display:none}.weather-multiview-grid{grid-template-columns:1fr}.weather-site-frame{height:218px}}
+/* MOBILE */
+@media (max-width:700px){
+
+  #start-menu{
+    width:calc(100vw - 16px);
+    height:min(560px, calc(100vh - 78px));
+    bottom:63px;
+    padding:14px;
+    border-radius:16px;
+  }
+
+  #frazer-name-card{
+    padding:7px 5px;
+    gap:6px;
+  }
+  #frazer-name-logo{
+    width:30px;
+    height:30px;
+    flex-basis:30px;
+    font-size:16px;
+  }
+  #frazer-name-title{
+    font-size:12px;
+  }
+  #frazer-name-input{
+    flex:1 1 auto;
+    width:auto;
+    min-width:70px;
+    padding:8px 9px;
+    font-size:12px;
+  }
+  #frazer-name-error{
+    min-width:0;
+    width:auto;
+    max-width:70px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size:9px;
+  }
+  #frazer-name-continue{
+    min-width:68px;
+    padding:8px 9px;
+    font-size:12px;
+  }
+
+  .window{
+    width:96vw;
+    height:78vh;
+    top:10px !important;
+    left:2vw !important;
+  }
+
+  .window-header{
+    font-size:14px;
+  }
+
+  .small-tile{
+    font-size:11px;
+    padding:8px;
+  }
+}
+
+/* HIDE DESKTOP ICONS WHILE A GAME IS FULLSCREEN/MAXIMIZED */
+body.game-fullscreen #desktop{
+  display:none !important;
+}
+
+/* SETTINGS OPTIONS */
+body.no-animations *{
+  transition:none !important;
+  animation:none !important;
+}
+
+/* DESKTOP ITEMS */
+#desktop{
+  position:fixed;
+  inset:0 0 55px 0;
+  z-index:10;
+  pointer-events:none;
+  padding:14px;
+}
+
+.desktop-item{
+  width:82px;
+  min-height:82px;
+  margin-bottom:8px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:6px;
+  padding:7px 5px;
+  border-radius:10px;
+  color:white;
+  text-align:center;
+  font-size:12px;
+  user-select:none;
+  cursor:pointer;
+  pointer-events:auto;
+  text-shadow:0 1px 3px rgba(0,0,0,.8);
+  transition:.15s;
+}
+
+.desktop-item:hover{
+  background:rgba(255,255,255,.12);
+}
+
+.desktop-item:active{
+  transform:scale(.96);
+}
+
+.desktop-icon{
+  width:44px;
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  line-height:1;
+}
+
+.desktop-icon img{
+  width:44px;
+  height:44px;
+  object-fit:contain;
+  border-radius:7px;
+}
+
+@media(max-width:700px){
+  #desktop{
+    padding:8px;
+  }
+
+  .desktop-item{
+    width:72px;
+    min-height:76px;
+    font-size:11px;
+  }
+
+  .desktop-icon,
+  .desktop-icon img{
+    width:38px;
+    height:38px;
+  }
+}
+
+
+/* ===== Frazer OS Start menu refresh: Windows 11-inspired acrylic ===== */
+#start-menu{
+  width:min(700px,calc(100vw - 24px));
+  height:min(710px,calc(100vh - 82px));
+  padding:18px 22px 12px;
+  background:rgba(28,30,36,.91);
+  backdrop-filter:blur(34px) saturate(155%);
+  -webkit-backdrop-filter:blur(34px) saturate(155%);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:22px;
+  box-shadow:0 28px 90px rgba(0,0,0,.52),0 6px 24px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.055);
+}
+#start-menu.show{transform:translate(-50%,0) scale(1)}
+.start-shell{position:relative;display:flex;flex:1;min-height:0;flex-direction:column;gap:0;color:#f7f8fb}
+.start-search-bar{
+  height:43px;flex:0 0 43px;display:flex;align-items:center;gap:11px;padding:0 13px;
+  border-radius:9px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.085);
+  box-shadow:0 1px 0 rgba(255,255,255,.04);color:rgba(255,255,255,.76);transition:border-color .18s,background .18s,box-shadow .18s;
+}
+.start-search-bar:focus-within{border-color:rgba(96,165,250,.92);background:rgba(255,255,255,.11);box-shadow:0 0 0 1px rgba(96,165,250,.42)}
+.start-search-bar>i{font-size:14px;color:#9bc8ff}
+#start-menu .start-search-bar #app-search{flex:1;min-width:0;width:100%;height:100%;padding:0;margin:0;border:0;border-radius:0;background:transparent;color:#fff;font-size:13px;outline:0;box-shadow:none}
+#start-menu .search::placeholder{color:rgba(240,243,249,.62)}
+.search-hint{font-size:17px;opacity:.48;line-height:1}
+.start-welcome-line{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 2px 8px;min-height:38px}
+#start-menu:not(.frazer-name-required) #frazer-start-greeting{font-size:12px!important;font-weight:500!important;line-height:1.3;margin:0!important;color:rgba(240,243,249,.68);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.start-brand-pill{display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.2px;color:rgba(240,243,249,.48);white-space:nowrap}
+.brand-dot{width:6px;height:6px;border-radius:50%;background:#65a8ff;box-shadow:0 0 10px rgba(101,168,255,.65)}
+.start-content{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;gap:13px;overflow:hidden}
+.start-section-heading{height:31px;min-height:31px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 2px;color:#f5f6fa;font-size:14px;font-weight:650;letter-spacing:.05px}
+.start-section-heading button,.all-apps-toolbar button{height:27px;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 10px;border:1px solid rgba(255,255,255,.09);border-radius:6px;background:rgba(255,255,255,.07);color:#f2f5fa;font:500 11px Arial,sans-serif;cursor:pointer;transition:background .15s,border-color .15s}
+.start-section-heading button:hover,.all-apps-toolbar button:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.15)}
+.start-section-heading button i,.all-apps-toolbar button i{font-size:9px;opacity:.78}
+.pinned-section,.recommended-section{flex:0 0 auto;min-height:0}
+.pinned-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px 5px}
+.start-pinned-app{min-width:0;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;padding:9px 3px 7px;border:1px solid transparent;border-radius:8px;background:transparent;color:#f4f6fb;font:11px Arial,sans-serif;text-align:center;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.start-pinned-app:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.035)}
+.start-pinned-app:active{transform:scale(.97)}
+.start-pinned-app:focus-visible,.recommended-item:focus-visible,.start-power-button:focus-visible{outline:2px solid #79b8ff;outline-offset:1px}
+.pinned-icon{width:39px;height:39px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:26px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
+.start-pinned-app>span:last-child{width:100%;max-width:95px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:1.2;color:rgba(250,251,255,.92)}
+.recommended-section{padding-top:6px;border-top:1px solid rgba(255,255,255,.085)}
+.recommended-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 8px}
+.recommended-item{min-width:0;height:51px;display:flex;align-items:center;gap:10px;padding:5px 8px;border:1px solid transparent;border-radius:8px;background:transparent;color:white;text-align:left;cursor:pointer;transition:background .15s,border-color .15s}
+.recommended-item:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.04)}
+.recommended-icon{width:34px;height:34px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,.075);font-size:21px}
+.recommended-copy{min-width:0;display:flex;flex-direction:column;gap:4px}
+.recommended-copy strong{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recommended-copy small{font-size:10px;color:rgba(238,242,250,.52);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.start-menu-footer{height:55px;min-height:55px;display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding:6px 3px 0;border-top:1px solid rgba(255,255,255,.09)}
+.start-footer-user{min-width:0;display:flex;align-items:center;gap:10px;padding:5px 9px 5px 5px;border-radius:7px;color:#f4f6fb;font-size:12px;font-weight:500}
+.start-user-avatar{width:31px;height:31px;flex:0 0 31px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:linear-gradient(145deg,#6fb2ff,#2869c7);border:1px solid rgba(255,255,255,.32);font-weight:700;font-size:13px;color:white;box-shadow:0 3px 10px rgba(0,0,0,.2)}
+#frazer-footer-name{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.start-power-button{width:38px;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:7px;background:transparent;color:#f4f6fb;font-size:15px;cursor:pointer;transition:background .15s,border-color .15s}
+.start-power-button:hover,.start-power-button[aria-expanded="true"]{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.06)}
+.start-power-menu{position:absolute;right:3px;bottom:58px;z-index:3;display:none;width:190px;padding:5px;border:1px solid rgba(255,255,255,.13);border-radius:10px;background:rgba(36,38,45,.98);box-shadow:0 12px 35px rgba(0,0,0,.38);backdrop-filter:blur(20px)}
+.start-power-menu.show{display:flex;flex-direction:column;animation:frazerStartContentIn .15s ease both}
+.start-power-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 11px;border:0;border-radius:6px;background:transparent;color:#f6f7fb;font:12px Arial,sans-serif;text-align:left;cursor:pointer}
+.start-power-menu button:hover{background:rgba(255,255,255,.1)}
+.start-power-menu button i{width:15px;color:#b9c7dc;text-align:center}
+#start-menu:not(.frazer-name-required) #home-panel{display:none!important;flex:1;min-height:0;overflow:auto;margin:0;padding:0 2px 4px}
+#start-menu.all-apps-open:not(.frazer-name-required) #home-panel,#start-menu.search-active:not(.frazer-name-required) #home-panel{display:flex!important;flex-direction:column}
+#start-menu.all-apps-open .pinned-section,#start-menu.all-apps-open .recommended-section,#start-menu.search-active .pinned-section,#start-menu.search-active .recommended-section{display:none!important}
+#start-menu.all-apps-open .start-content,#start-menu.search-active .start-content{overflow:hidden}
+.all-apps-toolbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 1px 10px;font-size:14px;font-weight:650}
+#start-menu:not(.frazer-name-required) .big-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(94px,1fr));gap:3px;flex:1;max-height:none;overflow:visible;margin:0;padding:0 0 4px}
+#start-menu:not(.frazer-name-required) .small-tile{min-width:0;min-height:75px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:7px;padding:9px 4px 7px;border:1px solid transparent;border-radius:8px;background:transparent;color:#f3f6fb;font-size:11px;line-height:1.2;text-align:center;word-break:normal;overflow:hidden;transition:background .15s,border-color .15s,transform .15s}
+#start-menu .small-tile:hover{transform:none;background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.04)}
+#start-menu .small-tile:active{transform:scale(.97)}
+.all-app-icon{width:37px;height:37px;flex:0 0 37px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:rgba(255,255,255,.055);font-size:25px;line-height:1}
+.all-app-label{width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:rgba(250,251,255,.92)}
+.start-search-empty{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:none;flex:none;align-items:center;justify-content:center;text-align:center;color:rgba(245,247,251,.55);font-size:13px;padding:25px;pointer-events:none}
+.start-search-empty:not([hidden]){display:flex}
+#start-menu.search-active .start-search-empty{display:none}
+#start-menu.search-active .start-search-empty:not([hidden]){display:flex}
+#start-menu.frazer-name-required{padding:18px 22px}
+#start-menu.frazer-name-required #frazer-name-card{min-height:170px;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:12px;padding:18px}
+#start-menu.frazer-name-required #frazer-name-title{font-size:18px;white-space:normal}
+#start-menu.frazer-name-required #frazer-name-input{width:min(300px,65vw)}
+#start-menu.frazer-name-required #frazer-name-error{width:100%;text-align:center;min-height:14px}
+@media(max-width:700px){
+  #start-menu{width:calc(100vw - 16px);height:min(690px,calc(100vh - 78px));bottom:63px;padding:13px 12px 8px;border-radius:18px}
+  .start-search-bar{height:41px;flex-basis:41px}
+  .start-welcome-line{padding:8px 2px 5px}
+  .pinned-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:0 3px}
+  .start-pinned-app{min-height:69px;padding:6px 2px}
+  .pinned-icon{width:34px;height:34px;font-size:23px}
+  .start-pinned-app>span:last-child{font-size:10px}
+  .recommended-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2px}
+  .recommended-item{height:47px;gap:6px;padding:4px}
+  .recommended-icon{width:29px;height:29px;flex-basis:29px;font-size:18px}
+  .recommended-copy strong{font-size:10px}
+  .recommended-copy small{font-size:9px}
+  #start-menu:not(.frazer-name-required) .big-grid{grid-template-columns:repeat(auto-fill,minmax(82px,1fr))}
+  #start-menu:not(.frazer-name-required) .small-tile{min-height:70px}
+  .start-menu-footer{height:49px;min-height:49px}
+}
+@media(max-height:650px){
+  #start-menu{height:calc(100vh - 76px);padding-top:10px;padding-bottom:7px}
+  .start-content{gap:6px}
+  .pinned-grid{gap:0 3px}
+  .start-pinned-app{min-height:60px;padding:4px 2px;gap:4px}
+  .pinned-icon{width:31px;height:31px;font-size:21px}
+  .recommended-section{padding-top:3px}
+  .recommended-item{height:43px}
+  .start-menu-footer{height:43px;min-height:43px;margin-top:4px}
+}
+
+/* Keep the Start menu fitted to the usable viewport on desktops, tablets and phones. */
+#start-menu{
+  width:min(720px,calc(100vw - 20px));
+  height:min(710px,calc(100vh - 74px));
+  height:min(710px,calc(100dvh - 74px));
+  max-height:calc(100dvh - 74px);
+  min-height:min(320px,calc(100dvh - 74px));
+  bottom:calc(55px + env(safe-area-inset-bottom,0px) + 8px);
+  padding:clamp(10px,2vw,20px) clamp(10px,2.5vw,22px) 10px;
+}
+#start-menu .start-content{flex:1 1 auto;min-height:0;overflow:hidden;gap:clamp(5px,1.2vh,13px)}
+#start-menu .pinned-section{display:flex;flex:1 1 auto;flex-direction:column;min-height:0}
+#start-menu .pinned-grid{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  align-content:start;
+  grid-auto-rows:minmax(68px,auto);
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,.24) transparent;
+}
+#start-menu .pinned-grid::-webkit-scrollbar{width:6px}
+#start-menu .pinned-grid::-webkit-scrollbar-thumb{background:rgba(255,255,255,.24);border-radius:8px}
+.start-pin-group-heading{font-size:12px;color:rgba(240,243,249,.64);padding:8px 2px 2px}
+.start-pin-option{display:flex;align-items:center;gap:8px;min-height:29px;font-size:12px;line-height:1.25;color:rgba(250,251,255,.9);cursor:pointer}
+.start-pin-option input{flex:0 0 auto;accent-color:#60a5fa}
+.start-pin-option-icon{width:22px;text-align:center;font-size:15px}
+.start-pin-option-name{overflow-wrap:anywhere}
+.start-pins-empty{grid-column:1/-1;padding:20px 8px;color:rgba(245,247,251,.62);font-size:12px;text-align:center}
+@media(max-width:900px){
+  #start-menu{width:min(680px,calc(100vw - 18px))}
+  .pinned-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media(max-width:700px){
+  #start-menu{width:calc(100vw - 16px);height:min(690px,calc(100dvh - 76px));bottom:calc(55px + env(safe-area-inset-bottom,0px) + 8px);padding:12px 11px 7px}
+  .pinned-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:0 3px}
+  .start-pinned-app{min-height:66px;padding:6px 2px;gap:5px}
+  .pinned-icon{width:34px;height:34px;font-size:23px}
+  .recommended-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:390px){
+  #start-menu{padding-left:9px;padding-right:9px}
+  .pinned-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .start-welcome-line{gap:5px}
+  .start-brand-pill{font-size:9px}
+}
+@media(max-height:520px){
+  #start-menu{height:calc(100dvh - 70px);min-height:0;padding-top:7px;padding-bottom:5px}
+  #start-menu .recommended-section{display:none}
+  .start-welcome-line{min-height:27px;padding:4px 2px}
+  .start-menu-footer{height:40px;min-height:40px;margin-top:3px}
+  .start-pinned-app{min-height:57px;padding:3px 2px;gap:3px}
+  .pinned-icon{width:29px;height:29px;font-size:20px}
+}
+
+</style>
+<script async src="https://pagead2.googlesyndication.com/adsbygoogle.js?client=ca-pub-7462828797160107" crossorigin="anonymous"></script>
+
+
+
+</head>
+
+<body>
+
+<!-- DESKTOP -->
+<div id="desktop">
+  <!-- Desktop items are generated from the existing games/apps list. -->
+</div>
+
+
+<div id="window-area"></div>
+
+<!-- SETTINGS TEMPLATE (cloned into the Settings window) -->
+<div id="settings-panel" class="panel" style="display:none;">
+  <div class="tile" onclick="openSettingsApp()">⚙️ Settings</div>
+
+  <div style="margin-top:14px;">
+    <h3 style="margin:0 0 10px;">Settings</h3>
+
+    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
+      <div style="font-size:14px; margin-bottom:10px;">🖥️ Desktop Items</div>
+
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:10px;">
+        <input id="desktop-items-toggle" type="checkbox" checked onchange="toggleDesktopItems(this.checked)">
+        Show desktop icons
+      </label>
+
+      <div id="desktop-icon-options" style="display:grid; gap:8px; padding-top:2px;"></div>
+
+      <div style="font-size:12px; opacity:.75; margin-top:9px;">
+        Your desktop choices stay saved on this device.
+      </div>
+    </div>
+
+    <div class="small-tile start-pin-settings" style="margin-top:10px; text-align:left; cursor:default;">
+      <div style="font-size:14px; margin-bottom:8px;">📌 Start Menu Pins</div>
+      <div style="font-size:12px; opacity:.75; margin-bottom:8px;">Choose any app or game to show in the Start menu's Pinned section. Your choices are saved on this device.</div>
+      <div id="start-pin-options" style="display:grid; gap:8px; max-height:300px; overflow:auto; padding:8px 4px 4px;"></div>
+    </div>
+
+    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
+      <div style="font-size:14px; margin-bottom:8px;">🎨 Wallpaper</div>
+      <select id="background-select" onchange="changeBackground(this.value)"
+        style="width:100%; padding:10px; border:none; outline:none; border-radius:9px; background:rgba(255,255,255,0.1); color:white;">
+        <option value="dark">🌙 Dark Windows 11</option>
+        <option value="light">☀️ Light mode (current wallpaper)</option>
+        <option value="blue">Blue</option>
+        <option value="purple">Purple</option>
+        <option value="black">Black</option>
+        <option value="gray">Gray</option>
+        <option value="green">Green</option>
+        <option value="custom">🖼 Custom image</option>
+      </select>
+      <div style="font-size:12px; opacity:.75; margin-top:8px;">
+        Dark Windows 11 is the default. Your wallpaper choice is saved on this device.
+      </div>
+    </div>
+
+    <div class="small-tile" style="margin-top:10px;" onclick="chooseCustomBackground()">
+      🖼 Choose Image
+    </div>
+    <input id="background-file" type="file" accept="image/*" style="display:none" onchange="applyCustomBackground(this.files[0])">
+
+    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
+      <div style="font-size:14px; margin-bottom:8px;">🔤 Font Size</div>
+      <select id="font-size-select" onchange="changeFontSize(this.value)"
+        style="width:100%; padding:10px; border:none; outline:none; border-radius:9px; background:rgba(255,255,255,0.1); color:white;">
+        <option value="small">Small</option>
+        <option value="medium">Medium</option>
+        <option value="large">Large</option>
+        <option value="xlarge">Extra Large</option>
+      </select>
+      <div style="font-size:12px; opacity:.75; margin-top:8px;">
+        Changes the main Frazer OS interface text size.
+      </div>
+    </div>
+
+    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
+      <div style="font-size:14px; margin-bottom:8px;">📌 Taskbar Transparency</div>
+      <input id="taskbar-opacity" type="range" min="30" max="100" value="70" oninput="changeTaskbarOpacity(this.value)" style="width:100%;">
+      <div id="taskbar-opacity-label" style="font-size:12px; opacity:.75; margin-top:5px;">70%</div>
+    </div>
+
+    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
+      <div style="font-size:14px; margin-bottom:8px;">✨ Animations</div>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px;">
+        <input id="animations-toggle" type="checkbox" checked onchange="toggleAnimations(this.checked)">
+        Enable animations
+      </label>
+    </div>
+
+
+    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
+      <div style="font-size:14px; margin-bottom:8px;">🧩 Widgets</div>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:9px;">
+        <input id="clock-widget-toggle" type="checkbox" checked onchange="toggleClockWidget(this.checked)">
+        Show desktop clock
+      </label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px;">
+        <input id="weather-widget-toggle" type="checkbox" checked onchange="toggleWeatherWidget(this.checked)">
+        Show taskbar weather
+      </label>
+      <div style="font-size:12px; opacity:.75; margin-top:8px;">
+        Clock and weather choices stay saved on this device.
+      </div>
+    </div>
+
+    <div class="small-tile" style="margin-top:10px; text-align:left; cursor:default;">
+      <div style="font-size:14px; margin-bottom:8px;">🌐 About:Blank</div>
+      <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:10px;">
+        <input id="about-blank-toggle" type="checkbox" checked onchange="toggleAboutBlankShortcut(this.checked)">
+        Show About:Blank button
+      </label>
+      <button id="about-blank-open-button" type="button" onclick="openAboutBlankTab()"
+        style="display:inline-flex; align-items:center; justify-content:center; padding:9px 13px; border:1px solid rgba(255,255,255,.16); border-radius:8px; background:rgba(255,255,255,.1); color:white; cursor:pointer; font:13px Arial,sans-serif;">
+        About:Blank ↗
+      </button>
+      <div style="font-size:12px; opacity:.75; margin-top:8px;">
+        Opens a completely empty browser tab. Your shortcut preference saves automatically on this device.
+      </div>
+    </div>
+
+    <div class="small-tile" style="margin-top:10px;" onclick="resetSettings()">
+      ♻ Reset Settings
+    </div>
+
+    <div style="margin-top:18px; padding:12px; border-top:1px solid rgba(255,255,255,0.12);">
+      <div style="font-size:12px; opacity:.6; text-align:center; line-height:1.5;">
+        Frazer OS<br>
+        Games and third-party content are provided for<br>
+        <b>fair use / educational purposes.</b><br>
+        Frazer OS does not claim ownership of third-party games.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- DESKTOP CLOCK -->
+<div id="desktop-clock">
+  <div class="widget-time" id="widget-clock-time">--:--</div>
+  <div class="widget-date" id="widget-clock-date">Loading...</div>
+</div>
+
+<!-- TASKBAR -->
+<div class="taskbar">
+
+<button class="start-btn" id="frazer-windows-button" type="button" aria-label="Open Windows menu" aria-expanded="false">
+<i class="fa-brands fa-windows"></i>
+</button>
+
+<!-- WINDOWS 11-STYLE FRAZER START MENU -->
+<div id="start-menu" aria-hidden="true">
+  <div id="frazer-name-card" aria-live="polite">
+    <div id="frazer-name-logo">🪟</div>
+    <div id="frazer-name-title">What's your name?</div>
+    <div id="frazer-name-subtitle">Enter your name to open Games.</div>
+    <input id="frazer-name-input" type="text" maxlength="40" autocomplete="off"
+           placeholder="Enter your name" spellcheck="false">
+    <div id="frazer-name-error"></div>
+    <button id="frazer-name-continue" type="button">Continue</button>
+  </div>
+
+  <div class="start-shell">
+    <label class="start-search-bar" for="app-search">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      <input id="app-search" class="search" placeholder="Search for apps, settings, and documents" autocomplete="off" aria-label="Search apps">
+      <span class="search-hint">⌕</span>
+    </label>
+
+    <div class="start-welcome-line">
+      <div id="frazer-start-greeting">Welcome</div>
+      <span class="start-brand-pill"><span class="brand-dot"></span> Frazer OS</span>
+    </div>
+
+    <div class="start-content">
+      <section class="pinned-section" aria-label="Pinned apps">
+        <div class="start-section-heading">
+          <span>Pinned</span>
+          <button id="frazer-all-apps-button" type="button">All apps <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="pinned-grid" id="start-pinned-grid" aria-label="Pinned apps">
+          <!-- Pinned apps are built from the saved choices in Settings. -->
+        </div>
+      </section>
+
+      <section class="recommended-section" aria-label="Recommended apps">
+        <div class="start-section-heading"><span>Recommended</span><button id="frazer-recommended-more" type="button">More <i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button></div>
+        <div class="recommended-grid">
+          <button class="recommended-item" type="button" onclick="openApp('games/drive-mad/index.html','Drive Mad','game')"><span class="recommended-icon">🚗</span><span class="recommended-copy"><strong>Drive Mad</strong><small>Quick game launch</small></span></button>
+          <button class="recommended-item" type="button" onclick="openApp('games/footballbros/index.html','Retro Bowl College','game')"><span class="recommended-icon">🏈</span><span class="recommended-copy"><strong>Football Bros</strong><small>Football game</small></span></button>
+          <button class="recommended-item" type="button" onclick="openApp('apps/music/index.html','Frazer Music','app')"><span class="recommended-icon">🎵</span><span class="recommended-copy"><strong>Frazer Music</strong><small>Music app</small></span></button>
+          <button class="recommended-item" type="button" onclick="openFilesApp()"><span class="recommended-icon">📁</span><span class="recommended-copy"><strong>Files</strong><small>Open HTML files</small></span></button>
+        </div>
+      </section>
+
+      <div class="start-search-empty" id="start-search-empty" hidden>No apps found. Try another search.</div>
+<div id="home-panel" class="panel active">
+  <div class="all-apps-toolbar">
+    <span id="frazer-all-apps-title">All apps</span>
+    <button id="frazer-pinned-button" type="button" aria-label="Back to pinned apps">Back <i class="fa-solid fa-arrow-left"></i></button>
+  </div>
+  <div class="big-grid">
+  <!-- GAMES -->
+  <div class="small-tile" onclick="openApp('games/vex7/index.html','Vex 7','game')">🏃 Vex 7</div>
+  <div class="small-tile" onclick="openApp('games/snake/index.html','snake','game')">Snake</div>
+  <div class="small-tile" onclick="openApp('games/slope/index.html','Slope','game')">🏂 Slope</div>
+  <div class="small-tile" onclick="openApp('games/drive-mad/index.html','Drive Mad','game')">🚗 Drive Mad</div>
+  <div class="small-tile" onclick="openApp('games/drivemad2/index.html','Drive Mad 2','game')">🚙 Drive Mad 2</div>
+  <div class="small-tile" onclick="openApp('games/retrobowlsim/index.html','Retro Bowl','game')">🏈 Retro Bowl</div>
+  <div class="small-tile" onclick="openApp('games/footballbros/index.html','Retro Bowl College','game')">🏈 Football Bros</div>
+  <div class="small-tile" onclick="openApp('games/gball/index.html','GBall','game')">⚾ Google baseball</div>
+  <div class="small-tile" onclick="openApp('games/moto-x3m/index.html','Moto X3M','game')">🏍️ Moto X3M</div>
+  <div class="small-tile" onclick="openApp('games/motox3m2/index.html','Moto X3M 2','game')">🏍️ Moto X3M 2</div>
+  <div class="small-tile" onclick="openApp('games/basketball-stars/index.html','Basketball Stars','game')">🏀 Basketball Stars</div>
+  <div class="small-tile" onclick="openApp('games/Snow-Rider3D-main/index.html','Snow Rider 3D','game')">❄️ Snow Rider 3D</div>
+  <div class="small-tile" onclick="openApp('games/fnaf/index.html','FNaF','game')">🐻 FNaF</div>
+  <div class="small-tile" onclick="openApp('games/fnaje/index.html','FNaJE','game')">😈 FNaJE</div>
+  <div class="small-tile" onclick="openApp('games/rocket-goal/index.html','Rocket Goal','game')">⚽ Rocket Goal</div>
+  <div class="small-tile" onclick="openApp('games/paper/index.html','Paper.io 2','game')">🎲 Paper.io 2</div>
+  <div class="small-tile" onclick="openApp('games/papaswings/index.html','Papas wingerria','game')">🍔 Papas wingeria</div>
+  <div class="small-tile" onclick="openApp('minec/EaglercraftX_1.8_u53_Offline_Signed.html','Minecraft','game')">⛏️ Minecraft 1.8</div>
+  <div class="small-tile" onclick="openApp('mc1.12/1.12.html','Minecraft 1.12','game')">⛏️ Minecraft 1.12</div>
+  <div class="small-tile" onclick="openApp('games/subwaysurfers/index.html','Subway Surfers','game')">🛹 Subway Surfers</div>
+  <div class="small-tile" onclick="openApp('games/bitl/index.html','bitlife','game')">👶 Bitlife</div>
+  <div class="small-tile" onclick="openApp('crazycattle3d/index.html','Crazycattle3d','game')">🐂 Crazy cattle 3d</div>
+  <div class="small-tile" onclick="openApp('games/pokered/index.html','Pokemon Red','game')">🔴 Pokemon Red</div>
+  <div class="small-tile" onclick="openApp('games/Ragdollarc/index.html','ragdollarc','game')">🏹 Stickman arrow game</div>
+  <div class="small-tile" onclick="openApp('games/papastacos/index.html','papastacos','game')">🌮 Papa's Tacos</div>
+  <div class="small-tile" onclick="openApp('games/escaperoad1/index.html','escape road','game')">🚓 Escape Road 1</div>
+  <div class="small-tile" onclick="openApp('games/escaperoad2/index.html','escape road 2','game')">🚓 Escape Road 2</div>
+  <div class="small-tile" onclick="openApp('games/cookieclicker1/index.html','Cookie Clicker','game')">🍪 Cookie Clicker</div>
+  <div class="small-tile" onclick="openApp('games/geodash/index.html','Geometry Dash')"> 🔴 Geometry dash</div>
+  <div class="small-tile" onclick="openApp('games/brawlstars/index.html','Brawl Starrs')"> 🔫 Brawl Starrs</div>
+  <div class="small-tile" onclick="openApp('games/crossyroad/index.html','Crossy road')"> 🐔 Crossy Road</div>
+  <div class="small-tile" onclick="openApp('games/4thandgoal/index.html','4th and Goal')"> 🏈 4th and goal 2022 </div>
+  <div class="small-tile" onclick="openApp('games/basketballbros/index.html','Basketball Bros')"> 🏀 Basketball Bros </div>
+  <div class="small-tile" onclick="openApp('games/gt2/index.html','gt 2')"> 🔫 GTA 2</div>
+  <div class="small-tile" onclick="openApp('games/run3/index.html','gt 2')"> 🔫 Run 3</div>
+  
+
+  <!-- APPS -->
+  <div class="small-tile" onclick="openApp('apps/chatbot/index.html','Chatbot','app')">🤖 AI Chatbot</div>
+  <div class="small-tile" onclick="openFilesApp()">📁 Files</div>
+  <div class="small-tile" onclick="openApp('apps/music/index.html','Frazer Music','app')">🎵 Frazer Music</div>
+  <div class="small-tile" onclick="openApp('apps/google/index.html','Google','app')">🌐 Frazer Proxy</div>
+
+  <!-- SETTINGS -->
+  <div class="small-tile" onclick="openSettingsApp()">⚙️ Settings</div>
+</div>
+
+</div>
+    </div>
+
+    <div class="start-menu-footer">
+      <div class="start-footer-user">
+        <div class="start-user-avatar" id="frazer-user-avatar">F</div>
+        <span id="frazer-footer-name">Guest</span>
+      </div>
+      <button class="start-power-button" id="frazer-power-button" type="button" aria-label="Power options" aria-expanded="false" title="Power options"><i class="fa-solid fa-power-off" aria-hidden="true"></i></button>
+    </div>
+
+    <div class="start-power-menu" id="frazer-power-menu" role="menu" aria-hidden="true">
+      <button type="button" role="menuitem" data-power-action="restart"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Restart Frazer OS</button>
+      <button type="button" role="menuitem" data-power-action="close"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Close Start menu</button>
+    </div>
+  </div>
+</div>
+
+<div id="taskbar-widgets">
+  <div class="taskbar-widget taskbar-widget-time" id="taskbar-time-widget">
+    <div class="taskbar-time" id="taskbar-clock-time">--:--</div>
+    <div class="taskbar-date" id="taskbar-clock-date">--</div>
+  </div>
+  <div class="taskbar-widget taskbar-weather" id="taskbar-weather" role="button" tabindex="0"
+       title="Open Weather" aria-label="Open Weather">
+    <div class="weather-temp">🌡️ --°F</div>
+    <div class="weather-desc">Loading weather...</div>
+  </div>
+</div>
+
+</div>
+
+<!-- Firebase global screen overlay: hidden unless the admin activates it. -->
+<style>
+#frazer-global-screen{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-align:center;
+  background:rgba(0,0,0,.96);
+  color:white;
+  z-index:100000;
+  padding:30px;
+}
+#frazer-global-screen.show{
+  display:flex;
+  animation:frazerGlobalPop .25s ease;
+}
+#frazer-global-screen .frazer-global-icon{
+  font-size:clamp(60px,12vw,130px);
+  margin-bottom:18px;
+}
+#frazer-global-screen .frazer-global-title{
+  font-size:clamp(25px,5vw,55px);
+  font-weight:700;
+}
+#frazer-global-screen .frazer-global-text{
+  font-size:clamp(16px,2vw,23px);
+  margin-top:10px;
+  max-width:900px;
+  white-space:pre-wrap;
+}
+#frazer-global-screen .frazer-global-image{
+  display:none;
+  max-width:min(90vw,900px);
+  max-height:55vh;
+  margin:0 0 22px;
+  object-fit:contain;
+  border-radius:12px;
+}
+#frazer-global-screen.has-image .frazer-global-image{display:block}
+@keyframes frazerGlobalPop{
+  from{opacity:0;transform:scale(.97)}
+  to{opacity:1;transform:scale(1)}
+}
+</style>
+
+<div id="frazer-global-screen" aria-live="assertive">
+  <img class="frazer-global-image" id="frazer-global-image" alt="">
+  <div class="frazer-global-icon" id="frazer-global-icon">📢</div>
+  <div class="frazer-global-title" id="frazer-global-title">Frazer OS</div>
+  <div class="frazer-global-text" id="frazer-global-text"></div>
+</div>
+
+<script>
+let z=2000;
+let windows=[];
+
+
+/* START MENU SEARCH */
+function initAppSearch(){
+  const search=document.getElementById("app-search");
+  const homePanel=document.getElementById("home-panel");
+  const menu=document.getElementById("start-menu");
+  if(!search || !homePanel || !menu) return;
+
+  const items=[...homePanel.querySelectorAll(".small-tile")];
+  const empty=document.getElementById("start-search-empty");
+  const allAppsTitle=document.getElementById("frazer-all-apps-title");
+
+  // Turn the existing catalog entries into icon + label tiles without changing their click actions.
+  const iconMap={
+    "snake":"🐍","bitlife":"👶","frazer proxy":"🌐","google":"🌐","files":"📁",
+    "frazer music":"🎵","settings":"⚙️","ai chatbot":"🤖","pokemon red":"🔴",
+    "geometry dash":"🔴","brawl starrs":"⭐","crossy road":"🐔","minecraft 1.8":"⛏️",
+    "minecraft 1.12":"⛏️","crazycattle3d":"🐂","papas wingerria":"🍔","papastacos":"🌮"
+  };
+  items.forEach(item=>{
+    if(item.querySelector(".all-app-icon")) return;
+    const raw=item.textContent.replace(/\s+/g," ").trim();
+    const label=raw.replace(/^[^\p{L}\p{N}]+/u,"").trim() || raw;
+    const prefix=raw.slice(0,Math.max(0,raw.indexOf(label))).trim();
+    const icon=prefix || iconMap[label.toLowerCase()] || "🎮";
+    item.textContent="";
+    const iconNode=document.createElement("span");
+    iconNode.className="all-app-icon";
+    iconNode.setAttribute("aria-hidden","true");
+    iconNode.textContent=icon;
+    const labelNode=document.createElement("span");
+    labelNode.className="all-app-label";
+    labelNode.textContent=label;
+    item.append(iconNode,labelNode);
+    item.setAttribute("aria-label",label);
+    if(!item.hasAttribute("role")) item.setAttribute("role","button");
+    if(!item.hasAttribute("tabindex")) item.setAttribute("tabindex","0");
+    item.addEventListener("keydown",event=>{
+      if(event.key==="Enter" || event.key===" "){event.preventDefault();item.click();}
+    });
+  });
+
+  const setSearchState=()=>{
+    const query=search.value.trim().toLowerCase();
+    if(query){
+      menu.classList.add("search-active");
+      menu.classList.remove("all-apps-open");
+      if(allAppsTitle) allAppsTitle.textContent="Search results";
+    }else{
+      menu.classList.remove("search-active");
+      if(allAppsTitle) allAppsTitle.textContent="All apps";
+    }
+    let visible=0;
+    items.forEach(item=>{
+      const label=item.textContent.toLowerCase();
+      const match=!query || label.includes(query);
+      item.classList.toggle("search-hidden",!match);
+      if(match) visible++;
+    });
+    if(empty) empty.hidden=visible!==0 || !query;
+  };
+  search.addEventListener("input",setSearchState);
+
+  const showAllApps=()=>{
+    search.value="";
+    setSearchState();
+    menu.classList.remove("search-active");
+    menu.classList.add("all-apps-open");
+    if(allAppsTitle) allAppsTitle.textContent="All apps";
+    search.blur();
+  };
+  document.getElementById("frazer-all-apps-button")?.addEventListener("click",showAllApps);
+  document.getElementById("frazer-recommended-more")?.addEventListener("click",showAllApps);
+  document.getElementById("frazer-pinned-button")?.addEventListener("click",()=>{
+    menu.classList.remove("all-apps-open","search-active");
+    search.value="";
+    setSearchState();
+  });
+
+  search.addEventListener("keydown",event=>{
+    if(event.key==="Escape"){
+      if(search.value){
+        search.value="";
+        setSearchState();
+      }else if(menu.classList.contains("all-apps-open")){
+        menu.classList.remove("all-apps-open");
+      }else{
+        closeStartMenu();
+      }
+      search.blur();
+    }
+    if(event.key==="Enter"){
+      const first=items.find(item=>!item.classList.contains("search-hidden"));
+      if(first) first.click();
+    }
+  });
+
+  const powerButton=document.getElementById("frazer-power-button");
+  const powerMenu=document.getElementById("frazer-power-menu");
+  const closePowerMenu=()=>{
+    powerMenu?.classList.remove("show");
+    powerMenu?.setAttribute("aria-hidden","true");
+    powerButton?.setAttribute("aria-expanded","false");
+  };
+  powerButton?.addEventListener("click",event=>{
+    event.stopPropagation();
+    const open=!powerMenu?.classList.contains("show");
+    if(open){powerMenu?.classList.add("show");powerMenu?.setAttribute("aria-hidden","false");powerButton.setAttribute("aria-expanded","true");}
+    else closePowerMenu();
+  });
+  powerMenu?.querySelectorAll("[data-power-action]").forEach(button=>button.addEventListener("click",()=>{
+    const action=button.dataset.powerAction;
+    closePowerMenu();
+    if(action==="restart") location.reload();
+    if(action==="close") closeStartMenu();
+  }));
+  document.addEventListener("mousedown",event=>{
+    if(powerMenu?.classList.contains("show") && !powerMenu.contains(event.target) && !powerButton?.contains(event.target)) closePowerMenu();
+  });
+}
+
+/* MENU */
+function closeStartMenu(){
+  const m=document.getElementById("start-menu");
+  const taskbar=document.querySelector(".taskbar");
+  if(!m) return;
+  m.classList.remove("show");
+  m.setAttribute("aria-hidden","true");
+  taskbar?.classList.remove("start-open");
+  document.getElementById("frazer-windows-button")?.setAttribute("aria-expanded","false");
+  document.getElementById("frazer-power-menu")?.classList.remove("show");
+  document.getElementById("frazer-power-menu")?.setAttribute("aria-hidden","true");
+  document.getElementById("frazer-power-button")?.setAttribute("aria-expanded","false");
+  setTimeout(()=>{
+    m.style.display="none";
+  },350);
+}
+
+window.frazerUpdateStartProfile = function(name){
+  const clean=String(name || "Guest").trim() || "Guest";
+  const label=document.getElementById("frazer-footer-name");
+  const avatar=document.getElementById("frazer-user-avatar");
+  if(label) label.textContent=clean;
+  if(avatar) avatar.textContent=(clean.match(/[\p{L}\p{N}]/u)?.[0] || "F").toUpperCase();
+};
+
+function toggleMenu(){
+  const menu = document.getElementById("start-menu");
+  const taskbar = document.querySelector(".taskbar");
+  const startButton = document.getElementById("frazer-windows-button");
+
+  if(!menu || !taskbar) return;
+
+  const isOpen = menu.classList.contains("show");
+
+  if(isOpen){
+    closeStartMenu();
+    return;
+  }
+
+  taskbar.classList.add("start-open");
+  menu.style.display = "flex";
+  menu.classList.add("show");
+  menu.setAttribute("aria-hidden","false");
+
+  const savedName = (localStorage.getItem("frazerDisplayName") || "").trim();
+  const greeting = document.getElementById("frazer-start-greeting");
+
+  if(savedName){
+    menu.classList.remove("frazer-name-required");
+    if(greeting) greeting.textContent = `Hello, ${savedName}`;
+    window.frazerUpdateStartProfile(savedName);
+  }else{
+    menu.classList.add("frazer-name-required");
+
+    const ensureName = window.frazerEnsureName;
+    if(typeof ensureName === "function") ensureName();
+  }
+
+  if(startButton) startButton.setAttribute("aria-expanded","true");
+}
+
+window.toggleMenu = toggleMenu;
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeStartMenu();
+});
+
+document.addEventListener("mousedown", event => {
+  const menu = document.getElementById("start-menu");
+  const button = document.getElementById("frazer-windows-button");
+  if (menu?.classList.contains("show") && !menu.contains(event.target) && !button?.contains(event.target)) {
+    closeStartMenu();
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const startButton = document.getElementById("frazer-windows-button");
+  if (startButton) {
+    startButton.addEventListener("click", toggleMenu);
+    startButton.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggleMenu();
+      }
+    });
+  }
+});
+
+/* PANELS */
+function openPanel(name){
+
+  document.querySelectorAll(".panel").forEach(p=>{
+    p.classList.remove("active");
+  });
+
+  document.getElementById(name+"-panel").classList.add("active");
+}
+
+/* START MENU PINNING
+   The All apps list is the source of truth, so every app/game already listed there
+   can be pinned without maintaining a second, incomplete list. */
+const FRAZER_START_PINS_KEY = "frazerStartPinnedApps";
+const FRAZER_DEFAULT_START_PINS = [
+  "app:games/vex7/index.html",
+  "app:games/slope/index.html",
+  "app:games/retrobowlsim/index.html",
+  "app:games/basketball-stars/index.html",
+  "app:games/moto-x3m/index.html",
+  "app:minec/EaglercraftX_1.8_u53_Offline_Signed.html",
+  "app:games/drive-mad/index.html",
+  "app:games/subwaysurfers/index.html",
+  "app:games/snake/index.html",
+  "app:games/geodash/index.html",
+  "system:files",
+  "system:settings"
+];
+
+function getStartAppCatalog(){
+  const tiles = [...document.querySelectorAll("#home-panel .small-tile")];
+  const catalog = [];
+
+  tiles.forEach(tile => {
+    const action = tile.getAttribute("onclick") || "";
+    const label = tile.querySelector(".all-app-label")?.textContent?.trim() || tile.textContent.trim();
+    const icon = tile.querySelector(".all-app-icon")?.textContent?.trim() || "🎮";
+
+    if (/\bopenFilesApp\s*\(/.test(action)) {
+      catalog.push({id:"system:files", name:label || "Files", launchTitle:"Files", icon:"📁", type:"system", url:null, systemAction:"files"});
+      return;
+    }
+    if (/\bopenSettingsApp\s*\(/.test(action)) {
+      catalog.push({id:"system:settings", name:label || "Settings", launchTitle:"Settings", icon:"⚙️", type:"system", url:null, systemAction:"settings"});
+      return;
+    }
+
+    const match = action.match(/openApp\(\s*(['"])(.*?)\1\s*,\s*(['"])(.*?)\3(?:\s*,\s*(['"])(.*?)\5)?\s*\)/);
+    if (!match) return;
+
+    const url = match[2].trim();
+    const launchTitle = match[4].trim() || label || "App";
+    const explicitType = (match[6] || "").trim().toLowerCase();
+    const type = explicitType || (/^apps\//i.test(url) ? "app" : "game");
+    catalog.push({
+      id:"app:" + url,
+      name:label || launchTitle,
+      launchTitle,
+      icon,
+      type:type === "game" ? "game" : "app",
+      url,
+      systemAction:null
+    });
+  });
+
+  // Keep only the first item if the same URL appears twice.
+  return [...new Map(catalog.map(item => [item.id, item])).values()];
+}
+
+function getStartPinnedIds(){
+  const raw = localStorage.getItem(FRAZER_START_PINS_KEY);
+  if(raw === null) return [...FRAZER_DEFAULT_START_PINS];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter(id => typeof id === "string") : [...FRAZER_DEFAULT_START_PINS];
+  } catch {
+    return [...FRAZER_DEFAULT_START_PINS];
+  }
+}
+
+function launchStartMenuApp(item){
+  if(!item) return;
+  if(item.systemAction === "files") openFilesApp();
+  else if(item.systemAction === "settings") openSettingsApp();
+  else if(item.url) openApp(item.url, item.launchTitle || item.name, item.type === "game" ? "game" : "app");
+}
+
+function renderStartPinnedApps(){
+  const grid = document.getElementById("start-pinned-grid");
+  if(!grid) return;
+  const catalog = getStartAppCatalog();
+  const availableIds = new Set(catalog.map(item => item.id));
+  const pinnedIds = getStartPinnedIds().filter(id => availableIds.has(id));
+  grid.replaceChildren();
+
+  if(!pinnedIds.length){
+    const empty = document.createElement("div");
+    empty.className = "start-pins-empty";
+    empty.textContent = "Nothing pinned yet. Open Settings to pin your favorite apps and games.";
+    grid.appendChild(empty);
+    return;
+  }
+
+  const byId = new Map(catalog.map(item => [item.id, item]));
+  pinnedIds.forEach(id => {
+    const item = byId.get(id);
+    if(!item) return;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "start-pinned-app";
+    button.title = item.name;
+    button.setAttribute("aria-label", "Open " + item.name);
+
+    const icon = document.createElement("span");
+    icon.className = "pinned-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = item.icon;
+
+    const label = document.createElement("span");
+    label.textContent = item.name;
+    button.append(icon, label);
+    button.addEventListener("click", () => launchStartMenuApp(item));
+    grid.appendChild(button);
+  });
+}
+
+function renderStartPinSettings(container){
+  if(!container) return;
+  const catalog = getStartAppCatalog();
+  const pinnedIds = new Set(getStartPinnedIds());
+  container.replaceChildren();
+
+  const groups = [
+    {title:"🎮 Games", items:catalog.filter(item => item.type === "game")},
+    {title:"📱 Apps", items:catalog.filter(item => item.type === "app")},
+    {title:"🛠 System", items:catalog.filter(item => item.type === "system")}
+  ];
+
+  groups.forEach(group => {
+    if(!group.items.length) return;
+    const heading = document.createElement("div");
+    heading.className = "start-pin-group-heading";
+    heading.textContent = group.title;
+    container.appendChild(heading);
+
+    group.items.forEach(item => {
+      const label = document.createElement("label");
+      label.className = "start-pin-option";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = pinnedIds.has(item.id);
+      checkbox.dataset.startPinId = item.id;
+      checkbox.addEventListener("change", () => setStartMenuPinned(item.id, checkbox.checked));
+
+      const icon = document.createElement("span");
+      icon.className = "start-pin-option-icon";
+      icon.textContent = item.icon;
+      icon.setAttribute("aria-hidden", "true");
+
+      const name = document.createElement("span");
+      name.className = "start-pin-option-name";
+      name.textContent = item.name;
+
+      label.append(checkbox, icon, name);
+      container.appendChild(label);
+    });
+  });
+}
+
+function refreshStartPinCheckboxes(){
+  const pinned = new Set(getStartPinnedIds());
+  document.querySelectorAll("[data-start-pin-id]").forEach(checkbox => {
+    checkbox.checked = pinned.has(checkbox.dataset.startPinId);
+  });
+}
+
+function setStartMenuPinned(id, enabled){
+  const pinned = new Set(getStartPinnedIds());
+  if(enabled) pinned.add(id);
+  else pinned.delete(id);
+  localStorage.setItem(FRAZER_START_PINS_KEY, JSON.stringify([...pinned]));
+  renderStartPinnedApps();
+  refreshStartPinCheckboxes();
+}
+
+function initStartMenuPins(){
+  const catalog = getStartAppCatalog();
+  if(localStorage.getItem(FRAZER_START_PINS_KEY) === null){
+    const available = new Set(catalog.map(item => item.id));
+    const defaults = FRAZER_DEFAULT_START_PINS.filter(id => available.has(id));
+    localStorage.setItem(FRAZER_START_PINS_KEY, JSON.stringify(defaults));
+  }else{
+    // Remove stale IDs if an app was removed from the All apps list.
+    const available = new Set(catalog.map(item => item.id));
+    const cleaned = getStartPinnedIds().filter(id => available.has(id));
+    localStorage.setItem(FRAZER_START_PINS_KEY, JSON.stringify(cleaned));
+  }
+  renderStartPinnedApps();
+  renderStartPinSettings(document.getElementById("start-pin-options"));
+}
+
+/* OPEN APP */
+function frazerSetLocalCurrentApp(gameName){
+  const value = gameName || "Browsing";
+  window.frazerCurrentGame = value;
+  if(typeof window.frazerSetCurrentGame === "function"){
+    window.frazerSetCurrentGame(value);
+  }
+}
+
+function frazerRefreshCurrentApp(){
+  const openWindows = windows.filter(w => w && document.body.contains(w));
+
+  const topWindow = openWindows
+    .slice()
+    .sort((a,b) => Number(a.style.zIndex || 0) - Number(b.style.zIndex || 0))
+    .pop();
+
+  if(topWindow && topWindow.dataset.appType === "game"){
+    frazerSetLocalCurrentApp(topWindow.dataset.gameTitle || "Game");
+  }else{
+    frazerSetLocalCurrentApp("Browsing");
+  }
+}
+
+function openApp(url,title,type="app"){
+
+  closeStartMenu();
+
+  const win=document.createElement("div");
+  win.className="window";
+  win.dataset.appType=type;
+  win.dataset.gameTitle=title || "Game";
+
+  let topPos=80+windows.length*20;
+  let leftPos=80+windows.length*20;
+
+  topPos=Math.min(topPos, window.innerHeight-400);
+  leftPos=Math.min(leftPos, window.innerWidth-500);
+
+  win.style.top=topPos+"px";
+  win.style.left=leftPos+"px";
+  win.style.zIndex=z++;
+
+  win.innerHTML=`
+    <div class="window-header">
+
+      <span>${title}</span>
+
+      <div class="win-controls">
+        <div class="win-btn max" onclick="toggleMax(this)"></div>
+        <div class="win-btn close" onclick="closeWindow(this)"></div>
+      </div>
+
+    </div>
+
+    <iframe src="${url}"></iframe>
+  `;
+
+  document.getElementById("window-area").appendChild(win);
+
+  windows.push(win);
+
+  drag(win);
+
+  win.addEventListener("mousedown",()=>{
+    win.style.zIndex=z++;
+
+    if(win.dataset.appType === "game"){
+      frazerSetLocalCurrentApp(win.dataset.gameTitle || title || "Game");
+    }else{
+      frazerSetLocalCurrentApp("Browsing");
+    }
+  });
+
+  if(type === "game"){
+    frazerSetLocalCurrentApp(title || "Game");
+  }else{
+    frazerSetLocalCurrentApp("Browsing");
+  }
+
+  return win;
+}
+
+/* SETTINGS APP */
+function openSettingsApp(){
+  closeStartMenu();
+  frazerSetLocalCurrentApp("Browsing");
+  const existing = document.querySelector('.window[data-app-type="settings"]');
+  if(existing){
+    existing.style.zIndex=z++;
+    return existing;
+  }
+
+  const win=document.createElement("div");
+  win.className="window settings-window";
+  win.dataset.appType="settings";
+
+  let topPos=Math.min(60, Math.max(10, window.innerHeight-520));
+  let leftPos=Math.max(10, (window.innerWidth-850)/2);
+
+  win.style.top=topPos+"px";
+  win.style.left=leftPos+"px";
+  win.style.zIndex=z++;
+
+  const settingsPanel=document.getElementById("settings-panel");
+
+  win.innerHTML=`
+    <div class="window-header">
+      <span>Settings</span>
+      <div class="win-controls">
+        <div class="win-btn max" onclick="toggleMax(this)"></div>
+        <div class="win-btn close" onclick="closeWindow(this)"></div>
+      </div>
+    </div>
+    <div class="settings-app-body"></div>
+  `;
+
+  const body=win.querySelector(".settings-app-body");
+  if(settingsPanel){
+    const clone=settingsPanel.cloneNode(true);
+    clone.removeAttribute("id");
+    clone.className="settings-app-content";
+    clone.style.display="block";
+    body.appendChild(clone);
+
+    clone.querySelectorAll("[id]").forEach(el=>{
+      const oldId=el.id;
+      el.id=oldId+"-app";
+    });
+
+    const master=clone.querySelector("#desktop-items-toggle-app");
+    if(master) master.onchange=()=>toggleDesktopItems(master.checked);
+
+    const bg=clone.querySelector("#background-select-app");
+    if(bg) bg.onchange=()=>changeBackground(bg.value);
+
+    const bgBtn=clone.querySelector('[onclick="chooseCustomBackground()"]');
+    if(bgBtn) bgBtn.onclick=()=>chooseCustomBackground("background-file-app");
+
+    const bgFile=clone.querySelector("#background-file-app");
+    if(bgFile) bgFile.onchange=()=>applyCustomBackground(bgFile.files[0]);
+
+    const font=clone.querySelector("#font-size-select-app");
+    if(font) font.onchange=()=>changeFontSize(font.value);
+
+    const opacity=clone.querySelector("#taskbar-opacity-app");
+    if(opacity) opacity.oninput=()=>changeTaskbarOpacity(opacity.value);
+
+    const anim=clone.querySelector("#animations-toggle-app");
+    if(anim) anim.onchange=()=>toggleAnimations(anim.checked);
+
+    const clock=clone.querySelector("#clock-widget-toggle-app");
+    if(clock) clock.onchange=()=>toggleClockWidget(clock.checked);
+
+    const weather=clone.querySelector("#weather-widget-toggle-app");
+    if(weather) weather.onchange=()=>toggleWeatherWidget(weather.checked);
+
+    const reset=clone.querySelector('[onclick="resetSettings()"]');
+    if(reset) reset.onclick=()=>resetSettings();
+  }
+
+  document.getElementById("window-area").appendChild(win);
+  windows.push(win);
+  drag(win);
+
+  win.addEventListener("mousedown",()=>{
+    win.style.zIndex=z++;
+  });
+
+  renderDesktopSettings();
+  syncSettingsApp();
+
+  return win;
+}
+
+function syncSettingsApp(){
+  const app=document.querySelector('.settings-app-content');
+  if(!app) return;
+
+  const master=app.querySelector("#desktop-items-toggle-app");
+  if(master) master.checked = localStorage.getItem("frazerDesktopItems") !== "off";
+
+  const bg=app.querySelector("#background-select-app");
+  if(bg){
+    const savedBg=localStorage.getItem("frazerBackground") || "dark";
+    bg.value = bg.querySelector(`option[value="${savedBg}"]`) ? savedBg : "dark";
+  }
+
+  const font=app.querySelector("#font-size-select-app");
+  if(font) font.value = localStorage.getItem("frazerFontSize") || "medium";
+
+  const opacity=app.querySelector("#taskbar-opacity-app");
+  const savedOpacity=localStorage.getItem("frazerTaskbarOpacity") || "70";
+  if(opacity) opacity.value=savedOpacity;
+
+  const label=app.querySelector("#taskbar-opacity-label-app");
+  if(label) label.textContent=`${savedOpacity}%`;
+
+  const anim=app.querySelector("#animations-toggle-app");
+  if(anim) anim.checked = localStorage.getItem("frazerAnimations") !== "off";
+
+  const clock=app.querySelector("#clock-widget-toggle-app");
+  if(clock) clock.checked = localStorage.getItem("frazerClockWidget") !== "off";
+
+  const weather=app.querySelector("#weather-widget-toggle-app");
+  if(weather) weather.checked = localStorage.getItem("frazerWeatherWidget") !== "off";
+
+  const aboutBlankEnabled = localStorage.getItem("frazerAboutBlankShortcut") !== "off";
+  const aboutBlankToggle = app.querySelector("#about-blank-toggle-app");
+  if(aboutBlankToggle) aboutBlankToggle.checked = aboutBlankEnabled;
+  const aboutBlankButton = app.querySelector("#about-blank-open-button-app");
+  if(aboutBlankButton) aboutBlankButton.style.display = aboutBlankEnabled ? "inline-flex" : "none";
+
+  const pinOptions=app.querySelector("#start-pin-options-app");
+  if(pinOptions) renderStartPinSettings(pinOptions);
+
+  const options=app.querySelector("#desktop-icon-options-app");
+  if(options){
+    options.innerHTML="";
+    const games=desktopCatalog.filter(item=>item.type==="Game");
+    const apps=desktopCatalog.filter(item=>item.type!=="Game");
+
+    const addGroup=(title,items)=>{
+      const heading=document.createElement("div");
+      heading.textContent=title;
+      heading.style.cssText="font-size:12px; opacity:.7; margin-top:4px; margin-bottom:2px;";
+      options.appendChild(heading);
+
+      items.forEach(item=>{
+        const label=document.createElement("label");
+        label.style.cssText="display:flex; align-items:center; gap:8px; font-size:13px;";
+        label.innerHTML=`<input type="checkbox"> ${item.icon} ${item.name}`;
+        const checkbox=label.querySelector("input");
+        checkbox.checked=localStorage.getItem("frazerDesktop_"+item.id)!=="off";
+        checkbox.onchange=()=>setDesktopIcon(item.id,checkbox.checked);
+        options.appendChild(label);
+      });
+    };
+
+    addGroup("🎮 Games",games);
+    addGroup("📱 Apps",apps);
+  }
+}
+
+function openFilesApp(){
+  frazerSetLocalCurrentApp("Browsing");
+  const existing=document.querySelector('.window[data-app-type="files"]');
+  if(existing){
+    existing.style.zIndex=z++;
+    return existing;
+  }
+
+  const win=document.createElement("div");
+  win.className="window files-window";
+  win.dataset.appType="files";
+  win.style.top="45px";
+  win.style.left="50%";
+  win.style.transform="translateX(-50%)";
+  win.style.width="min(92vw, 1100px)";
+  win.style.height="min(85vh, 720px)";
+  win.style.zIndex=z++;
+
+  win.innerHTML=`
+    <div class="window-header">
+      <span>📁 Files — HTML Runner</span>
+      <div class="win-controls">
+        <div class="win-btn max" onclick="toggleMax(this)"></div>
+        <div class="win-btn close" onclick="closeWindow(this)"></div>
+      </div>
+    </div>
+    <div class="files-app-body">
+      <div class="files-toolbar">
+        <input class="files-file-name" value="index.html" aria-label="File name">
+        <button type="button" data-action="new">＋ New</button>
+        <button type="button" data-action="open">📂 Open HTML</button>
+        <button type="button" data-action="run">▶ Run</button>
+        <button type="button" data-action="clear">✕ Clear</button>
+        <input type="file" accept=".html,.htm,text/html" class="files-open-input" style="display:none">
+      </div>
+      <div class="files-editor-wrap">
+        <textarea class="files-editor" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My HTML App</title>
+</head>
+<body>
+  <h1>Hello from Frazer OS!</h1>
+  <p>Edit this code and press Run.</p>
+
+
+
+</body>
+</html></textarea>
+        <iframe class="files-preview" sandbox="allow-scripts allow-forms"></iframe>
+      </div>
+    </div>
+  `;
+
+  const editor=win.querySelector(".files-editor");
+  const preview=win.querySelector(".files-preview");
+  const fileName=win.querySelector(".files-file-name");
+  const fileInput=win.querySelector(".files-open-input");
+
+  const run=()=>{
+    // The sandbox keeps the preview isolated from Frazer OS.
+    preview.srcdoc=editor.value;
+  };
+
+  win.querySelector('[data-action="run"]').onclick=run;
+  win.querySelector('[data-action="clear"]').onclick=()=>{
+    editor.value="";
+    run();
+  };
+  win.querySelector('[data-action="new"]').onclick=()=>{
+    fileName.value="index.html";
+    editor.value=`<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <title>New HTML App</title>\n</head>\n<body>\n  \n</body>\n</html>`;
+    run();
+  };
+  win.querySelector('[data-action="open"]').onclick=()=>fileInput.click();
+  fileInput.onchange=()=>{
+    const file=fileInput.files && fileInput.files[0];
+    if(!file) return;
+    fileName.value=file.name;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      editor.value=String(reader.result || "");
+      run();
+    };
+    reader.readAsText(file);
+    fileInput.value="";
+  };
+
+  document.getElementById("window-area").appendChild(win);
+  windows.push(win);
+  drag(win);
+  win.addEventListener("mousedown",()=>{win.style.zIndex=z++;});
+  run();
+  return win;
+}
+
+function closeWindow(btn){
+  const win=btn.closest(".window");
+  if(!win) return;
+  const wasMax=win.classList.contains("maximized");
+  win.remove();
+  windows=windows.filter(w=>w!==win);
+  if(wasMax) updateGameFullscreenState();
+  frazerRefreshCurrentApp();
+}
+
+function updateGameFullscreenState(){
+  const gameMaximized=[...document.querySelectorAll('.window[data-app-type="game"].maximized')].length>0;
+  const browserFullscreen=!!document.fullscreenElement;
+  document.body.classList.toggle("game-fullscreen", gameMaximized || browserFullscreen);
+}
+
+/* MAXIMIZE */
+
+function toggleMax(btn){
+  const win=btn.closest(".window");
+  if(!win) return;
+
+  win.classList.toggle("maximized");
+
+  // Only game windows hide desktop icons when maximized.
+  updateGameFullscreenState();
+}
+
+/* DRAG */
+function drag(el){
+
+  const h=el.querySelector(".window-header");
+
+  let dx,dy,isDrag=false;
+
+  h.onmousedown=(e)=>{
+
+    if(el.classList.contains("maximized")) return;
+
+    isDrag=true;
+
+    dx=e.clientX-el.offsetLeft;
+    dy=e.clientY-el.offsetTop;
+
+    el.style.zIndex=z++;
+  };
+
+  document.addEventListener("mousemove",(e)=>{
+
+    if(!isDrag) return;
+
+    let x=e.clientX-dx;
+    let y=e.clientY-dy;
+
+    x=Math.max(0, Math.min(window.innerWidth-el.offsetWidth, x));
+    y=Math.max(0, Math.min(window.innerHeight-el.offsetHeight-55, y));
+
+    el.style.left=x+"px";
+    el.style.top=y+"px";
+  });
+
+  document.addEventListener("mouseup",()=>{
+    isDrag=false;
+  });
+}
+/* BACKGROUND + SETTINGS */
+const darkWindows11Background =
+  'url("https://msftstories.thesourcemediaassets.com/sites/620/2021/09/Windows-11-Bloom-Screensaver-Dark-1000x562.jpg" ) center/cover no-repeat';
+
+const lightBackground =
+  'url("https://www.wallpaperhub.app/_next/image?url=https%3A%2F%2Fcdn.wallpaperhub.app%2Fcloudcache%2F8%2Fe%2Fc%2F4%2F4%2Ff%2F8ec44f86876a912a93f4116f50e6a3839af5c03b.jpg&w=4096&h=2160&q=100") center/cover no-repeat';
+
+// Keep the old variable name as the dark/default wallpaper for compatibility.
+const defaultBackground = darkWindows11Background;
+
+function applyBackground(background){
+  document.body.style.background = background;
+  document.body.style.backgroundSize = "cover";
+}
+
+function changeBackground(value){
+  const backgrounds = {
+    dark: darkWindows11Background,
+    light: lightBackground,
+    // Backward compatibility: old "default" meant the previous/current wallpaper.
+    default: lightBackground,
+    blue: "linear-gradient(135deg,#0b1f3a,#1464a5) center/cover no-repeat",
+    purple: "linear-gradient(135deg,#24103d,#7b3fb5) center/cover no-repeat",
+    black: "#000000",
+    gray: "linear-gradient(135deg,#222,#777) center/cover no-repeat",
+    green: "linear-gradient(135deg,#082b1b,#1b7a4a) center/cover no-repeat"
+  };
+
+  if(value === "custom"){
+    const custom = localStorage.getItem("frazerCustomBackground");
+    if(custom){
+      applyBackground(`url("${custom}") center/cover no-repeat`);
+      localStorage.setItem("frazerBackground", "custom");
+      syncSettingsApp();
+      return;
+    }
+    value = "dark";
+  }
+
+  const selected = backgrounds[value] || backgrounds.dark;
+  applyBackground(selected);
+  localStorage.setItem("frazerBackground", value);
+
+  document.querySelectorAll('[id^="background-select"]').forEach(select=>{
+    if(select.querySelector(`option[value="${value}"]`)) select.value=value;
+  });
+}
+
+function chooseCustomBackground(inputId){
+  const targetId = inputId || (document.querySelector('.settings-app-content') ? 'background-file-app' : 'background-file');
+  const input = document.getElementById(targetId);
+  if(input) input.click();
+}
+
+function applyCustomBackground(file){
+  if(!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const bg = `url("${e.target.result}") center/cover no-repeat`;
+    applyBackground(bg);
+    localStorage.setItem("frazerCustomBackground", e.target.result);
+    localStorage.setItem("frazerBackground", "custom");
+    syncSettingsApp();
+  };
+  reader.readAsDataURL(file);
+}
+
+function changeFontSize(value){
+  const sizes = {
+    small: "0.9",
+    medium: "1",
+    large: "1.1",
+    xlarge: "1.2"
+  };
+
+  const scale = sizes[value] || "1";
+  document.documentElement.style.setProperty("--frazer-font-scale", scale);
+  document.body.style.fontSize = `calc(16px * ${scale})`;
+  localStorage.setItem("frazerFontSize", value);
+}
+
+function changeTaskbarOpacity(value){
+  const opacity = Math.max(30, Math.min(100, Number(value))) / 100;
+  const taskbar = document.querySelector(".taskbar");
+
+  if(taskbar){
+    taskbar.style.background = `rgba(20,20,20,${opacity})`;
+  }
+
+  const label = document.getElementById("taskbar-opacity-label");
+  if(label) label.textContent = `${Math.round(opacity * 100)}%`;
+
+  localStorage.setItem("frazerTaskbarOpacity", String(value));
+}
+
+function toggleAnimations(enabled){
+  document.body.classList.toggle("no-animations", !enabled);
+  localStorage.setItem("frazerAnimations", enabled ? "on" : "off");
+}
+
+function toggleAboutBlankShortcut(enabled){
+  localStorage.setItem("frazerAboutBlankShortcut", enabled ? "on" : "off");
+  document.querySelectorAll('[id^="about-blank-toggle"]').forEach(input => {
+    input.checked = enabled;
+  });
+  document.querySelectorAll('[id^="about-blank-open-button"]').forEach(button => {
+    button.style.display = enabled ? "inline-flex" : "none";
+  });
+}
+
+function openAboutBlankTab(){
+  // Open a genuinely blank page; do not load or embed Frazer OS in it.
+  const blankTab = window.open("about:blank", "_blank");
+  if(!blankTab){
+    alert("Your browser blocked the new tab. Allow pop-ups for this site and try again.");
+  }
+}
+
+
+/* WIDGETS */
+function toggleClockWidget(enabled){
+  const clock=document.getElementById("desktop-clock");
+  if(clock) clock.style.display=enabled ? "block" : "none";
+  localStorage.setItem("frazerClockWidget", enabled ? "on" : "off");
+  document.querySelectorAll('[id="clock-widget-toggle"], [id="clock-widget-toggle-app"]').forEach(el=>el.checked=enabled);
+}
+
+function toggleWeatherWidget(enabled){
+  const weather=document.getElementById("taskbar-weather");
+  if(weather) weather.style.display=enabled ? "block" : "none";
+  localStorage.setItem("frazerWeatherWidget", enabled ? "on" : "off");
+  document.querySelectorAll('[id="weather-widget-toggle"], [id="weather-widget-toggle-app"]').forEach(el=>el.checked=enabled);
+}
+
+function updateClockWidget(){
+  const now=new Date();
+  const time=now.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+  const date=now.toLocaleDateString([], {weekday:"short", month:"short", day:"numeric"});
+  const t=document.getElementById("widget-clock-time");
+  const d=document.getElementById("widget-clock-date");
+  if(t) t.textContent=time;
+  if(d) d.textContent=date;
+
+  const tt=document.getElementById("taskbar-clock-time");
+  const td=document.getElementById("taskbar-clock-date");
+  if(tt) tt.textContent=time;
+  if(td) td.textContent=date;
+}
+
+
+const FRAZER_WEATHER_DEFAULT={name:"Your area",lat:41.91,lon:-87.94};
+const FRAZER_WEATHER_SITES=[
+  {name:"Apple Weather",url:"https://weather.apple.com/"},
+  {name:"The Weather Channel",url:"https://weather.com/"},
+  {name:"AccuWeather",url:"https://www.accuweather.com/"},
+  {name:"Weather Underground",url:"https://www.wunderground.com/"},
+  {name:"NWS",url:"https://www.weather.gov/"},
+  {name:"Windy",url:"https://www.windy.com/"}
+];
+let frazerWeatherLocation={...FRAZER_WEATHER_DEFAULT};
+
+function weatherCodeInfo(code){
+  const m={
+    0:["Clear","☀️"],1:["Mostly clear","🌤️"],2:["Partly cloudy","⛅"],3:["Cloudy","☁️"],
+    45:["Foggy","🌫️"],48:["Foggy","🌫️"],51:["Drizzle","🌦️"],53:["Drizzle","🌦️"],55:["Drizzle","🌦️"],
+    56:["Freezing drizzle","🌧️"],57:["Freezing drizzle","🌧️"],61:["Rain","🌧️"],63:["Rain","🌧️"],65:["Heavy rain","🌧️"],
+    66:["Freezing rain","🌧️"],67:["Heavy freezing rain","🌧️"],71:["Snow","🌨️"],73:["Snow","❄️"],75:["Heavy snow","❄️"],
+    77:["Snow grains","❄️"],80:["Showers","🌦️"],81:["Showers","🌦️"],82:["Heavy showers","🌧️"],
+    85:["Snow showers","🌨️"],86:["Heavy snow showers","❄️"],95:["Thunderstorms","⛈️"],96:["Thunderstorms","⛈️"],99:["Thunderstorms","⛈️"]
+  };
+  return m[Number(code)]||["Weather","🌡️"];
+}
+function weatherHour(v){return new Date(v).toLocaleTimeString([],{hour:"numeric"});}
+function weatherDay(v,i){return i===0?"Today":new Date(v+"T12:00:00").toLocaleDateString([],{weekday:"short"});}
+
+async function getFrazerWeatherForecast(lat,lon){
+  const u=`https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FChicago&forecast_days=7`;
+  const r=await fetch(u,{cache:"no-store"});
+  if(!r.ok) throw new Error("weather request failed");
+  return r.json();
+}
+
+async function getNwsForecast(lat,lon){
+  try{
+    const a=await fetch(`https://api.weather.gov/points/${lat},${lon}`,{headers:{Accept:"application/geo+json"}});
+    if(!a.ok)return null;
+    const p=await a.json();
+    const [hr,day]=await Promise.all([
+      fetch(p.properties.forecastHourly,{headers:{Accept:"application/geo+json"}}),
+      fetch(p.properties.forecast,{headers:{Accept:"application/geo+json"}})
+    ]);
+    if(!hr.ok||!day.ok)return null;
+    return {hourly:(await hr.json()).properties.periods||[],daily:(await day.json()).properties.periods||[]};
+  }catch{return null;}
+}
+
+function switchWeatherTab(tab){
+  document.querySelectorAll(".weather-tab").forEach(b=>b.classList.toggle("active",b.dataset.weatherTab===tab));
+  document.querySelectorAll(".weather-panel").forEach(p=>p.classList.toggle("active",p.id==="weather-panel-"+tab));
+}
+
+function weatherSiteCard(site){
+  const u=site.url.replace(/"/g,"&quot;");
+  return `<div class="weather-site-card">
+    <div class="weather-site-head"><div class="weather-site-title">${site.name}</div>
+    <button class="weather-site-open" type="button" onclick="window.open('${site.url}','_blank','noopener')">Open ↗</button></div>
+    <iframe class="weather-site-frame" src="${u}" title="${site.name}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>`;
+}
+
+function renderFrazerWeather(app,data,nws){
+  const c=data.current,d=data.daily,h=data.hourly,[cond,icon]=weatherCodeInfo(c.weather_code);
+  const start=Math.max(0,h.time.findIndex(t=>new Date(t)>=new Date()));
+  app.querySelector(".weather-location-name").textContent=frazerWeatherLocation.name;
+  app.querySelector(".weather-location-sub").textContent="Live forecast";
+  app.querySelector(".weather-condition-icon").textContent=icon;
+  app.querySelector(".weather-current-temp").textContent=`${Math.round(c.temperature_2m)}°`;
+  app.querySelector(".weather-current-condition").textContent=cond;
+  app.querySelector(".weather-hi-lo").textContent=`H ${Math.round(d.temperature_2m_max[0])}° · L ${Math.round(d.temperature_2m_min[0])}°`;
+  app.querySelector(".weather-updated").textContent=`Updated ${new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}`;
+  app.querySelector(".weather-metrics").innerHTML=[
+    ["Feels like",`${Math.round(c.apparent_temperature)}°`],
+    ["Humidity",`${Math.round(c.relative_humidity_2m)}%`],
+    ["Wind",`${Math.round(c.wind_speed_10m)} mph`],
+    ["Precipitation",`${Number(c.precipitation||0).toFixed(1)}"`]
+  ].map(x=>`<div class="weather-metric"><div class="weather-metric-label">${x[0]}</div><div class="weather-metric-value">${x[1]}</div></div>`).join("");
+  app.querySelector(".weather-hourly").innerHTML=h.time.slice(start,start+12).map((t,n)=>{
+    const i=start+n,[x,ic]=weatherCodeInfo(h.weather_code[i]),rain=h.precipitation_probability[i]??0;
+    return `<div class="weather-hour"><div class="weather-hour-time">${weatherHour(t)}</div><div class="weather-hour-icon">${ic}</div><div class="weather-hour-temp">${Math.round(h.temperature_2m[i])}°</div><div class="weather-rain">${rain}% rain</div></div>`;
+  }).join("");
+  app.querySelector(".weather-days").innerHTML=d.time.map((day,i)=>{
+    const [x,ic]=weatherCodeInfo(d.weather_code[i]);
+    return `<div class="weather-day"><div class="weather-day-name">${weatherDay(day,i)}</div><div class="weather-day-icon">${ic}</div><div class="weather-day-cond">${x}</div><div class="weather-day-temps">${Math.round(d.temperature_2m_min[i])}° / ${Math.round(d.temperature_2m_max[i])}°</div></div>`;
+  }).join("");
+  const n=nws?.hourly?.[0];
+  app.querySelector(".weather-nws-status").textContent=n?`NWS check: ${n.shortForecast||"Forecast available"} · ${n.temperature??"--"}°${n.temperatureUnit||"F"} · ${n.windSpeed||"--"}`:"NWS check unavailable";
+}
+
+async function refreshFrazerWeatherApp(win){
+  const app=win.querySelector(".weather-app"),panel=win.querySelector("#weather-panel-overview");
+  panel.innerHTML='<div class="weather-loading">Loading weather…</div>';
+  try{
+    const [data,nws]=await Promise.all([getFrazerWeatherForecast(frazerWeatherLocation.lat,frazerWeatherLocation.lon),getNwsForecast(frazerWeatherLocation.lat,frazerWeatherLocation.lon)]);
+    panel.innerHTML=`<div class="weather-hero"><div class="weather-hero-top"><div><div class="weather-location-name"></div><div class="weather-current-temp">--°</div><div class="weather-current-condition">Loading</div><div class="weather-hi-lo"></div><div class="weather-updated"></div></div><div class="weather-condition-icon">🌤️</div></div><div class="weather-metrics"></div></div>
+      <div class="weather-section"><div class="weather-section-title">Hourly forecast</div><div class="weather-hourly"></div></div>
+      <div class="weather-section"><div class="weather-section-title">7-day forecast</div><div class="weather-days"></div><div class="weather-source-note weather-nws-status"></div></div>
+      <div class="weather-section"><div class="weather-section-title">Weather sources</div><div class="weather-source-row">${FRAZER_WEATHER_SITES.map(x=>`<button class="weather-source-pill" type="button" onclick="window.open('${x.url}','_blank','noopener')">${x.name} ↗</button>`).join("")}</div><div class="weather-source-note">The in-app forecast uses Open-Meteo. NWS is checked separately for official U.S. forecast data.</div></div>`;
+    renderFrazerWeather(app,data,nws);
+  }catch(e){panel.innerHTML='<div class="weather-loading">Weather could not load right now. Check your connection and try again.</div>';}
+}
+
+async function searchFrazerWeatherLocation(win){
+  const input=win.querySelector(".weather-search input"),q=(input.value||"").trim();
+  if(!q)return;
+  const b=win.querySelector(".weather-search button");b.disabled=true;b.textContent="…";
+  try{
+    const r=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1&language=en&format=json`,{cache:"no-store"});
+    if(!r.ok)throw new Error();
+    const x=(await r.json()).results?.[0];
+    if(!x)throw new Error();
+    frazerWeatherLocation={name:`${x.name}${x.admin1?", "+x.admin1:""}`,lat:Number(x.latitude),lon:Number(x.longitude)};
+    localStorage.setItem("frazerWeatherLocation",JSON.stringify(frazerWeatherLocation));
+    input.value="";
+    await refreshFrazerWeatherApp(win);
+  }catch{alert("Couldn't find that location. Try a city like Chicago, IL.");}
+  finally{b.disabled=false;b.textContent="Search";}
+}
+
+function openWeatherApp(){
+  closeStartMenu();
+  frazerSetLocalCurrentApp("Weather");
+  const existing=document.querySelector('.window[data-app-type="weather"]');
+  if(existing){existing.style.zIndex=z++;refreshFrazerWeatherApp(existing);return existing;}
+  const saved=localStorage.getItem("frazerWeatherLocation");
+  if(saved){try{const x=JSON.parse(saved);if(Number.isFinite(+x.lat)&&Number.isFinite(+x.lon))frazerWeatherLocation={name:String(x.name||"Your area"),lat:+x.lat,lon:+x.lon};}catch{}}
+  const win=document.createElement("div");
+  win.className="window weather-window";win.dataset.appType="weather";
+  Object.assign(win.style,{top:"35px",left:"50%",transform:"translateX(-50%)",width:"min(94vw,1120px)",height:"min(90vh,780px)",zIndex:z++});
+  win.innerHTML=`<div class="window-header"><span>☁️ Weather</span><div class="win-controls"><div class="win-btn max" onclick="toggleMax(this)"></div><div class="win-btn close" onclick="closeWindow(this)"></div></div></div>
+  <div class="weather-app-body"><div class="weather-app"><div class="weather-topbar"><div class="weather-location"><div class="weather-location-name">${frazerWeatherLocation.name}</div><div class="weather-location-sub">Weather</div></div><div class="weather-search"><input type="text" placeholder="Search a city…" aria-label="Search a city"><button type="button">Search</button></div></div>
+  <div class="weather-tabs"><button class="weather-tab active" data-weather-tab="overview" type="button">Overview</button><button class="weather-tab" data-weather-tab="multiview" type="button">MultiView</button></div>
+  <div id="weather-panel-overview" class="weather-panel active"><div class="weather-loading">Loading weather…</div></div>
+  <div id="weather-panel-multiview" class="weather-panel"><div class="weather-section"><div class="weather-section-title">Weather website MultiView</div><div class="weather-source-note" style="margin:0 0 12px;">Live website panels. Some sites may block embedded previews; use Open ↗ when that happens.</div><div class="weather-multiview-grid">${FRAZER_WEATHER_SITES.map(weatherSiteCard).join("")}</div><div class="weather-source-footer">MultiView shows independent weather websites side-by-side inside Frazer OS.</div></div></div></div></div>`;
+  document.getElementById("window-area").appendChild(win);windows.push(win);drag(win);win.addEventListener("mousedown",()=>win.style.zIndex=z++);
+  win.querySelectorAll(".weather-tab").forEach(b=>b.addEventListener("click",()=>switchWeatherTab(b.dataset.weatherTab)));
+  const input=win.querySelector(".weather-search input"),button=win.querySelector(".weather-search button");
+  button.addEventListener("click",()=>searchFrazerWeatherLocation(win));input.addEventListener("keydown",e=>{if(e.key==="Enter")searchFrazerWeatherLocation(win);});
+  refreshFrazerWeatherApp(win);return win;
+}
+
+async function updateWeatherWidget(){
+  const box=document.getElementById("taskbar-weather");if(!box)return;
+  try{
+    const data=await getFrazerWeatherForecast(frazerWeatherLocation.lat,frazerWeatherLocation.lon);
+    const [name,icon]=weatherCodeInfo(data.current.weather_code),temp=Math.round(data.current.temperature_2m);
+    box.querySelector(".weather-temp").textContent=`${icon} ${temp}°F`;
+    box.querySelector(".weather-desc").textContent=name;
+  }catch{
+    box.querySelector(".weather-temp").textContent="🌡️ --°F";
+    box.querySelector(".weather-desc").textContent="Weather unavailable";
+  }
+}
+
+function loadWidgetSettings(){
+  const clockEnabled=localStorage.getItem("frazerClockWidget") === "on";
+  const weatherEnabled=localStorage.getItem("frazerWeatherWidget") !== "off";
+  toggleClockWidget(clockEnabled);
+  toggleWeatherWidget(weatherEnabled);
+  updateClockWidget();
+  updateWeatherWidget();
+}
+
+function resetSettings(){
+  localStorage.removeItem("frazerAboutBlankShortcut");
+  localStorage.removeItem("frazerBackground");
+  localStorage.removeItem("frazerCustomBackground");
+  localStorage.removeItem("frazerFontSize");
+  localStorage.removeItem("frazerTaskbarOpacity");
+  localStorage.removeItem("frazerAnimations");
+  localStorage.setItem("frazerClockWidget", "off");
+  localStorage.setItem("frazerWeatherWidget", "on");
+  localStorage.removeItem("frazerDesktopItems");
+  Object.keys(desktopItems).forEach(name => localStorage.removeItem("frazerDesktop_" + name));
+  localStorage.removeItem(FRAZER_START_PINS_KEY);
+  initStartMenuPins();
+
+  // Reset now means the dark Windows 11 wallpaper.
+  applyBackground(darkWindows11Background);
+  localStorage.setItem("frazerBackground", "dark");
+
+  document.querySelectorAll('[id^="background-select"]').forEach(select => {
+    if(select.querySelector('option[value="dark"]')) select.value = "dark";
+  });
+
+  document.querySelectorAll('[id^="font-size-select"]').forEach(select => select.value = "medium");
+  changeFontSize("medium");
+
+  document.querySelectorAll('[id^="taskbar-opacity"]').forEach(input => input.value = "70");
+  changeTaskbarOpacity("70");
+
+  document.querySelectorAll('[id^="animations-toggle"]').forEach(input => input.checked = true);
+  toggleAnimations(true);
+
+  toggleClockWidget(true);
+  toggleWeatherWidget(true);
+
+  document.querySelectorAll('[id^="desktop-items-toggle"]').forEach(input => input.checked = true);
+
+  Object.keys(desktopItems).forEach(name => {
+    const checkbox = document.querySelector(`#desktop-${name}-toggle, #desktop-${name}-toggle-app`);
+    const enabled = ["vex7","minecraft","music","settings"].includes(name);
+    if(checkbox) checkbox.checked = enabled;
+    setDesktopIcon(name, enabled);
+  });
+
+  toggleDesktopItems(true);
+  renderDesktopSettings();
+  syncSettingsApp();
+}
+
+(function loadSavedSettings(){
+  let savedBackground = localStorage.getItem("frazerBackground");
+  const custom = localStorage.getItem("frazerCustomBackground");
+
+  // Existing installs that stored "default" keep their old wallpaper as Light mode.
+  if(savedBackground === "default") savedBackground = "light";
+
+  if(savedBackground === "custom" && custom){
+    applyBackground(`url("${custom}") center/cover no-repeat`);
+  }else if(savedBackground){
+    changeBackground(savedBackground);
+  }else{
+    // Brand-new installs start in Dark Windows 11 mode.
+    applyBackground(darkWindows11Background);
+  }
+
+  const savedFont = localStorage.getItem("frazerFontSize") || "medium";
+  changeFontSize(savedFont);
+
+  const savedOpacity = localStorage.getItem("frazerTaskbarOpacity") || "70";
+  changeTaskbarOpacity(savedOpacity);
+
+  const savedAnimations = localStorage.getItem("frazerAnimations");
+  const enabled = savedAnimations !== "off";
+  toggleAnimations(enabled);
+})();
+
+
+function openDesktopSettings(){
+  closeStartMenu();
+  openSettingsApp();
+}
+
+/* DESKTOP ITEM SETTINGS */
+const desktopCatalog = [
+  { id:"vex7", name:"Vex 7", icon:"🎮", url:"games/vex7/index.html", type:"Game" },
+  { id:"snake", name:"Snake", icon:"🐍", url:"games/snake/index.html", type:"Game" },
+  { id:"slope", name:"Slope", icon:"🏂", url:"games/slope/index.html", type:"Game" },
+  { id:"drive-mad", name:"Drive Mad", icon:"🚗", url:"games/drive-mad/index.html", type:"Game" },
+  { id:"retro-bowl", name:"Retro Bowl", icon:"🏈", url:"games/retro-bowl/index.html", type:"Game" },
+  { id:"gball", name:"GBall", icon:"⚽", url:"games/gball/index.html", type:"Game" },
+  { id:"moto-x3m", name:"Moto X3M", icon:"🏍️", url:"games/moto-x3m/index.html", type:"Game" },
+  { id:"motox3m2", name:"Moto X3M 2", icon:"🏍️", url:"games/motox3m2/index.html", type:"Game" },
+  { id:"basketball-stars", name:"Basketball Stars", icon:"🏀", url:"games/basketball-stars/index.html", type:"Game" },
+  { id:"snow-rider-3d", name:"Snow Rider 3D", icon:"❄️", url:"games/Snow-Rider3D-main/index.html", type:"Game" },
+  { id:"fnaf", name:"FNaF", icon:"🐻", url:"games/fnaf/index.html", type:"Game" },
+  { id:"fnaje", name:"FNaJE", icon:"👻", url:"games/fnaje/index.html", type:"Game" },
+  { id:"rocket-goal", name:"Rocket Goal", icon:"🚀", url:"games/rocket-goal/index.html", type:"Game" },
+  { id:"marty-games", name:"Marty Games", icon:"🎲", url:"apps/marty-games/index.html", type:"Game" },
+  { id:"papas-wingeria", name:"Papas wingeria", icon:"🍔", url:"games/papaswings/index.html", type:"Game" },
+  { id:"minecraft", name:"Minecraft", icon:"⛏️", url:"minec/EaglercraftX_1.8_u53_Offline_Signed.html", type:"Game" },
+  { id:"chatbot", name:"AI Chatbot", icon:"🤖", url:"apps/chatbot/index.html", type:"App" },
+  { id:"music", name:"Frazer Music", icon:"🎵", url:"apps/music/index.html", type:"App" },
+  { id:"google", name:"Frazer Proxy", icon:"🌐", url:"apps/google/index.html", type:"App" },
+  { id:"files", name:"Files", icon:"📁", url:null, type:"System" },
+  { id:"settings", name:"Settings", icon:"⚙️", url:null, type:"System" }
+];
+
+const desktopItems = Object.fromEntries(
+  desktopCatalog.map(item => [item.id, "desktop-" + item.id])
+);
+
+function getDesktopItem(id){
+  return desktopCatalog.find(item => item.id === id);
+}
+
+function createDesktopIcon(item){
+  const el = document.createElement("div");
+  el.id = "desktop-" + item.id;
+  el.className = "desktop-item";
+  el.title = "Click to open";
+
+  const launch = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if(item.id === "settings") openDesktopSettings();
+    else if(item.id === "files") openFilesApp();
+    else if(item.url) openApp(item.url, item.name, item.type === "Game" ? "game" : "app");
+  };
+
+  // Open with a normal click; double-click also works.
+  el.addEventListener("click", launch);
+  el.addEventListener("dblclick", launch);
+
+  const icon = document.createElement("div");
+  icon.className = "desktop-icon";
+  icon.textContent = item.icon;
+
+  const label = document.createElement("div");
+  label.textContent = item.name;
+
+  el.appendChild(icon);
+  el.appendChild(label);
+  return el;
+}
+
+function renderDesktopItems(){
+  const desktop = document.getElementById("desktop");
+  if(!desktop) return;
+  desktop.innerHTML = "";
+
+  desktopCatalog.forEach(item => {
+    desktop.appendChild(createDesktopIcon(item));
+  });
+}
+
+function renderDesktopSettings(){
+  const options = document.getElementById("desktop-icon-options");
+  if(!options) return;
+  options.innerHTML = "";
+
+  const games = desktopCatalog.filter(item => item.type === "Game");
+  const apps = desktopCatalog.filter(item => item.type !== "Game");
+
+  const addGroup = (title, items) => {
+    const heading = document.createElement("div");
+    heading.textContent = title;
+    heading.style.cssText = "font-size:12px; opacity:.7; margin-top:4px; margin-bottom:2px;";
+    options.appendChild(heading);
+
+    items.forEach(item => {
+      const label = document.createElement("label");
+      label.style.cssText = "display:flex; align-items:center; gap:8px; font-size:13px;";
+      label.innerHTML = `<input id="desktop-${item.id}-toggle" type="checkbox"> ${item.icon} ${item.name}`;
+
+      const checkbox = label.querySelector("input");
+      checkbox.checked = localStorage.getItem("frazerDesktop_" + item.id) !== "off";
+      checkbox.onchange = () => setDesktopIcon(item.id, checkbox.checked);
+
+      options.appendChild(label);
+    });
+  };
+
+  addGroup("🎮 Games", games);
+  addGroup("📱 Apps", apps);
+}
+
+function setDesktopIcon(name, enabled){
+  const id = desktopItems[name];
+  const item = document.getElementById(id);
+
+  if(item){
+    item.style.display = enabled ? "flex" : "none";
+  }
+
+  localStorage.setItem("frazerDesktop_" + name, enabled ? "on" : "off");
+}
+
+function toggleDesktopItems(enabled){
+  const desktop = document.getElementById("desktop");
+
+  if(desktop){
+    desktop.style.display = enabled ? "block" : "none";
+  }
+
+  localStorage.setItem("frazerDesktopItems", enabled ? "on" : "off");
+
+  const options = document.getElementById("desktop-icon-options");
+  if(options){
+    options.style.opacity = enabled ? "1" : ".45";
+    options.style.pointerEvents = enabled ? "auto" : "none";
+  }
+}
+
+function loadDesktopItemSettings(){
+  renderDesktopItems();
+  renderDesktopSettings();
+
+  const masterEnabled = localStorage.getItem("frazerDesktopItems") !== "off";
+  const master = document.getElementById("desktop-items-toggle");
+  if(master) master.checked = masterEnabled;
+
+  Object.keys(desktopItems).forEach(name => {
+    const saved = localStorage.getItem("frazerDesktop_" + name);
+    const defaultEnabled = ["vex7","minecraft","music","settings"].includes(name);
+    const enabled = saved === null ? defaultEnabled : saved !== "off";
+
+    const checkbox = document.getElementById("desktop-" + name + "-toggle");
+    if(checkbox) checkbox.checked = enabled;
+
+    setDesktopIcon(name, enabled);
+  });
+
+  // Re-apply master switch after individual settings are loaded.
+  toggleDesktopItems(masterEnabled);
+}
+document.addEventListener("fullscreenchange", updateGameFullscreenState);
+
+// Bind the Windows button directly so it works even when inline handlers are blocked.
+const frazerWeatherButton = document.getElementById("taskbar-weather");
+if(frazerWeatherButton && !frazerWeatherButton.dataset.bound){
+  frazerWeatherButton.dataset.bound = "1";
+  frazerWeatherButton.addEventListener("click", openWeatherApp);
+  frazerWeatherButton.addEventListener("keydown", e => {
+    if(e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      openWeatherApp();
+    }
+  });
+}
+
+const frazerWindowsButton = document.getElementById("frazer-windows-button");
+if(frazerWindowsButton && !frazerWindowsButton.dataset.bound){
+  frazerWindowsButton.dataset.bound = "1";
+  frazerWindowsButton.addEventListener("click", toggleMenu);
+  frazerWindowsButton.addEventListener("keydown", e => {
+    if(e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      toggleMenu();
+    }
+  });
+}
+
+(function loadSavedWeatherLocation(){
+  const saved=localStorage.getItem("frazerWeatherLocation");
+  if(!saved)return;
+  try{
+    const x=JSON.parse(saved);
+    if(x && Number.isFinite(+x.lat) && Number.isFinite(+x.lon)){
+      frazerWeatherLocation={name:String(x.name||FRAZER_WEATHER_DEFAULT.name),lat:+x.lat,lon:+x.lon};
+    }
+  }catch{}
+})();
+
+loadDesktopItemSettings();
+initAppSearch();
+initStartMenuPins();
+loadWidgetSettings();
+setInterval(updateClockWidget, 1000);
+setInterval(updateWeatherWidget, 10 * 60 * 1000);
+
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import {
+    getDatabase,
+    ref,
+    set,
+    onValue,
+    onDisconnect,
+    runTransaction
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+
+  const FRAZER_BAD_WORDS = [
+    "fuck","fucker","fucking","shit","sh1t","bitch","b1tch","asshole","a55hole",
+    "dick","d1ck","piss","pussy","cunt","cock","motherfucker","nigger","nigga",
+    "fag","faggot","slut","whore"
+  ];
+
+  function frazerCleanName(value){
+    return String(value || "")
+      .replace(/[\u0000-\u001F\u007F]/g,"")
+      .trim()
+      .slice(0,40);
+  }
+
+  function frazerNameHasSwearing(name){
+    const normalized = String(name || "").toLowerCase().replace(/[^a-z0-9]+/g," ");
+    return FRAZER_BAD_WORDS.some(word =>
+      new RegExp("(^|[^a-z0-9])" + word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&") + "([^a-z0-9]|$)","i").test(normalized)
+    );
+  }
+
+  let frazerNameResolver;
+  window.frazerNamePromise = new Promise(resolve => { frazerNameResolver = resolve; });
+
+  function showFrazerNameGate(){
+    const saved = localStorage.getItem("frazerDisplayName") || "";
+    const menu=document.getElementById("start-menu");
+    const input=document.getElementById("frazer-name-input");
+    const error=document.getElementById("frazer-name-error");
+    const button=document.getElementById("frazer-name-continue");
+    const greeting=document.getElementById("frazer-start-greeting");
+
+    if(saved.trim()){
+      menu?.classList.remove("frazer-name-required");
+      if(greeting) greeting.textContent=`Hello, ${saved.trim()}`;
+      window.frazerUpdateStartProfile?.(saved.trim());
+      if(frazerNameResolver) frazerNameResolver(saved.trim());
+      return Promise.resolve(saved.trim());
+    }
+
+    menu?.classList.add("frazer-name-required");
+    if(error) error.textContent="";
+    if(input){ input.value=""; setTimeout(()=>input.focus(),220); }
+
+    return new Promise(resolve=>{
+      const finish=()=>{
+        const name=frazerCleanName(input?.value || "");
+        if(!name){
+          if(error) error.textContent="Please enter a name.";
+          input?.focus();
+          return;
+        }
+        if(frazerNameHasSwearing(name)){
+          if(error) error.textContent="Please choose a different name.";
+          if(input) input.value="";
+          input?.focus();
+          return;
+        }
+
+        localStorage.setItem("frazerDisplayName",name);
+        if(greeting) greeting.textContent=`Hello, ${name}`;
+        window.frazerUpdateStartProfile?.(name);
+        menu?.classList.remove("frazer-name-required");
+
+        button?.removeEventListener("click",finish);
+        input?.removeEventListener("keydown",onKey);
+        if(frazerNameResolver) frazerNameResolver(name);
+        resolve(name);
+      };
+      const onKey=e=>{ if(e.key==="Enter") finish(); };
+      button?.addEventListener("click",finish);
+      input?.addEventListener("keydown",onKey);
+    });
+  }
+
+  // The name screen is opened by the Windows/Games button.
+  window.frazerEnsureName = showFrazerNameGate;
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAJoDdhT8zxq66czyyGfB7-RSYAkFmXu6E",
+    authDomain: "frazeros.firebaseapp.com",
+    databaseURL: "https://frazeros-default-rtdb.firebaseio.com",
+    projectId: "frazeros",
+    storageBucket: "frazeros.firebasestorage.app",
+    messagingSenderId: "60815979501",
+    appId: "1:60815979501:web:aaaae6a20a8bbd5ae26de4",
+    measurementId: "G-XG229W97FC"
+  };
+
+  try {
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Persistent device identity + display name.
+    // The browser gets one random ID so identical iPads can still be distinguished.
+    let deviceId = localStorage.getItem("frazerDeviceId");
+    if (!deviceId) {
+      deviceId =
+        "d_" +
+        (globalThis.crypto?.randomUUID
+          ? crypto.randomUUID()
+          : Math.random().toString(36).slice(2) + Date.now());
+      localStorage.setItem("frazerDeviceId", deviceId);
+    }
+
+    // Wait until the user opens Windows/Games and completes the full-screen name screen.
+    let displayName = localStorage.getItem("frazerDisplayName") || "";
+    if (!displayName.trim()) {
+      displayName = await window.frazerNamePromise;
+    }
+
+    const presenceRef = ref(db, "frazerPresence/" + deviceId);
+    const userRef = ref(db, "frazerUsers/" + deviceId);
+
+    let currentGame = window.frazerCurrentGame || "Browsing";
+    const deviceType = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ? "Mobile" : "Desktop";
+
+    async function syncFrazerUser(){
+      currentGame = window.frazerCurrentGame || currentGame || "Browsing";
+
+      await set(userRef, {
+        name: displayName,
+        deviceId: deviceId,
+        device: deviceType,
+        online: true,
+        game: currentGame,
+        lastSeen: Date.now()
+      });
+    }
+
+    window.frazerSetCurrentGame = function(game){
+      currentGame = String(game || "Browsing");
+      window.frazerCurrentGame = currentGame;
+      syncFrazerUser().catch(err => {
+        console.warn("Frazer current-game update failed:", err);
+      });
+    };
+
+    await set(userRef, {
+      name: displayName,
+      deviceId: deviceId,
+      device: deviceType,
+      online: true,
+      game: currentGame,
+      lastSeen: Date.now()
+    });
+
+    await set(presenceRef, {
+      name: displayName,
+      deviceId: deviceId,
+      device: deviceType,
+      online: true,
+      at: Date.now()
+    });
+
+    onDisconnect(presenceRef).remove();
+    onDisconnect(userRef).update({
+      online: false,
+      game: "Offline",
+      lastSeen: Date.now()
+    });
+
+    // Keep the user's game and last-seen timestamp fresh.
+    setInterval(() => {
+      syncFrazerUser().catch(err => {
+        console.warn("Frazer user heartbeat failed:", err);
+      });
+    }, 15000);
+
+
+    // Receive private messages from the admin.
+    const privateMessageRef = ref(db, "frazerMessages/" + deviceId);
+    onValue(privateMessageRef, snap => {
+      const data = snap.val();
+      if (!data || data.active === false) return;
+
+      const screen = document.getElementById("frazer-global-screen");
+      const icon = document.getElementById("frazer-global-icon");
+      const title = document.getElementById("frazer-global-title");
+      const text = document.getElementById("frazer-global-text");
+      const image = document.getElementById("frazer-global-image");
+
+      if (!screen) return;
+
+      if (icon) icon.textContent = data.icon || "💬";
+      if (title) title.textContent = data.title || "Message from Admin";
+      if (text) text.textContent = data.text || "";
+
+      if (image) {
+        image.removeAttribute("src");
+        image.alt = "";
+      }
+      screen.classList.remove("has-image");
+      screen.classList.remove("show");
+      void screen.offsetWidth;
+      screen.classList.add("show");
+
+      // Mark the message as displayed/cleared locally without deleting the record.
+      setTimeout(() => {
+        screen.classList.remove("show");
+      }, Math.max(1000, Number(data.durationSeconds || 15) * 1000));
+    });
+
+    // Count one page view for this page load.
+    runTransaction(ref(db, "frazerAnalytics/pageViews"), current => {
+      return (Number(current) || 0) + 1;
+    }).catch(err => {
+      console.warn("Frazer page-view tracking failed:", err);
+    });
+
+    // Listen for admin broadcasts/jumpscares.
+    const globalRef = ref(db, "frazerLive/global");
+
+    onValue(globalRef, snap => {
+      const data = snap.val();
+      const screen = document.getElementById("frazer-global-screen");
+      const icon = document.getElementById("frazer-global-icon");
+      const title = document.getElementById("frazer-global-title");
+      const text = document.getElementById("frazer-global-text");
+      const image = document.getElementById("frazer-global-image");
+
+      if (!screen) return;
+
+      if (!data || data.active === false) {
+        screen.classList.remove("show", "has-image");
+        if (image) {
+          image.removeAttribute("src");
+          image.alt = "";
+        }
+        return;
+      }
+
+      if (icon) icon.textContent = data.icon || (data.type === "jumpscare" ? "😈" : "📢");
+      if (title) title.textContent = data.title || "Frazer OS";
+      if (text) text.textContent = data.text || "";
+
+      if (image && data.image) {
+        image.src = String(data.image);
+        image.alt = data.title || "Frazer OS";
+        screen.classList.add("has-image");
+      } else {
+        if (image) image.removeAttribute("src");
+        screen.classList.remove("has-image");
+      }
+
+      screen.classList.remove("show");
+      void screen.offsetWidth;
+      screen.classList.add("show");
+    });
+
+    console.log("Frazer Firebase connected.");
+  } catch (err) {
+    console.error("Frazer Firebase initialization failed:", err);
+  }
+</script>
+</body>
+</html>
